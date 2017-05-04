@@ -27,11 +27,17 @@ export class UserService {
   }
 
   setCurrentUser(user, headers) {
-    console.log("Setting current user:");
+    console.log("Setting current user and headers:");
     console.log(user);
+    console.log(headers);
     this.currentUser = user;
     this.headers = headers;
     this.storage.set('user', user);
+    this.storage.set('headers', headers);
+  }
+
+  logout() {
+    this.setCurrentUser(null, null);
   }
 
   fetchUser(email, callback) {
