@@ -14,3 +14,71 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+/* Regular */
+
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway'), local('Raleway'), url(../assets/fonts/Raleway-Regular.ttf) format('truetype');
+}
+
+/* Light */
+
+@font-face {
+  font-family: 'Raleway-Light';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Raleway-Light'), local('Raleway-Light'), url(../assets/fonts/Raleway-Light.ttf) format('truetype');
+}
+
+/* Header styles */
+
+h1 {
+    font-family: $font-family-base !important;
+}
+h2 {
+    font-family: $font-family-base !important;
+}
+h3 {
+    font-family: $font-family-base !important;
+}
+h4 {
+    font-family: $font-family-base !important;
+}
+h5 {
+    font-family: $font-family-base !important;
+}
+h6 {
+    font-family: $font-family-base !important;
+}
+p {
+    font-family: $font-family-base !important;
+}
+strong {
+    font-family: $font-family-base !important;
+}
+
+.toolbar-background {
+  background-color: color($colors, primary) !important;
+}
+
+.toolbar-title {
+  color: #fff !important;
+  font-family: $font-family-base !important;
+  border-left: 1px solid rgba(255,255,255,0.5);
+}
+
+.tab-button-text {
+  font-family: $font-family-base !important;
+}
+
+.label {
+  font-family: $font-family-base !important;
+}
+
+.popover-content {
+  top: 47px !important;
+  left: calc(100% - 263px) !important;
+}

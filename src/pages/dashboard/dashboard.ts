@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -7,13 +7,14 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'dashboard.html'
 })
 export class Dashboard {
-
-  constructor(public navCtrl: NavController) {
-
+  constructor(public navCtrl: NavController,
+              private popoverCtrl: PopoverController) {
   }
 
   toggleDropdown() {
     console.log("Toggling dropdown!");
+    let popover = this.popoverCtrl.create('Dropdown');
+    popover.present();
   }
 
 }

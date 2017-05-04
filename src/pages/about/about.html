@@ -1,8 +1,16 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>
-      About
-    </ion-title>
+    <ion-buttons left>
+      <button ion-button (click)="homePressed()">
+        <img style="width:54px;margin:5px;" src="assets/logo.png">
+      </button>
+    </ion-buttons>
+    <ion-title>About</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="toggleDropdown()">
+        <img style="width:30px;border-radius:5px;" src="assets/tmh.png">
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
