@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Platform, AlertController, ModalController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-
 import { Storage } from '@ionic/storage';
 
 import { TabsPage } from '../pages/tabs/tabs';
@@ -32,15 +31,14 @@ export class TheManHome {
   fetchCurrentUser() {
     // console.log('erasing storage for login debugging');
     this.storage.clear().then(() => { // clear cache for login debugging
-      let env = this;
+      let self = this;
       this.storage.get('user').then((storedUser) => {
         if (!storedUser || !storedUser.accessToken) {
           console.log('No stored user found!')
-          let modal = env.modalCtrl.create('Login');
-          modal.present();
+          let modal = self.modalCtrl.create('Login');
+          // modal.present();
         } else if (storedUser.accessToken) {
           console.log('Stored user found: ', storedUser);
-          
         }
       });
 

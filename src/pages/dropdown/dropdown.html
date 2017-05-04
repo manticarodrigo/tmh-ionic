@@ -1,3 +1,23 @@
-<ion-content padding>
-   Hey
+<ion-content>
+   <div class="header">
+     <img src="assets/tmh.png">
+     <h4 *ngIf="user">
+      {{ user.firstName }}
+     </h4>
+     <p *ngIf="user">
+      {{ user.emailAddress }}
+     </p>
+     <h4 *ngIf="!user">
+      User
+     </h4>
+     <p *ngIf="!user">
+      user@email.com
+     </p>
+     <button ion-button full>
+       VIEW PROFILE
+     </button>
+   </div>
+   <a>ALL PROJECTS</a>
+   <a>NEW PROJECT</a>
+   <a>LOGOUT</a>
 </ion-content>

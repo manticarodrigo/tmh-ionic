@@ -17,7 +17,16 @@
 <ion-content padding>
   <ion-list>
     <ion-item>
-      Project 1
+      <div class="avatar" item-left>
+          <img src="assets/tmh.png">
+      </div>
+      <span *ngIf="user">{{ user.firstName }}'s </span>Project 1
+    </ion-item>
+    <ion-item>
+      <div class="avatar" item-left>
+          <img src="assets/tmh.png">
+      </div>
+      <span *ngIf="user">{{ user.firstName }}'s </span>Project 2
     </ion-item>
   </ion-list>
 </ion-content>
