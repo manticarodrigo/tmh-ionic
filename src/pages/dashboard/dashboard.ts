@@ -3,13 +3,17 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 @IonicPage()
 @Component({
-  selector: 'page-about',
-  templateUrl: 'about.html'
+  selector: 'page-dashboard',
+  templateUrl: 'dashboard.html'
 })
-export class About {
+export class Dashboard {
 
   constructor(public navCtrl: NavController) {
 
+  }
+
+  toggleDropdown() {
+    console.log("Toggling dropdown!");
   }
 
 }

@@ -1,8 +1,8 @@
 {
-  "name": "ionic-hello-world",
-  "version": "0.0.0",
-  "author": "Ionic Framework",
-  "homepage": "http://ionicframework.com/",
+  "name": "tmh",
+  "version": "0.1.0",
+  "author": "Rodrigo Mantica",
+  "homepage": "http://manticarodrigo.com/",
   "private": true,
   "scripts": {
     "clean": "ionic-app-scripts clean",
@@ -49,5 +49,5 @@
       "locator": "ios"
     }
   ],
-  "description": "tmh: An Ionic project"
+  "description": "THE MAN HOME: Uncomplicated interior design for men."
 }
