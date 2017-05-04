@@ -36,10 +36,9 @@
 /* Header styles */
 
 h1 {
-    font-family: $font-family-base !important;
+  font-family: $font-family-base !important;
 }
-h2 {
-    font-family: $font-family-base !important;
+h2 {font-family: $font-family-base !important;
 }
 h3 {
     font-family: $font-family-base !important;
@@ -60,6 +59,23 @@ strong {
     font-family: $font-family-base !important;
 }
 
+/* Element styles */
+
+button {
+  font-family: 'Raleway', Helvetica, sans-serif !important;
+  font-weight: 600 !important;
+  border-radius: 0px !important;
+  height: 40px !important;
+  margin: 0 auto !important;
+}
+
+.label {
+  font-family: $font-family-base !important;
+}
+
+
+/* Navbar styles */
+
 .toolbar-background {
   background-color: color($colors, primary) !important;
 }
@@ -70,15 +86,34 @@ strong {
   border-left: 1px solid rgba(255,255,255,0.5);
 }
 
-.tab-button-text {
-  font-family: $font-family-base !important;
-}
+/* Tabbar styles */
 
-.label {
+.tab-button-text {
   font-family: $font-family-base !important;
 }
 
 .popover-content {
   top: 47px !important;
   left: calc(100% - 263px) !important;
+}
+
+/* Alert styles */
+
+.alert-head {
+    text-align: center !important;
+}
+
+.alert-message {
+    font-family: $font-family-base !important;
+    text-align: center !important;
+}
+
+.alert-button-group {
+    justify-content: center !important;
+}
+
+.alert-button {
+    font-family: $font-family-base !important;
+    font-weight: 800 !important;
+    text-transform: capitalize !important;
 }

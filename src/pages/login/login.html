@@ -1,18 +1,8 @@
-<!--
-  Generated template for the Login page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
-<ion-header>
-
-  <ion-navbar>
-    <ion-title>Login</ion-title>
-  </ion-navbar>
-
-</ion-header>
-
-
-<ion-content padding>
-
+<ion-content text-center padding>
+  <div class="center">
+    <img src="assets/logo.png">
+    <ion-input [(ngModel)]="email" type="email" placeholder="EMAIL"></ion-input>
+    <ion-input [(ngModel)]="password" type="password" placeholder="PASSWORD"></ion-input>
+    <button ion-button type="button" (click)="login()">LOGIN</button>
+  </div>
 </ion-content>

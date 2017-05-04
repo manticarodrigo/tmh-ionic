@@ -1,3 +1,26 @@
 page-login {
-
+  .scroll-content {
+    background-color: color($colors, primary);
+  }
+  .center {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    transform: translateY(-50%);
+    max-width: 200px;
+    margin: auto;
+    img {
+      width: 75px;
+      margin-bottom: 10px;
+    }
+  }
+  ion-input {
+    background-color: color($colors, light);
+    margin-bottom: 10px;
+  }
+  button {
+    width: 100%;
+    background-color: #999999 !important;
+  }
 }
