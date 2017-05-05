@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 
@@ -13,7 +13,6 @@ export class Login {
   password = '';
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
-              private viewCtrl: ViewController,
               private alertCtrl: AlertController,
               private userService: UserService) {
   }
@@ -24,7 +23,7 @@ export class Login {
     } else {
       this.userService.login(this.email, this.password, (user) => {
         if (user) {
-          this.viewCtrl.dismiss();
+          this.navCtrl.setRoot('Dashboard');
         } else {
           this.presentError();
         }

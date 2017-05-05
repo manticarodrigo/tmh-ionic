@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
+import { ImageService } from '../../providers/image-service';
 
 @IonicPage()
 @Component({
@@ -10,12 +11,22 @@ import { UserService } from '../../providers/user-service';
 })
 export class Dropdown {
   user: any;
+  image64: any;
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
-              private modalCtrl: ModalController,
-              private userService: UserService) {
+              private userService: UserService,
+              private imageService: ImageService) {
     if (this.userService.currentUser) {
       this.user = this.userService.currentUser;
+      this.imageService.getImage(this.user.portraitId, this.userService.headers, (data) => {
+        if (data) {
+          console.log("Adding data to dropdown image");
+          console.log(data);
+          this.image64 = data;
+        } else {
+          console.log("No image found");
+        }
+      });
     } else {
       console.log("No current user in dropdown");
     }
@@ -23,8 +34,7 @@ export class Dropdown {
 
   logout() {
     this.userService.logout();
-    let modal = this.modalCtrl.create('Login');
-    modal.present();
+    this.navCtrl.setRoot('Login');
   }
 
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <widget id="com.ionicframework.tmh850018" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>THE MAN HOME</name>
+  <name>TMH</name>
   <description>Uncomplicated interior design for men.</description>
   <author email="manticarodrigo@gmail.com" href="http://manticarodrigo.com/">Rodrigo Mantica</author>
   <content src="index.html"/>

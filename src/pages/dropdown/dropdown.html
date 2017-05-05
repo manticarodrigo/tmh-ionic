@@ -1,6 +1,7 @@
 <ion-content>
    <div class="header">
-     <img src="assets/tmh.png">
+     <img *ngIf="image64" src="data:image/png;base64,{{image64}}">
+     <img *ngIf="!image64" src="assets/user-placeholder.png">
      <h4 *ngIf="user">
       {{ user.firstName }}
      </h4>
@@ -19,5 +20,5 @@
    </div>
    <a>ALL PROJECTS</a>
    <a>NEW PROJECT</a>
-   <a>LOGOUT</a>
+   <a (click)="logout()">LOGOUT</a>
 </ion-content>

@@ -6,6 +6,8 @@ import { TheManHome } from './app.component';
 import { TabsPage } from '../pages/tabs/tabs';
 
 import { UserService } from '../providers/user-service';
+import { ImageService } from '../providers/image-service';
+import { ProjectService } from '../providers/project-service';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -35,7 +37,9 @@ import { HttpModule } from '@angular/http';
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    UserService
+    UserService,
+    ImageService,
+    ProjectService
   ]
 })
 export class AppModule {}

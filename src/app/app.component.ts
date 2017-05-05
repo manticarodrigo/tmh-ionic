@@ -1,24 +1,24 @@
-import { Component } from '@angular/core';
-import { Platform, AlertController, ModalController } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { Nav, Platform, AlertController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Storage } from '@ionic/storage';
 
 import { UserService } from '../providers/user-service';
 
-import { TabsPage } from '../pages/tabs/tabs';
+// import { TabsPage } from '../pages/tabs/tabs';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class TheManHome {
-  rootPage:any = TabsPage;
+  @ViewChild(Nav) nav: Nav;
+  rootPage:any = 'Login';
 
-    constructor(private platform: Platform,
+  constructor(private platform: Platform,
               private statusBar: StatusBar,
               private splashScreen: SplashScreen,
               private alertCtrl: AlertController,
-              private modalCtrl: ModalController,
               private storage: Storage,
               private userService: UserService) {
     platform.ready().then(() => {
@@ -33,23 +33,24 @@ export class TheManHome {
 
   fetchCurrentUser() {
     // console.log('erasing storage for login debugging');
-    this.storage.clear().then(() => { // clear cache for login debugging
+    // this.storage.clear().then(() => { // clear cache for login debugging
       let self = this;
-      Promise.all([this.storage.get('user'), this.storage.get('headers')])
+      Promise.all([this.storage.get('user'), this.storage.get('token')])
       .then(data => {
         const user = data[0];
-        const headers = data[1];
-        if (!user || !headers) {
-          console.log('No stored user found')
-          let modal = self.modalCtrl.create('Login');
-          modal.present();
+        const token = data[1];
+        if (!user || !token) {
+          console.log('No stored user found');
+          console.log(user);
+          console.log(token);
         } else {
           console.log('Stored user found');
-          self.userService.setCurrentUser(user, headers);
+          self.userService.setCurrentUser(user, token);
+          this.nav.setRoot('Dashboard');
         }
       });
 
-      }); // clear cache for login debug
+      // }); // clear cache for login debug
     }
 
     presentError(message) {

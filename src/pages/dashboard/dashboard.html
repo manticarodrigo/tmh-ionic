@@ -16,17 +16,24 @@
 
 <ion-content padding>
   <ion-list>
-    <ion-item>
-      <div class="avatar" item-left>
+
+    <ion-item class="project" *ngIf="!projects">
+      <div class="type" item-left>
           <img src="assets/tmh.png">
       </div>
       <span *ngIf="user">{{ user.firstName }}'s </span>Project 1
     </ion-item>
-    <ion-item>
-      <div class="avatar" item-left>
-          <img src="assets/tmh.png">
+
+    <ion-item class="project" *ngFor="let project of projects">
+      <div class="type" item-left>
+          <img src="assets/{{ project.projectType }}.png">
       </div>
-      <span *ngIf="user">{{ user.firstName }}'s </span>Project 2
+      <span *ngIf="user">{{ user.firstName }}'s</span> {{ project.projectType }} Project
+      <div class="details">
+        <p><b>{{ project.projectStatus }}</b></p>
+        <p>Phase</p>
+      </div>
     </ion-item>
+    
   </ion-list>
 </ion-content>

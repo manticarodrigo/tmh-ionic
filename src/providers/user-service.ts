@@ -11,29 +11,35 @@ export class UserService {
               private storage: Storage) {
   }
 
+  generateHeader(token) {
+    const headers = new Headers();
+    var authHeader = `Basic ${token}`;
+    headers.append('Authorization', authHeader);
+    return headers;
+  }
+
   login(email, password, callback) {
     const self = this;
-    const headers = new Headers();
-    var authData = btoa(email + ':' + password);
-    var authHeader = `Basic ${authData}`;
-    headers.append('Authorization', authHeader);
-    const url = "http://stage.themanhome.com/api/jsonws/user/get-user-by-email-address/companyId/20155/emailAddress/" + email + "?p_auth=[PwkVOXCB]";
-    this.http.get(url, {headers: headers})
+    const token = btoa(email + ':' + password);
+    const headers = this.generateHeader(token);
+    const enpoint = "/api/user/get-user-by-email-address/companyId/20155/emailAddress/" + email + "?p_auth=[PwkVOXCB]";
+    this.http.get(enpoint, {headers: headers})
     .map(res => res.json())
     .subscribe(data => {
-      self.setCurrentUser(data, headers);
+      self.setCurrentUser(data, token);
       callback(data);
     })
   }
 
-  setCurrentUser(user, headers) {
-    console.log("Setting current user and headers:");
+  setCurrentUser(user, token) {
+    console.log("Setting current user and token:");
     console.log(user);
+    const headers = this.generateHeader(token);
     console.log(headers);
     this.currentUser = user;
     this.headers = headers;
     this.storage.set('user', user);
-    this.storage.set('headers', headers);
+    this.storage.set('token', token);
   }
 
   logout() {
@@ -42,8 +48,8 @@ export class UserService {
 
   fetchUser(email, callback) {
     const self = this;
-    const url = "http://stage.themanhome.com/api/jsonws/user/get-user-by-email-address/companyId/20155/emailAddress/" + email + "?p_auth=[PwkVOXCB]";
-    this.http.get(url, {headers: this.headers})
+    const enpoint = "/api/user/get-user-by-email-address/companyId/20155/emailAddress/" + email + "?p_auth=[PwkVOXCB]";
+    this.http.get(enpoint, {headers: this.headers})
     .map(res => res.json())
     .subscribe(data => {
       console.log("Fetched user:");

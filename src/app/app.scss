@@ -93,8 +93,10 @@ button {
 }
 
 .popover-content {
-  top: 47px !important;
-  left: calc(100% - 263px) !important;
+  top: 55px !important;
+  left: calc(100% - 290px) !important;
+  width: 280px !important;
+  border-radius: 0 !important;
 }
 
 /* Alert styles */
