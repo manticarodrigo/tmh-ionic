@@ -8,6 +8,7 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { UserService } from '../providers/user-service';
 import { ImageService } from '../providers/image-service';
 import { ProjectService } from '../providers/project-service';
+import { ChatService } from '../providers/chat-service';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -39,7 +40,8 @@ import { HttpModule } from '@angular/http';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UserService,
     ImageService,
-    ProjectService
+    ProjectService,
+    ChatService
   ]
 })
 export class AppModule {}
