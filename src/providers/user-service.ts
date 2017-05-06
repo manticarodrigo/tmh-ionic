@@ -40,28 +40,33 @@ export class UserService {
     console.log(user);
     const headers = this.generateHeader(token);
     console.log(headers);
-    if (user && token) {
-      self.imageForUser(user)
-      .then(url => {
-        user.photoURL = url;
-        self.currentUser = user;
-        self.headers = headers;
-        self.storage.set('user', user);
-        self.storage.set('token', token);
-      })
-      .catch(error => {
-        console.log(error);
-        self.currentUser = user;
-        self.headers = headers;
-        self.storage.set('user', user);
-        self.storage.set('token', token);
-      });
-    } else {
-      self.currentUser = null;
-      self.headers = null;
-      self.storage.set('user', null);
-      self.storage.set('token', null);
-    }
+    return new Promise((resolve, reject) => {
+      if (user && token) {
+        self.imageForUser(user)
+        .then(url => {
+          user.photoURL = url;
+          self.currentUser = user;
+          self.headers = headers;
+          self.storage.set('user', user);
+          self.storage.set('token', token);
+          resolve(user);
+        })
+        .catch(error => {
+          console.log(error);
+          self.currentUser = user;
+          self.headers = headers;
+          self.storage.set('user', user);
+          self.storage.set('token', token);
+          resolve(user);
+        });
+      } else {
+        self.currentUser = null;
+        self.headers = null;
+        self.storage.set('user', null);
+        self.storage.set('token', null);
+        reject(null);
+      }
+    });
   }
 
   imageForUser(user) {

@@ -8,7 +8,8 @@
     <ion-title>Dashboard</ion-title>
     <ion-buttons end>
       <button class="dropdown" ion-button (click)="toggleDropdown()">
-        <img src="assets/tmh.png">
+        <img *ngIf="user" [src]="user.photoURL">
+        <img *ngIf="!user" src="assets/tmh.png">
       </button>
     </ion-buttons>
   </ion-navbar>

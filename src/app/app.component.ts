@@ -45,8 +45,13 @@ export class TheManHome {
           console.log(token);
         } else {
           console.log('Stored user found');
-          self.userService.setCurrentUser(user, token);
-          this.nav.setRoot('Dashboard');
+          self.userService.setCurrentUser(user, token)
+          .then(user => {
+            this.nav.setRoot('Dashboard');
+          })
+          .catch(error => {
+            console.log(error);
+          });
         }
       });
 
