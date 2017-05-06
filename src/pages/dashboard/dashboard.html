@@ -7,31 +7,50 @@
     </ion-buttons>
     <ion-title>Dashboard</ion-title>
     <ion-buttons end>
-      <button ion-button (click)="toggleDropdown()">
-        <img style="width:30px;border-radius:5px;" src="assets/tmh.png">
+      <button class="dropdown" ion-button (click)="toggleDropdown()">
+        <img src="assets/tmh.png">
       </button>
     </ion-buttons>
   </ion-navbar>
+  <div class="sub-nav">
+    <button ion-button type="button" (click)="selectTab()" full>
+      {{ tab }}
+      <img src="assets/down.png">
+    </button>
+  </div>
 </ion-header>
 
 <ion-content padding>
   <ion-list>
 
-    <ion-item class="project" *ngIf="!projects">
-      <div class="type" item-left>
-          <img src="assets/tmh.png">
-      </div>
-      <span *ngIf="user">{{ user.firstName }}'s </span>Project 1
+    <ion-item class="no-projects" *ngIf="!projects">
+      Welcome<span *ngIf="user">, {{ user.firstName }}</span>.
+      <button ion-button>START NEW PROJECT</button>
     </ion-item>
 
     <ion-item class="project" *ngFor="let project of projects">
-      <div class="type" item-left>
+      <div class="header">
+        <div class="type" item-left>
           <img src="assets/{{ project.projectType }}.png">
-      </div>
-      <span *ngIf="user">{{ user.firstName }}'s</span> {{ project.projectType }} Project
+        </div>
+        <div class="chat" item-right>
+          <img [class.inactive]="!project.initChat" src="assets/chat.png">
+        </div>
+      </div> 
       <div class="details">
-        <p><b>{{ project.projectStatus }}</b></p>
-        <p>Phase</p>
+        <p class="title"><b><span *ngIf="user">{{ user.firstName }} - </span>{{ project.projectTypeReadable }} Project</b></p>
+        <div class="section">
+          <p class="info">{{ project.modifiedDateReadable }}</p>
+          <p class="sub-title">Edited</p>
+        </div>
+        <div class="section">
+          <p class="info">{{ project.projectStatusReadable }}</p>
+          <p class="sub-title">Phase</p>
+        </div>
+        <div class="section">
+          <p class="info">{{ project.endDateReadable }}</p>
+          <p class="sub-title">Days Left</p>
+        </div>
       </div>
     </ion-item>
     

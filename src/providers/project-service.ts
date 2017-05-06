@@ -30,4 +30,15 @@ export class ProjectService {
     })
   }
 
+  findByInProgress(headers, callback) {
+    const endpoint = "api/tmh-project-portlet.project/find-by-in-progress?p_auth=[kGC1Jco4]";
+    this.http.get(endpoint, {headers: headers})
+    .map(res => res.json())
+    .subscribe(data => {
+      console.log("Found projects:");
+      console.log(data);
+      callback(data);
+    })
+  }
+
 }

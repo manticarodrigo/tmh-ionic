@@ -1,4 +1,19 @@
 page-dashboard {
+  .sub-nav {
+    padding: 10px 15px;
+    position: relative;
+    background-color: color($colors, primary);
+    .button {
+      position: relative;
+      width: 100%;
+      border: 1px solid #fff;
+      color: #fff !important;
+    }
+    img {
+      width: 15px;
+      margin: 10px;
+    }
+  }
  .scroll-content {
    background-color: #ECF0F1;
  }
@@ -9,9 +24,50 @@ page-dashboard {
  .item-inner {
    border-bottom: 0px !important;
  }
- .avatar {
-   img {
+ .project {
+   position: relative;
+   padding: 0px 0px 5px 20px;
+   .header {
+     position: relative;
+   }
+   .type {
      width: 50px;
+     height: 50px;
+     background-color: #e6e6e6;
+     img {
+        padding: 10px;
+        object-fit: contain;
+        height: 100%;
+        width: 100%;
+        filter: brightness(0.25);
+      }
+   }
+   .chat {
+     position: absolute;
+     top: 0;
+     right: 10px;
+     .inactive {
+       filter: saturate(0);
+     }
+   }
+   .details {
+     position: relative;
+     padding-top: 15px;
+     .title {
+       color: #000;
+       padding-bottom: 15px;
+     }
+     .section {
+       text-align: left;
+       display: inline-block;
+       width: 33%;
+       margin: auto;
+       .info {
+         font-weight: 600;
+         color: #000;
+         white-space: pre-wrap;
+       }
+     }
    }
  }
 }
