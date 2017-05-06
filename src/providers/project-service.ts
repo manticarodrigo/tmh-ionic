@@ -1,21 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
+import { Platform } from 'ionic-angular';
 
 import { UserService } from './user-service';
 
 @Injectable()
 export class ProjectService {
   headers: any;
+  api: any;
+
   constructor(private http: Http,
+              private platform: Platform,
               private userService: UserService) {
     this.headers = this.userService.headers;
+    if (this.platform.is('core')) {
+      this.api = '/api'
+    } else {
+      this.api = 'http://stage.themanhome.com/api/jsonws'
+    }
   }
 
   findByUserId(id) {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = "api/tmh-project-portlet.project/find-by-user-id/userId/" + id + "?p_auth=[Fpfvhue6]";
+      const endpoint = this.api + "/tmh-project-portlet.project/find-by-user-id/userId/" + id + "?p_auth=[Fpfvhue6]";
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -29,7 +38,7 @@ export class ProjectService {
   findByInProgress() {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = "api/tmh-project-portlet.project/find-by-in-progress?p_auth=[kGC1Jco4]";
+      const endpoint = this.api + "/tmh-project-portlet.project/find-by-in-progress?p_auth=[kGC1Jco4]";
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -43,7 +52,7 @@ export class ProjectService {
   findByComplete() {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = "api/tmh-project-portlet.project/find-by-complete?p_auth=[sMXgUOR4]";
+      const endpoint = this.api + "/tmh-project-portlet.project/find-by-complete?p_auth=[sMXgUOR4]";
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -57,7 +66,7 @@ export class ProjectService {
   findByArchived() {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = "api/tmh-project-portlet.project/find-by-archived?p_auth=[sMXgUOR4]";
+      const endpoint = this.api + "/tmh-project-portlet.project/find-by-archived?p_auth=[sMXgUOR4]";
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -71,7 +80,7 @@ export class ProjectService {
   findByUpNext() {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = "api/tmh-project-portlet.project/find-by-up-next?p_auth=[Fpfvhue6]";
+      const endpoint = this.api + "/tmh-project-portlet.project/find-by-up-next?p_auth=[Fpfvhue6]";
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {

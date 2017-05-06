@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Storage } from '@ionic/storage';
+import { Platform } from 'ionic-angular';
 
 import { ImageService } from './image-service';
 
@@ -9,9 +10,17 @@ import { ImageService } from './image-service';
 export class UserService {
   currentUser: any;
   headers: any;
+  api: any;
+  
   constructor(private http: Http,
               private storage: Storage,
+              private platform: Platform,
               private imageService: ImageService) {
+    if (this.platform.is('core')) {
+      this.api = '/api'
+    } else {
+      this.api = 'http://stage.themanhome.com/api/jsonws'
+    }
   }
 
   generateHeader(token) {
@@ -25,8 +34,8 @@ export class UserService {
     const self = this;
     const token = btoa(email + ':' + password);
     const headers = this.generateHeader(token);
-    const enpoint = "/api/user/get-user-by-email-address/companyId/20155/emailAddress/" + email + "?p_auth=[PwkVOXCB]";
-    this.http.get(enpoint, {headers: headers})
+    const endpoint = this.api + "/user/get-user-by-email-address/companyId/20155/emailAddress/" + email + "?p_auth=[PwkVOXCB]";
+    this.http.get(endpoint, {headers: headers})
     .map(res => res.json())
     .subscribe(data => {
       self.setCurrentUser(data, token);
@@ -77,7 +86,7 @@ export class UserService {
         if (data) {
           console.log("Adding data to dropdown image");
           console.log(data);
-          const photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId + '&t=' + data.modifiedDate;
+          const photoURL = this.api + "/image/user_male_portrait?img_id=" + user.portraitId + '&t=' + data.modifiedDate;
           resolve(photoURL);
         } else {
           console.log("No image found");
@@ -93,8 +102,8 @@ export class UserService {
 
   fetchUser(uid, callback) {
     const self = this;
-    const enpoint = "/api/user/get-user-by-id/userId/" + uid + "?p_auth=[kgKg7erN]";
-    this.http.get(enpoint, {headers: this.headers})
+    const endpoint = this.api + "/user/get-user-by-id/userId/" + uid + "?p_auth=[kgKg7erN]";
+    this.http.get(endpoint, {headers: this.headers})
     .map(res => res.json())
     .subscribe(data => {
       console.log("Fetched user:");
@@ -110,8 +119,8 @@ export class UserService {
       uids.forEach(uid => {
           if (uid) {
             let promise = new Promise((resolve, reject) => {
-                const enpoint = "/api/user/get-user-by-id/userId/" + uid + "?p_auth=[kgKg7erN]";
-                self.http.get(enpoint, {headers: self.headers})
+                const endpoint = this.api + "/user/get-user-by-id/userId/" + uid + "?p_auth=[kgKg7erN]";
+                self.http.get(endpoint, {headers: self.headers})
                 .map(res => res.json())
                 .subscribe(data => {
                   console.log("Fetched user:");
