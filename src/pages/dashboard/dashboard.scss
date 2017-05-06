@@ -24,6 +24,13 @@ page-dashboard {
  .item-inner {
    border-bottom: 0px !important;
  }
+ .no-projects {
+   padding: 20px 20px 25px 40px;
+   button {
+     margin-top: 20px !important;
+     width: 300px;
+   }
+ }
  .project {
    position: relative;
    padding: 0px 0px 5px 20px;

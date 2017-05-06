@@ -94,6 +94,7 @@ button {
     }
 }
 
+
 /* Tabbar styles */
 
 .tab-button-text {
@@ -101,10 +102,11 @@ button {
 }
 
 .popover-content {
-  top: 55px !important;
-  left: calc(100% - 290px) !important;
-  width: 280px !important;
-  border-radius: 0 !important;
+    // position: absolute;
+    // top: 55px !important;
+    // left: calc(100% - 290px) !important;
+    // width: 280px !important;
+    border-radius: 0 !important;
 }
 
 /* Alert styles */

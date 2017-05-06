@@ -14,7 +14,7 @@
   </ion-navbar>
   <div class="sub-nav">
     <button ion-button type="button" (click)="selectTab()" full>
-      {{ tab }}
+      {{ tabs[tab] }}
       <img src="assets/down.png">
     </button>
   </div>
@@ -23,8 +23,8 @@
 <ion-content padding>
   <ion-list>
 
-    <ion-item class="no-projects" *ngIf="!projects">
-      Welcome<span *ngIf="user">, {{ user.firstName }}</span>.
+    <ion-item text-center class="no-projects" *ngIf="!projects">
+      <h2>Welcome<span *ngIf="user">, {{ user.firstName }}</span>.</h2>
       <button ion-button>START NEW PROJECT</button>
     </ion-item>
 

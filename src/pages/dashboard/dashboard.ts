@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController, Platform } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
@@ -12,7 +12,14 @@ import { ProjectService } from '../../providers/project-service';
 export class Dashboard {
   user: any;
   projects: Array<any>;
-  tab = 'IN PROGRESS'
+  tab = 'IN_PROGRESS';
+  tabs = {
+    ALL: 'ALL',
+    IN_PROGRESS: 'IN PROGRESS',
+    COMPLETED: 'COMPLETED',
+    ARCHIVED: 'ARCHIVED',
+    UP_NEXT: 'UP NEXT'
+  }
   types = {
     BEDROOM: 'Bedroom',
     LIVING_ROOM: 'Living Room',
@@ -30,43 +37,105 @@ export class Dashboard {
   }
   constructor(private navCtrl: NavController,
               private popoverCtrl: PopoverController,
+              private platform: Platform,
               private userService: UserService,
               private projectService: ProjectService) {
-    const self = this;
     if (this.userService.currentUser) {
       this.user = this.userService.currentUser;
       // load projects
-    this.projectService.findByInProgress(this.userService.headers, (data) => {
-      if (!data.exception) {
-        var projects = [];
-        for (var key in data) {
-          const project = data[key];
-          project.projectTypeReadable = self.types[project.projectType]
-          project.projectStatusReadable = self.phases[project.projectStatus]
-          project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
-          project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
-          projects.push(project);
-        }
-        self.projects = projects;
-      } else {
-        console.log(data.exception);
-      }
-    });
+      this.fetchProjects();
     } else {
       console.log("No current user in dashboard");
     }
   }
 
+  fetchProjects() {
+    const methods = {
+      ALL: this.projectService.findByUserId,
+      IN_PROGRESS: this.projectService.findByInProgress,
+      COMPLETED: this.projectService.findByComplete,
+      ARCHIVED: this.projectService.findByArchived,
+      UP_NEXT: this.projectService.findByUpNext
+    }
+    const method = methods[this.tab];
+    const self = this;
+    console.log("fetching projects with method:")
+    console.log(method);
+    if (this.tab == 'ALL') {
+      self.projectService.findByUserId(self.userService.currentUser.userId)
+      .then(data => {
+        self.processProjects(data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    } else {
+      method
+      .then(data => {
+        if (!data.exception) {
+          self.processProjects(data);
+        } else {
+          console.log(data.exception);
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }
+  }
+
+  processProjects(data) {
+    const self = this;
+    var projects = [];
+    for (var key in data) {
+      const project = data[key];
+      project.projectTypeReadable = self.types[project.projectType]
+      project.projectStatusReadable = self.phases[project.projectStatus]
+      project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
+      project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
+      projects.push(project);
+    }
+    if (projects.length > 0)
+      self.projects = projects;
+    self.projects = null;
+  }
+
   toggleDropdown() {
     console.log("Toggling dropdown!");
     let popover = this.popoverCtrl.create('Dropdown');
-    popover.present();
+    let width = this.platform.width();
+    let ev = {
+      target : {
+        getBoundingClientRect : () => {
+          return {
+            top: '55',
+            left: width
+          };
+        }
+      }
+    };
+    popover.present({ev});
   }
 
   selectTab() {
     console.log("Toggling tab dropdown!");
-    let popover = this.popoverCtrl.create('Dropdown');
-    popover.present();
+    let popover = this.popoverCtrl.create('TabDropdown');
+    let ev = {
+      target : {
+        getBoundingClientRect : () => {
+          return {
+            top: '325'
+          };
+        }
+      }
+    };
+    popover.onDidDismiss(data => {
+      if (data) {
+        this.tab = data.replace(" ", "_");
+        this.fetchProjects();
+      }
+    });
+    popover.present({ev});
   }
 
   getDateStringFrom(timestamp) {
