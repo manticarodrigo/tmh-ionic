@@ -24,8 +24,8 @@
   <ion-list>
 
     <ion-item text-center class="no-projects" *ngIf="!projects">
-      <h2>Welcome<span *ngIf="user">, {{ user.firstName }}</span>.</h2>
-      <button ion-button>START NEW PROJECT</button>
+      <h2>We welcome you<span *ngIf="user">, {{ user.firstName }}</span>.</h2>
+      <button ion-button (click)="startProject()">START NEW PROJECT</button>
     </ion-item>
 
     <ion-item class="project" *ngFor="let project of projects">
@@ -38,7 +38,7 @@
         </div>
       </div> 
       <div class="details">
-        <p class="title"><b><span *ngIf="user">{{ user.firstName }} - </span>{{ project.projectTypeReadable }} Project</b></p>
+        <p class="title"><b><span *ngIf="project.user">{{ project.user.shortName }} - </span>{{ project.projectTypeReadable }} Project</b></p>
         <div class="section">
           <p class="info">{{ project.modifiedDateReadable }}</p>
           <p class="sub-title">Edited</p>

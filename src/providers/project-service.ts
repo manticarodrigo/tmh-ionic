@@ -13,9 +13,10 @@ export class ProjectService {
   }
 
   findByUserId(id) {
+    const self = this;
     return new Promise((resolve, reject) => {
       const endpoint = "api/tmh-project-portlet.project/find-by-user-id/userId/" + id + "?p_auth=[Fpfvhue6]";
-      this.http.get(endpoint, {headers: this.headers})
+      self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("Found projects:");
@@ -26,9 +27,10 @@ export class ProjectService {
   }
 
   findByInProgress() {
+    const self = this;
     return new Promise((resolve, reject) => {
       const endpoint = "api/tmh-project-portlet.project/find-by-in-progress?p_auth=[kGC1Jco4]";
-      this.http.get(endpoint, {headers: this.headers})
+      self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("Found projects:");
@@ -39,9 +41,10 @@ export class ProjectService {
   }
 
   findByComplete() {
+    const self = this;
     return new Promise((resolve, reject) => {
       const endpoint = "api/tmh-project-portlet.project/find-by-complete?p_auth=[sMXgUOR4]";
-      this.http.get(endpoint, {headers: this.headers})
+      self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("Found projects:");
@@ -52,9 +55,10 @@ export class ProjectService {
   }
 
   findByArchived() {
+    const self = this;
     return new Promise((resolve, reject) => {
       const endpoint = "api/tmh-project-portlet.project/find-by-archived?p_auth=[sMXgUOR4]";
-      this.http.get(endpoint, {headers: this.headers})
+      self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("Found projects:");
@@ -65,9 +69,10 @@ export class ProjectService {
   }
 
   findByUpNext() {
+    const self = this;
     return new Promise((resolve, reject) => {
       const endpoint = "api/tmh-project-portlet.project/find-by-up-next?p_auth=[Fpfvhue6]";
-      this.http.get(endpoint, {headers: this.headers})
+      self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("Found projects:");

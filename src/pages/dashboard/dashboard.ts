@@ -40,64 +40,81 @@ export class Dashboard {
               private platform: Platform,
               private userService: UserService,
               private projectService: ProjectService) {
+    const self = this;
     if (this.userService.currentUser) {
-      this.user = this.userService.currentUser;
-      // load projects
-      this.fetchProjects();
+      self.user = self.userService.currentUser;
+      self.loadProjects();
     } else {
       console.log("No current user in dashboard");
     }
   }
 
   fetchProjects() {
-    const methods = {
-      ALL: this.projectService.findByUserId,
-      IN_PROGRESS: this.projectService.findByInProgress,
-      COMPLETED: this.projectService.findByComplete,
-      ARCHIVED: this.projectService.findByArchived,
-      UP_NEXT: this.projectService.findByUpNext
-    }
-    const method = methods[this.tab];
+    if (this.tab == 'ALL')
+      return this.projectService.findByUserId(this.userService.currentUser.userId);
+    if (this.tab == 'IN_PROGRESS')
+      return this.projectService.findByInProgress();
+    if (this.tab == 'COMPLETED')
+      return this.projectService.findByComplete();
+    if (this.tab == 'UP_NEXT')
+      return this.projectService.findByUpNext();
+    if (this.tab == 'ARCHIVED')
+      return this.projectService.findByArchived();
+  }
+
+  loadProjects() {
     const self = this;
-    console.log("fetching projects with method:")
-    console.log(method);
-    if (this.tab == 'ALL') {
-      self.projectService.findByUserId(self.userService.currentUser.userId)
-      .then(data => {
-        self.processProjects(data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    } else {
-      method
-      .then(data => {
-        if (!data.exception) {
-          self.processProjects(data);
-        } else {
-          console.log(data.exception);
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    }
+    self.fetchProjects()
+    .then(data => {
+      self.processProjects(data);
+    })
+    .catch(error => {
+      console.log(error);
+    })
   }
 
   processProjects(data) {
     const self = this;
     var projects = [];
-    for (var key in data) {
-      const project = data[key];
-      project.projectTypeReadable = self.types[project.projectType]
-      project.projectStatusReadable = self.phases[project.projectStatus]
-      project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
-      project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
-      projects.push(project);
+    var userIds = [];
+    if (!data.exception) {
+      for (var key in data) {
+        const project = data[key];
+        project.projectTypeReadable = self.types[project.projectType]
+        project.projectStatusReadable = self.phases[project.projectStatus]
+        project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
+        project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
+        projects.push(project);
+        userIds.push(project.userId);
+      }
+    } else {
+      console.log(data.exception);
     }
-    if (projects.length > 0)
+
+    if (projects.length > 0) {
       self.projects = projects;
-    self.projects = null;
+      self.fetchUsers(userIds);
+    } else {
+      self.projects = null;
+    }
+  }
+
+  fetchUsers(uids) {
+    const self = this;
+    return new Promise((resolve, any) => {
+      self.userService.fetchUsers(uids)
+      .then(users => {
+        for (var key in users) {
+          const user = users[key];
+          if (user) {
+            self.projects[key].user = user;
+          }
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    });
   }
 
   toggleDropdown() {
@@ -132,7 +149,7 @@ export class Dashboard {
     popover.onDidDismiss(data => {
       if (data) {
         this.tab = data.replace(" ", "_");
-        this.fetchProjects();
+        this.loadProjects();
       }
     });
     popover.present({ev});
@@ -159,6 +176,10 @@ export class Dashboard {
     } else {
       return 'N/A';
     }
+  }
+
+  startProject() {
+    console.log("Start proj pressed");
   }
 
 }

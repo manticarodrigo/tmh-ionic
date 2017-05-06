@@ -11,14 +11,14 @@ export class ImageService {
     if (id == 0) {
      callback(null);
     } else {
-      const endpoint = "api/image/get-image/imageId/" + id + "?p_auth=[MkKs6gSW]";
+      const endpoint = "api/image/get-image/imageId/" + id + "?p_auth=[rt4Vaior]";
       this.http.get(endpoint, {headers: headers})
       .map(res => res.json())
       .subscribe(img => {
         console.log("Found image:");
         console.log(img);
+        callback(img);
       })
     }
   }
-
 }
