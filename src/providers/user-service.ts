@@ -56,6 +56,7 @@ export class UserService {
     console.log(headers);
     return new Promise((resolve, reject) => {
       if (user && token) {
+        self.headers = headers;
         self.imageForUser(user)
         .then(url => {
           console.log("Found user image url:");
@@ -64,7 +65,6 @@ export class UserService {
             user.photoURL = url;
           }
           self.currentUser = user;
-          self.headers = headers;
           self.storage.set('user', user);
           self.storage.set('token', token);
           resolve(user);
@@ -72,7 +72,6 @@ export class UserService {
         .catch(error => {
           console.log(error);
           self.currentUser = user;
-          self.headers = headers;
           self.storage.set('user', user);
           self.storage.set('token', token);
           resolve(user);
@@ -95,7 +94,7 @@ export class UserService {
         if (data) {
           console.log("Adding data to dropdown image");
           console.log(data);
-          var photoURL = this.api + "/image/user_male_portrait?img_id=" + user.portraitId;
+          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
           if (data.modifiedDate) {
             photoURL = photoURL.concat('&t=' + data.modifiedDate);
           }
