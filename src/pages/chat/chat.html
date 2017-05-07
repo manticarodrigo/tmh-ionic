@@ -6,7 +6,7 @@
             {{ user.firstName }}
         </ion-title>
         <ion-title class="title" *ngIf="!user">
-            Clara
+            Chat
         </ion-title>
         <ion-buttons end>
             <button class="exit" ion-fab (click)="dismiss()">
@@ -21,10 +21,10 @@
     <ion-list no-lines>
         <ion-item *ngFor="let message of messages">
             <div class="chat-header">
-                <img *ngIf="message.senderPhotoURL" [src]="message.senderPhotoURL">
-                <img *ngIf="!message.senderPhotoURL" src="assets/tmh.png">
-                <h4 *ngIf="message.senderName">{{ message.senderName }}</h4>
-                <h4 *ngIf="!message.senderName">TMH BOT</h4>
+                <img *ngIf="members[message.senderId]" [src]="members[message.senderId].photoURL">
+                <img *ngIf="!members[message.senderId]" src="assets/tmh.png">
+                <h4 *ngIf="message.senderFirstName">{{ message.senderFirstName }}</h4>
+                <h4 *ngIf="!message.senderFirstName">TMH BOT</h4>
                 <p *ngIf="message.createdAtReadable">{{ message.createdAtReadable }}</p>
             </div>
             <div *ngIf="message.text" class="chat-bubble {{ message.position }} ">

@@ -5,6 +5,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { SocketService } from '../../providers/socket-service';
 import { UserService } from '../../providers/user-service';
+import { ImageService } from '../../providers/image-service';
 
 @IonicPage()
 @Component({
@@ -16,11 +17,14 @@ export class Chat {
   project: any;
   messages: any;
   message = {
-    id: null,
-    sender: null,
     text: '',
+    senderId: null,
+    senderFirstName: null,
+    senderPortraitId: null,
     createdAt: null,
+    id: null,
   }
+  members = {}
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private viewCtrl: ViewController,
@@ -29,7 +33,13 @@ export class Chat {
               private loadingCtrl: LoadingController,
               private statusBar: StatusBar,
               private socketService: SocketService,
-              private userService: UserService) {
+              private userService: UserService,
+              private imageService: ImageService) {
+    const self = this; 
+    console.log(this.userService.currentUser.photoURL);
+    this.members[this.userService.currentUser.userId] = {
+      photoURL: this.userService.currentUser.photoURL
+    }
     this.project = this.navParams.get('project');
     this.socketService.addCollection('messages');
     this.socketService.pubData('messages', 'join', this.project.projectId, (savedToLocal) => {
@@ -43,39 +53,55 @@ export class Chat {
           for (var key in data[0]) {
             if (data[0].hasOwnProperty(key) && key != '_id') {
               var message = data[0][key];
-              if (message.sender != this.userService.currentUser.userId) {
-                  message.position = 'left';
-              } else {
-                  message.position = 'right';
+              if (!self.members[message.senderId]) {
+                self.appendPhotoUrlFor(message.senderPortraitId, message.senderId);
               }
-              message.createdAtReadable = this.getTimeStringFrom(message.createdAt);
+              message.createdAtReadable = self.getTimeStringFrom(message.createdAt);
               messageArr.push(message);
             }
           }
           messageArr.sort(function(a, b){
               return a.createdAt-b.createdAt;
           });
-          this.messages = messageArr;
+          self.messages = messageArr;
           setTimeout(() => {
-              this.scrollToBottom();
+              self.scrollToBottom();
           }, 1000);
         } else {
-          this.messages = null;
+          self.messages = null;
         }
       });
       this.socketService.addSubscription('messages', 'new message')
       .subscribe(data => {
         console.log("Component received message : ");
         console.log(data);
-        if (data['sender'] != this.userService.currentUser.userId) {
-            data['position'] = 'left';
-        } else {
-            data['position'] = 'right';
+        if (!self.members[data['senderId']]) {
+          self.appendPhotoUrlFor(data['senderPortraitId'], data['senderId']);
         }
         data['createdAtReadable'] = this.getTimeStringFrom(data['createdAt']);
         this.messages.push(data);
         this.scrollToBottom();
       });
+    });
+  }
+
+  appendPhotoUrlFor(portraitId, uid) {
+    const self = this;
+    const headers = this.userService.headers;
+    self.imageService.getImage(portraitId, headers, (data) => {
+      if (data) {
+        console.log("Adding data to dropdown image");
+        console.log(data);
+        var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + portraitId;
+        if (data.modifiedDate) {
+          photoURL = photoURL + '&t=' + data.modifiedDate;
+        }
+        self.members[uid] = {
+          photoURL: photoURL
+        }
+      } else {
+        console.log("No image found");
+      }
     });
   }
 
@@ -108,7 +134,9 @@ export class Chat {
     if (!this.message.id) {
       this.message.id = Math.ceil(Math.random() * 1000);
     }
-    this.message.sender = this.userService.currentUser.userId;
+    this.message.senderId = this.userService.currentUser.userId;
+    this.message.senderFirstName = this.userService.currentUser.firstName;
+    this.message.senderPortraitId = this.userService.currentUser.portaitId;
     this.message.createdAt = new Date().getTime();
     var data = {
       message: this.message,
@@ -117,10 +145,12 @@ export class Chat {
     this.socketService.pubData('messages', 'addMessage', data, function(savedToLocal) {
         console.log('savedToLocal : ', savedToLocal);
         self.message = {
-          id: null,
-          sender: self.userService.currentUser.userId,
           text: '',
-          createdAt: null
+          senderId: self.userService.currentUser.userId,
+          senderFirstName: self.userService.currentUser.firstName,
+          senderPortraitId: self.userService.currentUser.potraitId,
+          createdAt: null,
+          id: null
         };
     });
   }
