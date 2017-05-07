@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Platform } from 'ionic-angular';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import * as io from 'socket.io-client';
@@ -7,12 +8,17 @@ import * as io from 'socket.io-client';
 export class SocketService {
   observables: any;
   collections: any;
-  port = 'http://localhost:3000';
+  port = 'https://themanhome.herokuapp.com';
   socket: any;
   isConnectionAlive = false;
 
-  constructor() {
+  constructor(private platform: Platform) {
     this.collections = {};
+    if (this.platform.is('core')) {
+      // this.port = 'http://localhost:3000';
+    } else {
+      this.port = 'https://themanhome.herokuapp.com';
+    }
   }
 
   init() {
