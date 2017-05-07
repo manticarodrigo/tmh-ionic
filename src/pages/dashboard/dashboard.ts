@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, PopoverController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController, ModalController, Platform } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
@@ -37,6 +37,7 @@ export class Dashboard {
   }
   constructor(private navCtrl: NavController,
               private popoverCtrl: PopoverController,
+              private modalCtrl: ModalController,
               private platform: Platform,
               private userService: UserService,
               private projectService: ProjectService) {
@@ -186,6 +187,13 @@ export class Dashboard {
 
   startProject() {
     console.log("Start proj pressed");
+  }
+
+  chatFor(project) {
+    console.log("Chat pressed for project:");
+    console.log(project);
+    let modal = this.modalCtrl.create('Chat');
+    modal.present();
   }
 
 }

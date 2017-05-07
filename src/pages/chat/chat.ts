@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
 import { ChatService } from '../../providers/chat-service';
 
@@ -13,6 +13,7 @@ export class Chat {
   message: any;
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
+              private viewCtrl: ViewController,
               private chatService: ChatService) {
     this.chatService.addCollection('messages');
     this.chatService.addSubscription('messages', 'allMessages')
@@ -25,6 +26,10 @@ export class Chat {
         this.messages = null;
       }
     });
+  }
+
+  dismiss() {
+    this.viewCtrl.dismiss();
   }
 
   sendMessage() {

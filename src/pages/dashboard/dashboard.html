@@ -34,8 +34,11 @@
         <div class="type" item-left>
           <img src="assets/{{ project.projectType }}.png">
         </div>
-        <div class="chat" item-right>
+        <div *ngIf="project.initChat" (click)="chatFor(project)" class="chat" item-right>
           <img [class.inactive]="!project.initChat" src="assets/chat.png">
+        </div>
+        <div *ngIf="!project.initChat" class="chat inactive" item-right>
+          <img [class.inactive]="" src="assets/chat.png">
         </div>
       </div> 
       <div class="details">
