@@ -21,15 +21,15 @@ export class Login {
     if (this.email == '' || this.password == '') {
       this.presentError();
     } else {
-      this.userService.login(this.email, this.password, (user) => {
-        if (user) {
+      this.userService.login(this.email, this.password, (data) => {
+        if (!data.exception) {
+          this.email = '';
+          this.password = '';
           this.navCtrl.setRoot('Dashboard');
         } else {
           this.presentError();
         }
       });
-      this.email = '';
-      this.password = '';
     }
   }
 

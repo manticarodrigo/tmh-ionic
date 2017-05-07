@@ -38,8 +38,13 @@ export class UserService {
     this.http.get(endpoint, {headers: headers})
     .map(res => res.json())
     .subscribe(data => {
-      self.setCurrentUser(data, token);
-      callback(data);
+      self.setCurrentUser(data, token)
+      .then(user => {
+        callback(user);
+      })
+      .catch(error => {
+        callback(error);
+      })
     })
   }
 
@@ -53,7 +58,11 @@ export class UserService {
       if (user && token) {
         self.imageForUser(user)
         .then(url => {
-          user.photoURL = url;
+          console.log("Found user image url:");
+          console.log(url);
+          if (url) {
+            user.photoURL = url;
+          }
           self.currentUser = user;
           self.headers = headers;
           self.storage.set('user', user);
@@ -73,7 +82,7 @@ export class UserService {
         self.headers = null;
         self.storage.set('user', null);
         self.storage.set('token', null);
-        reject(null);
+        resolve(null);
       }
     });
   }
@@ -86,7 +95,10 @@ export class UserService {
         if (data) {
           console.log("Adding data to dropdown image");
           console.log(data);
-          const photoURL = this.api + "/image/user_male_portrait?img_id=" + user.portraitId + '&t=' + data.modifiedDate;
+          var photoURL = this.api + "/image/user_male_portrait?img_id=" + user.portraitId;
+          if (data.modifiedDate) {
+            photoURL = photoURL.concat('&t=' + data.modifiedDate);
+          }
           resolve(photoURL);
         } else {
           console.log("No image found");

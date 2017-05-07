@@ -131,6 +131,12 @@ export class Dashboard {
         }
       }
     };
+    popover.onDidDismiss(data => {
+      if (data == "LOGOUT") {
+        this.userService.logout();
+        this.navCtrl.setRoot('Login');
+      }
+    });
     popover.present({ev});
   }
 
