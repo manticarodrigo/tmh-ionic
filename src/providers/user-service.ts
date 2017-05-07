@@ -38,6 +38,8 @@ export class UserService {
     this.http.get(endpoint, {headers: headers})
     .map(res => res.json())
     .subscribe(data => {
+      console.log("login returned data");
+      console.log(data);
       self.setCurrentUser(data, token)
       .then(user => {
         callback(user);
@@ -52,8 +54,8 @@ export class UserService {
     const self = this;
     console.log("Setting current user and token:");
     console.log(user);
+    console.log(token);
     const headers = this.generateHeader(token);
-    console.log(headers);
     return new Promise((resolve, reject) => {
       if (user && token) {
         self.headers = headers;
@@ -96,7 +98,7 @@ export class UserService {
           console.log(data);
           var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
           if (data.modifiedDate) {
-            photoURL = photoURL.concat('&t=' + data.modifiedDate);
+            photoURL = photoURL + '&t=' + data.modifiedDate;
           }
           resolve(photoURL);
         } else {

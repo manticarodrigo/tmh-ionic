@@ -18,10 +18,12 @@ export class Login {
   }
 
   login() {
+    console.log("login pressed");
     if (this.email == '' || this.password == '') {
       this.presentError();
     } else {
       this.userService.login(this.email, this.password, (data) => {
+        console.log(data);
         if (!data.exception) {
           this.email = '';
           this.password = '';

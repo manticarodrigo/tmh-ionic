@@ -13,7 +13,7 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
-    <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+    
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
@@ -85,9 +85,4 @@
     <plugin name="cordova-plugin-statusbar" spec="2.2.1" />
     <plugin name="cordova-plugin-device" spec="1.1.4" />
     <plugin name="cordova-plugin-splashscreen" spec="~4.0.1" />
-    <plugin name="cordova-plugin-wkwebview-engine" spec="https://github.com/driftyco/cordova-plugin-wkwebview-engine.git" />
-    <feature name="CDVWKWebViewEngine">
-      <param name="ios-package" value="CDVWKWebViewEngine" />
-    </feature>
-    <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
 </widget>
