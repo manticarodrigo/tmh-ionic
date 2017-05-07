@@ -5,8 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { Storage } from '@ionic/storage';
 
 import { UserService } from '../providers/user-service';
-
-// import { TabsPage } from '../pages/tabs/tabs';
+import { SocketService } from '../providers/socket-service'; 
 
 @Component({
   templateUrl: 'app.html'
@@ -20,7 +19,8 @@ export class TheManHome {
               private splashScreen: SplashScreen,
               private alertCtrl: AlertController,
               private storage: Storage,
-              private userService: UserService) {
+              private userService: UserService,
+              private socketService: SocketService) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -28,6 +28,8 @@ export class TheManHome {
       splashScreen.hide();
       // Fetch current user
       this.fetchCurrentUser();
+      // Initizalize sockets
+      this.socketService.init();
     });
   }
 

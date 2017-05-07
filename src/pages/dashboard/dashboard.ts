@@ -192,7 +192,9 @@ export class Dashboard {
   chatFor(project) {
     console.log("Chat pressed for project:");
     console.log(project);
-    let modal = this.modalCtrl.create('Chat');
+    let modal = this.modalCtrl.create('Chat', {
+      project: project
+    });
     modal.present();
   }
 

@@ -4,10 +4,10 @@ import { Observable } from 'rxjs/Observable';
 import * as io from 'socket.io-client';
 
 @Injectable()
-export class ChatService {
+export class SocketService {
   observables: any;
   collections: any;
-  port = 'http://localhost:8000';
+  port = 'http://localhost:3000';
   socket: any;
   isConnectionAlive = false;
 

@@ -20,8 +20,8 @@
     <p class="alert-text" *ngIf="!messages || messages.length < 1">Hello and welcome to your personal design studio! As soon as you submit your final details, we will connect you with your designer so that you two can chat. The 10 day design period begins once you recieve your initial concept boards. Thank you!</p>
     <ion-list no-lines>
         <ion-item *ngFor="let message of messages">
-            <div *ngIf="message.message" class="chat-bubble {{ message.position }} ">
-                <div class="message">{{ message.message }}</div>
+            <div *ngIf="message.text" class="chat-bubble {{ message.position }} ">
+                <div class="message">{{ message.text }}</div>
                 <div class="tip"></div>
             </div>
             <div *ngIf="message.url" class="img-bubble {{ message.position }}">
@@ -36,7 +36,7 @@
           <img src="assets/attach.png">
       </button>
       <div class="message">
-          <ion-textarea type="text" name="chat-message" [(ngModel)]="message" placeholder="Enter a message" autocorrect="on"></ion-textarea>
+          <ion-textarea type="text" name="chat-message" [(ngModel)]="message.text" placeholder="Enter a message" autocorrect="on"></ion-textarea>
       </div>
       <button class="send" type="submit">
           SEND
