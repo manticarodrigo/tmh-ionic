@@ -1,17 +1,20 @@
 page-login {
   .scroll-content {
-    background-color: color($colors, primary);
+    background-color: #1b1b1b;
   }
   .center {
+    background-color: #fff;
+    padding: 40px 30px;
     position: absolute;
     top: 50%;
     right: 0;
     left: 0;
     transform: translateY(-50%);
-    max-width: 200px;
+    max-width: 300px;
     margin: auto;
-    img {
-      width: 75px;
+    .logo {
+      width: 60px;
+      filter: brightness(0.1);
       margin-bottom: 10px;
     }
   }
@@ -21,6 +24,18 @@ page-login {
   }
   button {
     width: 100%;
-    background-color: #999999 !important;
+  }
+  .auth {
+    background-color: #000 !important;
+  }
+  .toggle {
+    margin-top: 10px !important;
+    background-color: #fff !important;
+    border: 2px solid color($colors, primary);
+    color: color($colors, primary);
+  }
+  .facebook {
+    margin-top: 10px !important;
+    background-color: #3b5998 !important;
   }
 }

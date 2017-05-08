@@ -16,6 +16,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpModule } from '@angular/http';
 
+// import { Facebook } from 'ionic-native';
+import { FacebookService } from 'ng2-facebook-sdk';
+
 @NgModule({
   declarations: [
     TheManHome,
@@ -41,7 +44,9 @@ import { HttpModule } from '@angular/http';
     UserService,
     ImageService,
     ProjectService,
-    SocketService
+    SocketService,
+    // Facebook,
+    FacebookService
   ]
 })
 export class AppModule {}
