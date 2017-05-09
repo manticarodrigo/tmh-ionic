@@ -17,7 +17,9 @@ export class ImageService {
   }
 
   getImage(id, headers, callback) {
-    if (id == 0) {
+    console.log("Fetching image with id:");
+    console.log(id);
+    if (!id || id == 0) {
      callback(null);
     } else {
       const endpoint = this.api + "/image/get-image/imageId/" + id + "?p_auth=[rt4Vaior]";

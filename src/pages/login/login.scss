@@ -4,7 +4,7 @@ page-login {
   }
   .center {
     background-color: #fff;
-    padding: 40px 30px;
+    padding: 30px;
     position: absolute;
     top: 50%;
     right: 0;
@@ -12,11 +12,15 @@ page-login {
     transform: translateY(-50%);
     max-width: 300px;
     margin: auto;
-    .logo {
-      width: 60px;
-      filter: brightness(0.1);
-      margin-bottom: 10px;
-    }
+  }
+  .logo {
+    width: 60px;
+    filter: brightness(0.1);
+    margin-bottom: 10px;
+  }
+  .spinner {
+    margin: auto;
+    display: block;
   }
   ion-input {
     background-color: color($colors, light);
@@ -29,7 +33,6 @@ page-login {
     background-color: #000 !important;
   }
   .toggle {
-    margin-top: 10px !important;
     background-color: #fff !important;
     border: 2px solid color($colors, primary);
     color: color($colors, primary);

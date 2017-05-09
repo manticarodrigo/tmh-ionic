@@ -23,8 +23,8 @@
             <div class="chat-header">
                 <img *ngIf="members[message.senderId]" [src]="members[message.senderId].photoURL">
                 <img *ngIf="!members[message.senderId]" src="assets/tmh.png">
-                <h4 *ngIf="message.senderFirstName">{{ message.senderFirstName }}</h4>
-                <h4 *ngIf="!message.senderFirstName">TMH BOT</h4>
+                <h4 *ngIf="members[message.senderId]">{{ members[message.senderId].firstName }}</h4>
+                <h4 *ngIf="!members[message.senderId]">TMH BOT</h4>
                 <p *ngIf="message.createdAtReadable">{{ message.createdAtReadable }}</p>
             </div>
             <div *ngIf="message.text" class="chat-bubble {{ message.position }} ">

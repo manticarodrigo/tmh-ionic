@@ -9,6 +9,7 @@ import { UserService } from '../providers/user-service';
 import { ImageService } from '../providers/image-service';
 import { ProjectService } from '../providers/project-service';
 import { SocketService } from '../providers/socket-service';
+import { ChatService } from '../providers/chat-service';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -16,8 +17,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpModule } from '@angular/http';
 
-// import { Facebook } from 'ionic-native';
-import { FacebookService } from 'ng2-facebook-sdk';
+import { Facebook } from '@ionic-native/facebook';
+import { FacebookService } from 'ngx-facebook';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { FacebookService } from 'ng2-facebook-sdk';
     ImageService,
     ProjectService,
     SocketService,
-    // Facebook,
+    ChatService,
+    Facebook,
     FacebookService
   ]
 })

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, PopoverController, ModalController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
@@ -36,6 +36,7 @@ export class Dashboard {
     FINAL_DELIVERY: 'Final Delivery'
   }
   constructor(private navCtrl: NavController,
+              private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
               private modalCtrl: ModalController,
               private platform: Platform,
@@ -48,6 +49,15 @@ export class Dashboard {
     } else {
       console.log("No current user in dashboard");
     }
+  }
+
+  homePressed() {
+    let alert = this.alertCtrl.create({
+      title: 'Hey there!',
+      message: 'What should we do with this button on mobile?',
+      buttons: ['Dismiss']
+      });
+    alert.present();
   }
 
   fetchProjects() {
