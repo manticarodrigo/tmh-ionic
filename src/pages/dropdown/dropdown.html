@@ -14,11 +14,11 @@
      <p *ngIf="!user">
       user@email.com
      </p>
-     <button ion-button full>
+     <button (click)="profilePressed()" ion-button full type="button">
        VIEW PROFILE
      </button>
    </div>
-   <a>ALL PROJECTS</a>
-   <a>NEW PROJECT</a>
+   <a (click)="allPressed()">ALL PROJECTS</a>
+   <a (click)="newPressed()">NEW PROJECT</a>
    <a (click)="logout()">LOGOUT</a>
 </ion-content>

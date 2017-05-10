@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform, AlertController } from 'ionic-angular';
+import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Storage } from '@ionic/storage';
@@ -17,7 +17,6 @@ export class TheManHome {
   constructor(private platform: Platform,
               private statusBar: StatusBar,
               private splashScreen: SplashScreen,
-              private alertCtrl: AlertController,
               private storage: Storage,
               private userService: UserService,
               private socketService: SocketService) {
@@ -49,7 +48,7 @@ export class TheManHome {
           console.log('Stored user found');
           self.userService.setCurrentUser(user, token)
           .then(user => {
-            this.nav.setRoot('Onboarding');
+            this.nav.setRoot('Profile');
           })
           .catch(error => {
             console.log(error);
@@ -58,14 +57,5 @@ export class TheManHome {
       });
 
       // }); // clear cache for login debug
-    }
-
-    presentError(message) {
-        let alert = this.alertCtrl.create({
-            title: 'Login Failed!',
-            message: message,
-            buttons: ['Dismiss']
-            });
-        alert.present();
     }
 }

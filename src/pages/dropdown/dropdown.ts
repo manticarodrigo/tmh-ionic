@@ -24,6 +24,21 @@ export class Dropdown {
     }
   }
 
+  profilePressed() {
+    console.log("view profile pressed");
+    this.viewCtrl.dismiss('PROFILE');
+  }
+
+  allPressed() {
+    console.log("all projects pressed");
+    this.viewCtrl.dismiss('ALL');
+  }
+
+  newPressed() {
+    console.log("new project pressed");
+    this.viewCtrl.dismiss('NEW');
+  }
+
   logout() {
     this.viewCtrl.dismiss('LOGOUT');
   }

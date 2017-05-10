@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, AlertController, PopoverController, Platform } from 'ionic-angular';
 
+import { UserService } from '../../providers/user-service';
 
 @IonicPage()
 @Component({
@@ -8,6 +9,7 @@ import { IonicPage, NavController, NavParams, ModalController, AlertController }
   templateUrl: 'onboarding.html',
 })
 export class Onboarding {
+  user: any;
   step = 0;
   type = '';
   styleQuestions = {
@@ -62,7 +64,65 @@ export class Onboarding {
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private modalCtrl: ModalController,
-              private alertCtrl: AlertController) {
+              private alertCtrl: AlertController,
+              private userService: UserService,
+              private popoverCtrl: PopoverController,
+              private platform: Platform) {
+    this.user = this.userService.currentUser;
+  }
+
+  homePressed() {
+    let alert = this.alertCtrl.create({
+      title: 'NEW PROJECT',
+      message: 'Are you sure you want to start over?',
+      buttons: 
+      [{
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+              console.log('Cancel pressed');
+          }
+      },
+      {
+          text: 'Start Over',
+          handler: data => {
+              this.navCtrl.setRoot('Onboarding')
+          }
+      }]
+      });
+    alert.present();
+  }
+
+  toggleDropdown() {
+    console.log("Toggling dropdown!");
+    let popover = this.popoverCtrl.create('Dropdown');
+    let width = this.platform.width();
+    let ev = {
+      target : {
+        getBoundingClientRect : () => {
+          return {
+            top: '65',
+            left: width
+          };
+        }
+      }
+    };
+    popover.onDidDismiss(data => {
+      if (data == 'PROFILE') {
+        this.navCtrl.setRoot('Profile');
+      }
+      if (data == 'ALL') {
+        this.navCtrl.setRoot('Dashboard');
+      }
+      if (data == 'NEW') {
+        this.navCtrl.setRoot('Onboarding');
+      }
+      if (data == 'LOGOUT') {
+        this.userService.logout();
+        this.navCtrl.setRoot('Login');
+      }
+    });
+    popover.present({ev});
   }
 
   startProject() {

@@ -1,0 +1,71 @@
+page-profile {
+  .header-md:after {
+    background-image: none !important;
+  }
+  .profile-header {
+    min-height: 190px;
+    padding: 20px;
+    background-color: #fff;
+    @media only screen and (max-width: 700px) {
+      h1 {
+        margin-top: 160px !important;
+      }
+      h1, h3, h4 {
+        margin-left: 0px !important;
+      }
+      h3 {
+        margin-bottom: 20px !important;
+      }
+    }
+    img {
+      width: 148px;
+      height: 148px;
+      object-fit: cover;
+      float: left;
+      border-radius: 8px;
+      margin-right: 20px;
+    }
+    h1, h3, h4 {
+      text-align: left;
+      margin: 0px 20px;
+    }
+    h1 {
+      font-weight: 700;
+    }
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 55px;
+    }
+    h4 {
+      font-size: 16px;
+    }
+    .button {
+      float: right;
+    }
+  }
+  .scroll-content {
+    background-color: #ecf0f1;
+  }
+  .profile-wrapper {
+    margin: 20px;
+    
+    .profile-details {
+      h1, h2, p {
+        text-align: left;
+      }
+      .profile-details-content {
+        box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+        padding: 10px 30px 20px;
+        background-color: #fff;
+        h2 {
+          color: #9C9C9C;
+          font-size: 16px;
+        }
+        p {
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
