@@ -91,8 +91,9 @@ page-onboarding {
     color: #fff;
     h2 {
       float: left;
+      text-align: left;
       font-weight: 700;
-      font-size: 18px;
+      font-size: 16px;
     }
   }
   .step1 {
@@ -278,6 +279,134 @@ page-onboarding {
       }
       ul:nth-of-type(1) {
         border-right: 1px solid #fff;
+      }
+    }
+  }
+  .step4 {
+    .zip-button-content {
+      max-width: 811px;
+      background-color: #fff;
+      padding: 30px;
+      margin: 10px auto;
+      h4, p {
+        text-align: left;
+      }
+      .input {
+        border: 1px solid #C3C3C3;
+        background-color: #F8F5F5;
+      }
+      .button {
+        margin: auto;
+        max-width: 300px;
+      }
+    }
+    .final-question {
+      max-width: 811px;
+      background-color: #fff;
+      padding: 30px;
+      margin: 10px auto;
+      h4, p {
+        text-align: left;
+      }
+      .button-inner {
+        justify-content:flex-start;
+        .check {
+          position: absolute;
+          top: 12.5px;
+          right: 5px;
+        }
+      }
+      .button {
+        background-color: #fff;
+        color: color($colors, primary);
+        border: 2px solid color($colors, primary);
+        margin: 10px 0 !important;
+        .check {
+          width: 15px;
+          display: none;
+        }
+      }
+      .button:hover {
+        background-color: color($colors, primary);
+        color: #fff;
+        .check {
+          display: block;
+        }
+      }
+      .input {
+        border: 1px solid #C3C3C3;
+        background-color: #F8F5F5;
+      }
+      .button {
+        margin: auto;
+        max-width: 300px;
+      }
+    }
+  }
+  .step5 {
+    .payment-form {
+      margin: 10px;
+      padding: 30px;
+      background-color: #fff;
+      .paypal-button {
+        margin: 30px 0 10px !important;
+      }
+      p {
+        text-align: left;
+        font-weight: 700;
+      }
+      .input {
+        border: 1px solid #C3C3C3;
+        background-color: #F8F5F5;
+        margin: 10px 0;
+      }
+      .datetime {
+        text-align: left;
+        border: 1px solid #C3C3C3;
+        background-color: #F8F5F5;
+        margin: 10px 0;
+      }
+      @media only screen and (max-width: 700px) {
+        .mobile {
+          display: block !important;
+        }
+        .paypal-button {
+          margin: 30px 0 !important;
+        }
+      }
+      .mobile {
+        display: none;
+      }
+      .summary {
+        width: 33%;
+        float: right;
+        @media only screen and (max-width: 700px) {
+          .desktop {
+            display: none;
+          }
+          width: 100% !important;
+        }
+        .box {
+          padding: 20px;
+          border: 1px solid color($colors, primary);
+        }
+      }
+      .billing {
+        @media only screen and (max-width: 700px) {
+          width: 100% !important;
+        }
+        width: 63%;
+      }
+      .card {
+        @media only screen and (max-width: 700px) {
+          width: 100% !important;
+        }
+        width: 63%;
+      }
+      @media only screen and (max-width: 700px) {
+        .payment-button {
+          margin: 30px 0px !important;
+        }
       }
     }
   }

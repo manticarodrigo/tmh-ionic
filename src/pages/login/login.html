@@ -1,37 +1,19 @@
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : 'your-app-id',
-      xfbml      : true,
-      version    : 'v2.9'
-    });
-    FB.AppEvents.logPageView();
-  };
-
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-</script>
 <ion-content text-center padding>
   <div class="center">
     <form>
       <img class="logo" src="assets/logo.png">
       <div *ngIf="!loading">
         <ion-input *ngIf="signup" [(ngModel)]="firstName" name="firstName" type="text" placeholder="FIRST NAME"></ion-input>
-      <ion-input *ngIf="signup" [(ngModel)]="lastName" name="lastName" type="text" placeholder="LAST NAME"></ion-input>
-      <ion-input [(ngModel)]="email" name="email" type="email" placeholder="EMAIL"></ion-input>
-      <ion-input [(ngModel)]="password" name="password" type="password" placeholder="PASSWORD"></ion-input>
-      <ion-input *ngIf="signup" [(ngModel)]="password2" name="password2" type="password" placeholder="CONFIRM PASSWORD"></ion-input>
-      <button ion-button class="auth" type="submit" (click)="auth()">{{ signup ? 'SIGN UP' : 'LOG IN'}}</button>
-      <button ion-button class="facebook" type="button" (click)="facebookLogin()">{{ signup ? 'SIGN UP WITH FACEBOOK' : 'LOG IN WITH FACEBOOK'}}</button>
-      <p *ngIf="!signup"><a>Forgot your password?</a></p>
-      <hr>
-      <p>or</p>
-      <button ion-button class="toggle" type="button" (click)="toggleType()">{{ signup ? 'LOG IN' : 'SIGN UP'}}</button>
+        <ion-input *ngIf="signup" [(ngModel)]="lastName" name="lastName" type="text" placeholder="LAST NAME"></ion-input>
+        <ion-input [(ngModel)]="email" name="email" type="email" placeholder="EMAIL"></ion-input>
+        <ion-input [(ngModel)]="password" name="password" type="password" placeholder="PASSWORD"></ion-input>
+        <ion-input *ngIf="signup" [(ngModel)]="password2" name="password2" type="password" placeholder="CONFIRM PASSWORD"></ion-input>
+        <button ion-button class="auth" type="submit" (click)="auth()">{{ signup ? 'SIGN UP' : 'LOG IN'}}</button>
+        <button ion-button class="facebook" type="button" (click)="facebookLogin()">{{ signup ? 'SIGN UP WITH FACEBOOK' : 'LOG IN WITH FACEBOOK'}}</button>
+        <p *ngIf="!signup"><a>Forgot your password?</a></p>
+        <hr>
+        <p>or</p>
+        <button ion-button class="toggle" type="button" (click)="toggleType()">{{ signup ? 'LOG IN' : 'SIGN UP'}}</button>
       </div>
       <ion-spinner *ngIf="loading" name="crescent">
       </ion-spinner>

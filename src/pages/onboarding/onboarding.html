@@ -172,6 +172,108 @@
         <li>Detailed set-up instructions</li>
       </ul>
     </div>
+    <
+  </ion-grid>
+
+  <ion-grid *ngIf="step == 4" class="step4">
+    <div class="step-title">
+      <h1>FINAL QUESTIONS</h1>
+      <p>STEP 4/5<p>
+    </div>
+    <div class="step-subtitle">
+      <h2>Just a few questions. We promise.</h2>
+    </div>
+    <div *ngIf="finalQuestion == 1" class="zip-button">
+      <div class="zip-button-content">
+        <h1>1/5</h1>
+        <h4>What's your ZIP code?</h4>
+        <ion-input [(ngModel)]="zip" (input)="validateZip()" maxlength="5" type="text" placeholder="ZIP"></ion-input>
+        <p><a (click)="requestInternational()">International address?</a></p>
+        <button ion-button full (click)="submittedZip()">CONTINUE</button>
+      </div>
+    </div>
+    <div *ngIf="finalQuestion == 2" class="shares-button final-question">
+      <div class="shares-button-content">
+        <h1>2/5</h1>
+        <h4>Who do you share your space with?</h4>
+        <button ion-button full (click)="sharesWith('myself')">Myself<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="sharesWith('partner')">Partner<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="sharesWith('roomate')">Roomate(s)<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="sharesWith('family')">Family<img class="check" src="assets/simple-check.png"></button>
+      </div>
+    </div>
+    <div *ngIf="finalQuestion == 3" class="pet-button final-question">
+      <div class="pet-button-content">
+        <h1>3/5</h1>
+        <h4>Would you like your designer to select pet friendly options?</h4>
+        <button ion-button full (click)="hasPet(true)">YES<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="hasPet(false)">NO<img class="check" src="assets/simple-check.png"></button>
+      </div>
+    </div>
+    <div *ngIf="finalQuestion == 4" class="access-button final-question">
+      <div class="access-button-content">
+        <h1>4/5</h1>
+        <h4>Is it difficult moving furniture in and out of your home? (i.e. narrow hallways)</h4>
+        <button ion-button full (click)="hasLimitedAccess(true)">YES<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="hasLimitedAccess(false)">NO<img class="check" src="assets/simple-check.png"></button>
+      </div>
+    </div>
+    <div *ngIf="finalQuestion == 5" class="budget-button final-question">
+      <div class="budget-button-content">
+        <h1>5/5</h1>
+        <h4>What is your furniture budget per room?</h4>
+        <button ion-button full (click)="hasBudget(1)">$2k or less<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="hasBudget(2)">$2k - $4k<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="hasBudget(3)">$4k - $6k<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="hasBudget(4)">$6k or more<img class="check" src="assets/simple-check.png"></button>
+      </div>
+    </div>
+  </ion-grid>
+
+  <ion-grid *ngIf="step == 5" class="step5">
+    <div class="step-title">
+      <h1>DESIGN PAYMENT</h1>
+      <p>STEP 5/5<p>
+    </div>
+    <div class="step-subtitle">
+      <h2>Once we receive your payment, we can get started.</h2>
+    </div>
+    <div class="payment-form">
+      <div class="summary">
+        <div class="box">
+          <h1>PROJECT SUMMARY</h1>
+          <p>Package: <span class="right">{{ rooms }} Room(s)</span></p>
+          <p>Duration: <span class="right">10 Days</span></p>
+          <p>Cost: <span class="right">${{ costs[rooms] }}.00</span></p>
+          <p><b>Total: <span class="right">${{ costs[rooms] }}.00</span></b></p>
+        </div>
+        <button class="paypal-button" ion-button full (click)="paypalPresed()" type="button">PAY WITH PAYPAL</button>
+        <button class="payment-button desktop" ion-button full (click)="payPresed()" type="button">PAY WITH CARD</button>
+      </div>
+      <br>
+      <div class="billing">
+        <p>Billing Information</p>
+        <ion-input [(ngModel)]="billing.firstName" type="text" placeholder="FIRST NAME"></ion-input>
+        <ion-input [(ngModel)]="billing.lastName" type="text" placeholder="LAST NAME"></ion-input>
+        <ion-input [(ngModel)]="billing.address" type="text" placeholder="ADDRESS"></ion-input>
+        <ion-input [(ngModel)]="billing.city" type="text" placeholder="CITY"></ion-input>
+        <ion-input [(ngModel)]="billing.country" type="text" placeholder="COUNTRY"></ion-input>
+        <ion-input [(ngModel)]="billing.zip" type="text" placeholder="ZIP"></ion-input>
+      </div>
+      <br>
+      <div class="card">
+        <p>Credit Card Information</p>
+        <ion-input [(ngModel)]="card.number" (input)="validateCardNumber()" maxlength="19" type="text" placeholder="0000-0000-0000-0000"></ion-input>
+        <ion-input [(ngModel)]="card.name" type="text" placeholder="NAME ON CARD"></ion-input>
+        <br>
+        <p>Expiration Date</p>
+        <ion-datetime [(ngModel)]="card.expDate" displayFormat="MM/YYYY" pickerFormat="MM/YYYY" placeholder="MM/YYYY"></ion-datetime>
+        <br>
+        <p>Security Code</p>
+        <ion-input [(ngModel)]="card.code" maxlength="3" type="text" placeholder="***"></ion-input>
+      </div>
+      <button class="payment-button mobile" ion-button full (click)="payPresed()" type="button">PAY WITH CARD</button>
+    </div>
   </ion-grid>
 
 </ion-content>
