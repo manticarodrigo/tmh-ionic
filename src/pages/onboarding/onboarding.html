@@ -1,0 +1,177 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons left>
+      <button ion-button (click)="homePressed()">
+        <img style="width:54px;margin:10px;" src="assets/logo.png">
+      </button>
+    </ion-buttons>
+    <ion-buttons end>
+      <button class="dropdown" ion-button (click)="toggleDropdown()">
+        <img *ngIf="user" [src]="user.photoURL">
+        <img *ngIf="!user" src="assets/tmh.png">
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content text-center padding>
+
+  <div *ngIf="step == 0" class="welcome">
+    <h1>WELCOME TO<br>THE MAN HOME</h1>
+    <p>Time to like where you wake up</p>
+    <button ion-button type="button" (click)="startProject()" full>START YOUR PROJECT</button>
+  </div>
+
+  <ion-grid *ngIf="step == 1" class="step1">
+    <div class="step-title">
+      <h1>ROOM SELECTION</h1>
+      <p>STEP 1/5<p>
+    </div>
+    <div class="step-subtitle">
+      <h2>Select your space:</h2>
+    </div>
+    <ion-row>
+      <ion-col col-12 col-sm>
+        <div class="space-button" (click)="selectedType('LIVING_ROOM')">
+          <div class="space-button-content">
+            <img src="assets/LIVING_ROOM.png">
+            <h4>Living Room</h4>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col col-12 col-sm>
+        <div class="space-button" (click)="selectedType('BEDROOM')">
+          <div class="space-button-content">
+            <img src="assets/BEDROOM.png">
+            <h4>Bedroom</h4>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col col-12 col-sm>
+        <div class="space-button" (click)="selectedType('DINING_ROOM')">
+          <div class="space-button-content">
+            <img src="assets/DINING_ROOM.png">
+            <h4>Dining Room</h4>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12 col-sm>
+        <div class="space-button" (click)="selectedType('HOME_OFFICE')">
+          <div class="space-button-content">
+            <img src="assets/HOME_OFFICE.png">
+            <h4>Home Office</h4>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col col-12 col-sm>
+        <div class="space-button" (click)="selectedType('STUDIO')">
+          <div class="space-button-content">
+            <img class="wide" src="assets/STUDIO.png">
+            <h4>Studio</h4>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col col-12 col-sm>
+        <div class="space-button" (click)="selectedType('MULTIPURPOSE_ROOM')">
+          <div class="space-button-content">
+            <img class="wide" src="assets/MULTIPURPOSE_ROOM.png">
+            <h4>Multipurpose Room</h4>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid *ngIf="step == 2" class="step2">
+    <div class="step-title">
+      <h1>STYLE PREFERENCE</h1>
+      <p>STEP 2/5<p>
+    </div>
+    <div class="step-subtitle">
+      <h2>Select which style best fits you:</h2>
+    </div>
+    <ion-row *ngFor="let i of [1,2,3,4]" class="style-question" [class.active]="styleQuestions[i].answering == true">
+      <ion-col col-12 col-sm>
+        <div class="style-button" (click)="selectedStyle(i, 1)">
+          <div class="style-button-content">
+            <img class="check" src="assets/check.png">
+            <img class="q-img" src="assets/q{{i}}_style1.jpg">
+          </div>
+        </div>
+      </ion-col>
+      <ion-col col-12 col-sm>
+        <div class="style-button" (click)="selectedStyle(i, 2)">
+          <div class="style-button-content">
+            <img class="check" src="assets/check.png">
+            <img class="q-img" src="assets/q{{i}}_style2.jpg">
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid *ngIf="step == 3" class="step3">
+    <div class="step-title">
+      <h1>PACKAGE</h1>
+      <p>STEP 3/5<p>
+    </div>
+    <div class="step-subtitle">
+      <h2>How many spaces are you working on?</h2>
+    </div>
+    <ion-row class="packages">
+      <ion-col col-12 col-sm>
+        <div class="package-button">
+          <div class="package-button-content">
+            <img src="assets/door.png">
+            <h2>SINGLE ROOM</h2>
+            <p>Keep it simple. Start with a single room.</p>
+            <h1>$399</h1>
+            <button ion-button full (click)="selectedPackage(1)">SELECT</button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col col-12 col-sm>
+        <div class="package-button">
+          <div class="package-button-content">
+            <img src="assets/two-doors.png">
+            <h2>DOUBLE ROOM</h2>
+            <p>Cover more of your floor plan.</p>
+            <h1>$699</h1>
+            <button ion-button full (click)="selectedPackage(2)">SELECT</button>
+          </div>
+        </div>
+      </ion-col>
+      <ion-col col-12 col-sm>
+        <div class="package-button">
+          <div class="package-button-content">
+            <img src="assets/three-doors.png">
+            <h2>TRIPLE ROOM</h2>
+            <p>Impress throughout your home.</p>
+            <h1>$999</h1>
+            <button ion-button full (click)="selectedPackage(3)">SELECT</button>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <div class="features">
+      <h1>INCLUDED IN EACH PACKAGE</h1>
+      <ul>
+        <h2>Full service design:</h2>
+        <li>10 day design process per room</li>
+        <li>2 concept board options</li>
+        <li>3 design revisions</li>
+        <li>Chat service with personal designer</li>
+      </ul>
+      <ul>
+        <h2>Final delivery:</h2>
+        <li>3D Virtual Tour of design</li>
+        <li>Concept Board and Floor Plan</li>
+        <li>Shopping List & Cart</li>
+        <li>Detailed set-up instructions</li>
+      </ul>
+    </div>
+  </ion-grid>
+
+</ion-content>

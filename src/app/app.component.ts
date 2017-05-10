@@ -49,7 +49,7 @@ export class TheManHome {
           console.log('Stored user found');
           self.userService.setCurrentUser(user, token)
           .then(user => {
-            this.nav.setRoot('Dashboard');
+            this.nav.setRoot('Onboarding');
           })
           .catch(error => {
             console.log(error);

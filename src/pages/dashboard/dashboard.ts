@@ -197,6 +197,7 @@ export class Dashboard {
 
   startProject() {
     console.log("Start proj pressed");
+    this.navCtrl.setRoot('Onboarding');
   }
 
   chatFor(project) {
