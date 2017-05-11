@@ -81,8 +81,7 @@ export class Dashboard {
       target : {
         getBoundingClientRect : () => {
           return {
-            top: '65',
-            left: width
+            top: '25'
           };
         }
       }
@@ -104,6 +103,21 @@ export class Dashboard {
     });
     popover.present({ev});
   }
+
+  selectTab() {
+    console.log("Toggling tab dropdown!");
+    let popover = this.popoverCtrl.create('TabDropdown', {
+      tabs: ['ALL', 'IN PROGRESS', 'COMPLETED', 'ARCHIVED', 'UP NEXT']
+    });
+    popover.onDidDismiss(data => {
+      if (data) {
+        this.tab = data.replace(" ", "_");
+        this.loadProjects();
+      }
+    });
+    popover.present();
+  }
+
 
   fetchProjects() {
     if (this.tab == 'ALL')
@@ -171,27 +185,6 @@ export class Dashboard {
         console.log(error);
       });
     });
-  }
-
-  selectTab() {
-    console.log("Toggling tab dropdown!");
-    let popover = this.popoverCtrl.create('TabDropdown');
-    let ev = {
-      target : {
-        getBoundingClientRect : () => {
-          return {
-            top: '325'
-          };
-        }
-      }
-    };
-    popover.onDidDismiss(data => {
-      if (data) {
-        this.tab = data.replace(" ", "_");
-        this.loadProjects();
-      }
-    });
-    popover.present({ev});
   }
 
   getDateStringFrom(timestamp) {

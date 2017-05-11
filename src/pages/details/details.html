@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons left>
+      <button ion-button (click)="homePressed()">
+        <img style="width:54px;margin:5px;" src="assets/logo.png">
+      </button>
+    </ion-buttons>
+    <ion-title>Details</ion-title>
+    <ion-buttons end>
+      <button class="dropdown" ion-button (click)="toggleDropdown()">
+        <img *ngIf="user" [src]="user.photoURL">
+        <img *ngIf="!user" src="assets/tmh.png">
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+  <div class="sub-nav">
+    <button ion-button type="button" (click)="selectTab()" full>
+      1. DETAILS
+      <img src="assets/down.png">
+    </button>
+  </div>
+</ion-header>
+
+<ion-content padding>
+</ion-content>

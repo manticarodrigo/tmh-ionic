@@ -1,3 +1,9 @@
 page-tab-dropdown {
-  background-color: color($colors, primary);
+  .button {
+    background-color: #fff;
+    color: color($colors, primary);
+  }
+  .button:hover {
+    color: #fff;
+  }
 }

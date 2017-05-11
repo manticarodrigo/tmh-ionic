@@ -8,19 +8,13 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
 })
 export class TabDropdown {
   
-  tabs = ['ALL', 'IN PROGRESS', 'COMPLETED', 'ARCHIVED', 'UP NEXT'];
-  tabsDict = {
-    ALL: 'ALL',
-    IN_PROGRESS: 'IN PROGRESS',
-    COMPLETED: 'COMPLETED',
-    ARCHIVED: 'ARCHIVED',
-    UP_NEXT: 'UP NEXT'
-  }
+  tabs: any;
   
 
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private viewCtrl: ViewController) {
+    this.tabs = this.navParams.get('tabs');
   }
 
   selectTab(tab) {
