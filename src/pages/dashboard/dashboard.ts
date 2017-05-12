@@ -224,4 +224,14 @@ export class Dashboard {
     modal.present();
   }
 
+  selectedProject(project) {
+    var page = 'Details';
+    if (project.projectStatus == 'DETAILS') {
+      
+    }
+    this.navCtrl.setRoot(page, {
+      project: project
+    });
+  }
+
 }

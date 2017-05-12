@@ -11,6 +11,7 @@ import { UserService } from '../../providers/user-service';
 export class Details {
 
   user: any;
+  project: any;
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
@@ -18,6 +19,7 @@ export class Details {
               private popoverCtrl: PopoverController,
               private platform: Platform) {
     this.user = this.userService.currentUser;
+    this.project = this.navParams.get('project');
   }
 
   homePressed() {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -9,11 +9,16 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 export class IntlAddress {
 
   constructor(private navCtrl: NavController,
-              private navParams: NavParams) {
+              private navParams: NavParams,
+              private viewCtrl: ViewController) {
   }
 
   done() {
     console.log('done pressed');
+  }
+
+  dismiss() {
+    this.viewCtrl.dismiss();
   }
 
 }

@@ -23,4 +23,21 @@ page-details {
       margin: 10px;
     }
   }
+  .collab-workzone {
+    background-image: url('../assets/constructor_bg.png');
+    background-repeat: repeat;
+    background-size: cover;
+    .chat-fab {
+      float: right;
+      width: 45px !important;
+      height: 45px !important;
+      border-radius: 50% !important;
+      img {
+        object-fit: contain;
+        width: 17.5px;
+        height: 17.5px;
+      }
+    }
+
+  }
 }

@@ -14,7 +14,13 @@
     </ion-buttons>
   </ion-navbar>
   <div class="sub-nav">
-    <button ion-button type="button" (click)="selectTab()" full>
+    <ul class="desktop menu">
+      <li>IN PROGRESS</li>
+      <li>UP NEXT</li>
+      <li>COMPLETE</li>
+      <li>ARCHIVE</li>
+    </ul>
+    <button class="mobile" ion-button type="button" (click)="selectTab()" full>
       {{ tabs[tab] }}
       <img src="assets/down.png">
     </button>
@@ -22,6 +28,16 @@
 </ion-header>
 
 <ion-content padding>
+
+  <div class="dashboard-header desktop">
+    <div>Client Name</div>
+    <div>Project Type</div>
+    <div>Last Edited</div>
+    <div>Status</div>
+    <div>Time Left</div>
+    <div>Messages</div>
+  </div>
+
   <ion-list>
 
     <ion-item text-center class="no-projects" *ngIf="!projects">
@@ -29,34 +45,56 @@
       <button ion-button (click)="startProject()" full>START NEW PROJECT</button>
     </ion-item>
 
-    <ion-item class="project" *ngFor="let project of projects">
-      <div class="header">
-        <div class="type" item-left>
+    <ion-item class="project" *ngFor="let project of projects" (click)="selectedProject(project)">
+      <div class="mobile">
+        <div class="header">
+          <div class="type" item-left>
+            <img src="assets/{{ project.projectType }}.png">
+          </div>
+          <div (click)="chatFor(project)" class="chat" item-right>
+            <img [class.inactive]="!project.initChat" src="assets/chat.png">
+          </div>
+        </div>
+        <div class="details">
+          <p class="title"><b><span *ngIf="project.user">{{ project.user.shortName }} - </span>{{ project.projectTypeReadable }} Project</b></p>
+          <div class="section">
+            <p class="info">{{ project.modifiedDateReadable }}</p>
+            <p class="sub-title">Edited</p>
+          </div>
+          <div class="section">
+            <p class="info">{{ project.projectStatusReadable }}</p>
+            <p class="sub-title">Phase</p>
+          </div>
+          <div class="section">
+            <p class="info">{{ project.endDateReadable }}</p>
+            <p class="sub-title">Days Left</p>
+          </div>
+        </div>
+      </div>
+      <div class="desktop">
+        <div class="section type">
           <img src="assets/{{ project.projectType }}.png">
         </div>
-        <div *ngIf="project.initChat" (click)="chatFor(project)" class="chat" item-right>
-          <img [class.inactive]="!project.initChat" src="assets/chat.png">
+        <div class="section">
+          <p class="info"><span *ngIf="project.user">{{ project.user.shortName }}</span></p>
         </div>
-        <div *ngIf="!project.initChat" class="chat inactive" item-right>
-          <img [class.inactive]="" src="assets/chat.png">
+        <div class="section">
+          <p class="info">{{ project.projectTypeReadable }}</p>
         </div>
-      </div> 
-      <div class="details">
-        <p class="title"><b><span *ngIf="project.user">{{ project.user.shortName }} - </span>{{ project.projectTypeReadable }} Project</b></p>
         <div class="section">
           <p class="info">{{ project.modifiedDateReadable }}</p>
-          <p class="sub-title">Edited</p>
         </div>
         <div class="section">
           <p class="info">{{ project.projectStatusReadable }}</p>
-          <p class="sub-title">Phase</p>
         </div>
         <div class="section">
           <p class="info">{{ project.endDateReadable }}</p>
-          <p class="sub-title">Days Left</p>
+        </div>
+        <div (click)="chatFor(project)" class="section chat">
+          <img [class.inactive]="!project.initChat" src="assets/chat.png">
         </div>
       </div>
     </ion-item>
-    
+  
   </ion-list>
 </ion-content>

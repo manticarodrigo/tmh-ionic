@@ -99,17 +99,18 @@ page-onboarding {
   .step1 {
     @media only screen and (max-width: 700px) {
       .space-button-content {
-        background-color: #fff !important;
+        background-color: color($colors, primary) !important;
         margin: 10px auto;
         padding: 20px;
         img {
-          filter: brightness(0.1) !important;
+          filter: brightness(1) !important;
         }
         h4 {
-          color: color($colors, primary) !important;
+          color: #fff !important;
         }
       }
       .space-button-content:hover {
+        background-color: #fff !important;
         border: 5px solid color($colors, primary) !important;
       }
     }
@@ -398,6 +399,9 @@ page-onboarding {
         width: 63%;
       }
       .card {
+        .datetime {
+          padding-left: 8px;
+        }
         @media only screen and (max-width: 700px) {
           width: 100% !important;
         }

@@ -22,6 +22,13 @@ page-dashboard {
       width: 15px;
       margin: 10px;
     }
+    .menu {
+      width: 100%;
+      li {
+        float: left;
+        width: 33%;
+      }
+    }
   }
  .scroll-content {
    background-color: #ECF0F1;
@@ -39,51 +46,114 @@ page-dashboard {
      margin-top: 20px !important;
    }
  }
- .project {
-   position: relative;
-   padding: 0px 0px 5px 20px;
-   .header {
-     position: relative;
-   }
-   .type {
-     width: 50px;
-     height: 50px;
-     background-color: #e6e6e6;
-     img {
-        padding: 10px;
-        object-fit: contain;
-        height: 100%;
-        width: 100%;
-        filter: brightness(0.25);
+ .dashboard-header {
+    margin: 20px 0px;
+    padding: 0px 20px;
+    background-color: color($colors, primary);
+    width: 100%;
+    height: 45px;
+    div {
+      float: left;
+      width: 16%;
+      list-style: none;
+      color: #fff;
+      line-height: 45px;
+      text-align: center;
+    }
+    div:nth-of-type(1) {
+      text-align: right;
+    }
+    div:nth-of-type(2) {
+      text-align: right;
+    }
+    div:nth-of-type(3) {
+      text-align: right;
+    }
+    div:last-of-type {
+      text-align: right;
+    }
+  }
+  .project {
+    position: relative;
+    padding: 0px 0px 0px 20px;
+    .mobile {
+      padding-bottom: 5px;
+      .header {
+        position: relative;
       }
-   }
-   .chat {
-     width: 30px;
-     position: absolute;
-     top: 0;
-     right: 10px;
-     .inactive {
-       filter: saturate(0);
-     }
-   }
-   .details {
-     position: relative;
-     padding-top: 15px;
-     .title {
-       color: #000;
-       padding-bottom: 15px;
-     }
-     .section {
-       text-align: left;
-       display: inline-block;
-       width: 33%;
-       margin: auto;
-       .info {
-         font-weight: 600;
-         color: #000;
-         white-space: pre-wrap;
-       }
-     }
-   }
- }
+      .type {
+        width: 50px;
+        height: 50px;
+        background-color: #e6e6e6;
+        img {
+            padding: 10px;
+            object-fit: contain;
+            height: 100%;
+            width: 100%;
+            filter: brightness(0.25);
+          }
+      }
+      .chat {
+        width: 30px;
+        position: absolute;
+        top: 0;
+        right: 10px;
+        .inactive {
+          filter: saturate(0);
+        }
+      }
+      .details {
+        position: relative;
+        padding-top: 15px;
+        .title {
+          color: #000;
+          padding-bottom: 15px;
+        }
+        .section {
+          text-align: left;
+          display: inline-block;
+          width: 33%;
+          margin: auto;
+          .info {
+            font-weight: 600;
+            color: #000;
+            white-space: pre-wrap;
+          }
+        }
+      }
+    }
+    .desktop {
+      .type {
+        width: 50px !important;
+        height: 50px !important;
+        background-color: #e6e6e6;
+        img {
+            padding: 10px;
+            object-fit: contain;
+            height: 100%;
+            width: 100%;
+            filter: brightness(0.25);
+          }
+      }
+      .chat {
+        padding-top: 10px;
+        img {
+          float: right;
+          width: 30px;
+        }
+        .inactive {
+          filter: saturate(0);
+        }
+      }
+      .section {
+        float: left;
+        width: 15%;
+      }
+      .info {
+        line-height: 50px;
+        text-align: center;
+        font-weight: 700;
+      }
+    }
+  }
 }
