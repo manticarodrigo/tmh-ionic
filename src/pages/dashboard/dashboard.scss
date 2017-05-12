@@ -23,10 +23,24 @@ page-dashboard {
       margin: 10px;
     }
     .menu {
-      width: 100%;
-      li {
-        float: left;
-        width: 33%;
+      margin: auto;
+      width: 75%;
+      display: table;
+      table-layout: fixed;
+      div {
+        display: table-cell;
+      }
+      a {
+        display: inline-block;
+        width: 95%;
+        height: 25px;
+        margin: auto;
+        text-align: center;
+        color: #fff;
+        border-bottom: 2px solid rgba(255,255,255,0.5);
+      }
+      .active {
+        border-bottom: 2px solid #fff;
       }
     }
   }

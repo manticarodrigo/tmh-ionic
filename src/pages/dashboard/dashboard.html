@@ -14,12 +14,12 @@
     </ion-buttons>
   </ion-navbar>
   <div class="sub-nav">
-    <ul class="desktop menu">
-      <li>IN PROGRESS</li>
-      <li>UP NEXT</li>
-      <li>COMPLETE</li>
-      <li>ARCHIVE</li>
-    </ul>
+    <div class="desktop menu">
+      <div><a>IN PROGRESS</a></div>
+      <div><a>UP NEXT</a></div>
+      <div><a>COMPLETE</a></div>
+      <div><a>ARCHIVE</a></div>
+    </div>
     <button class="mobile" ion-button type="button" (click)="selectTab()" full>
       {{ tabs[tab] }}
       <img src="assets/down.png">
@@ -46,7 +46,7 @@
       <p class="info">Status</p>
     </div>
     <div class="section">
-      <p class="info">Client Name</p>
+      <p class="info">Time Left</p>
     </div>
     <div class="section">
       <p class="info">Messages</p>
