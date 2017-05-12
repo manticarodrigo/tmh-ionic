@@ -15,10 +15,10 @@
   </ion-navbar>
   <div class="sub-nav">
     <div class="desktop menu">
-      <div><a>IN PROGRESS</a></div>
-      <div><a>UP NEXT</a></div>
-      <div><a>COMPLETE</a></div>
-      <div><a>ARCHIVE</a></div>
+      <div><a [class.active]="tab == 'IN_PROGRESS'" (click)="selectedTabLink('IN_PROGRESS')">IN PROGRESS</a></div>
+      <div><a [class.active]="tab == 'UP_NEXT'" (click)="selectedTabLink('UP_NEXT')">UP NEXT</a></div>
+      <div><a [class.active]="tab == 'COMPLETED'" (click)="selectedTabLink('COMPLETED')">COMPLETED</a></div>
+      <div><a [class.active]="tab == 'ARCHIVED'" (click)="selectedTabLink('ARCHIVED')">ARCHIVED</a></div>
     </div>
     <button class="mobile" ion-button type="button" (click)="selectTab()" full>
       {{ tabs[tab] }}
@@ -71,7 +71,7 @@
           </div>
         </div>
         <div class="details">
-          <p class="title"><b><span *ngIf="project.user">{{ project.user.shortName }} - </span>{{ project.projectTypeReadable }} Project</b></p>
+          <p class="title"><b><span *ngIf="projectUsers[project.userId]">{{ projectUsers[project.userId].shortName }} - </span>{{ project.projectTypeReadable }} Project</b></p>
           <div class="section">
             <p class="info">{{ project.modifiedDateReadable }}</p>
             <p class="sub-title">Edited</p>
@@ -91,7 +91,7 @@
           <img src="assets/{{ project.projectType }}.png">
         </div>
         <div class="section">
-          <p class="info"><span *ngIf="project.user">{{ project.user.shortName }}</span></p>
+          <p class="info"><span *ngIf="projectUsers[project.userId]">{{ projectUsers[project.userId].shortName }}</span></p>
         </div>
         <div class="section">
           <p class="info">{{ project.projectTypeReadable }}</p>

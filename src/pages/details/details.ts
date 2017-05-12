@@ -9,9 +9,16 @@ import { UserService } from '../../providers/user-service';
   templateUrl: 'details.html',
 })
 export class Details {
-
   user: any;
   project: any;
+  types = {
+    BEDROOM: 'BEDROOM',
+    LIVING_ROOM: 'LIVING ROOM',
+    MULTIPURPOSE_ROOM: 'MULTIPURPOSE ROOM',
+    STUDIO: 'STUDIO',
+    DINING_ROOM: 'DINING ROOM',
+    HOME_OFFICE: 'OFFICE'
+  }
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,

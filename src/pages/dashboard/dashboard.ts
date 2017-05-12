@@ -12,6 +12,7 @@ import { ProjectService } from '../../providers/project-service';
 export class Dashboard {
   user: any;
   projects: Array<any>;
+  projectUsers = {};
   tab = 'IN_PROGRESS';
   tabs = {
     ALL: 'ALL',
@@ -29,11 +30,15 @@ export class Dashboard {
     HOME_OFFICE: 'Office'
   }
   phases = {
-    CONCEPTS: 'Concepts',
+    DETAILS: 'Details',
     DESIGN: 'Design',
-    REQUEST_ALTERNATIVES: 'Request Alternatives',
+    CONCEPTS: 'Concepts',
     FLOOR_PLAN: 'Floor Plan',
-    FINAL_DELIVERY: 'Final Delivery'
+    REQUEST_ALTERNATIVES: 'Request Alternatives',
+    FINAL_DELIVERY: 'Final Delivery',
+    SHOPPING_CART: 'Shopping Cart',
+    ESTIMATE_SHIPPING_AND_TAX: 'Estimate Shipping & Tax',
+    ARCHIVED: 'Archived'
   }
   constructor(private navCtrl: NavController,
               private alertCtrl: AlertController,
@@ -104,6 +109,11 @@ export class Dashboard {
     popover.present({ev});
   }
 
+  selectedTabLink(tab) {
+    this.tab = tab;
+    this.loadProjects();
+  }
+
   selectTab() {
     console.log("Toggling tab dropdown!");
     let popover = this.popoverCtrl.create('TabDropdown', {
@@ -146,7 +156,6 @@ export class Dashboard {
   processProjects(data) {
     const self = this;
     var projects = [];
-    var userIds = [];
     if (!data.exception) {
       for (var key in data) {
         const project = data[key];
@@ -155,7 +164,7 @@ export class Dashboard {
         project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
         project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
         projects.push(project);
-        userIds.push(project.userId);
+        self.fetchUser(project.userId);
       }
     } else {
       console.log(data.exception);
@@ -163,27 +172,17 @@ export class Dashboard {
 
     if (projects.length > 0) {
       self.projects = projects;
-      self.fetchUsers(userIds);
     } else {
       self.projects = null;
     }
   }
 
-  fetchUsers(uids) {
+  fetchUser(uid) {
     const self = this;
-    return new Promise((resolve, any) => {
-      self.userService.fetchUsers(uids)
-      .then(users => {
-        for (var key in users) {
-          const user = users[key];
-          if (user) {
-            self.projects[key].user = user;
-          }
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    self.userService.fetchUser(uid, user => {
+      if (user) {
+        self.projectUsers[user.userId] = user;
+      }
     });
   }
 

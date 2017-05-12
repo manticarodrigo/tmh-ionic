@@ -21,22 +21,26 @@
   </div>
 </ion-header>
 
-<ion-content padding>
+<ion-content>
   <div class="collab-workzone">
     <button class="chat-fab" ion-fab (click)="chatPressed()">
       <img src="assets/chats.png">
     </button>
-  </div>
-  <div class="collab-alert">
-    <h1>WELCOME TO YOUR DESIGN STUDIO!</h1>
-    <p>Please upload pictures of your space and a hand drawn floor plan. The floor plan should be from a birds eye view and include height and width of each wall. Please also include dimensions for doors, windows, or any dditional items that could affect the design.</p>
-    <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
+    <div class="collab-alert">
+      <h1>WELCOME TO YOUR DESIGN STUDIO!</h1>
+      <p>Please upload pictures of your space and a hand drawn floor plan. The floor plan should be from a birds eye view and include height and width of each wall.</p>
+      <p> Please also include dimensions for doors, windows, or any dditional items that could affect the design.</p>
+      <p class="note">( 2 Picture Limit)</p>
+      <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
+    </div>
   </div>
   <div class="project-details">
     <h1>Project Details</h1>
     <div *ngIf="project" class="project-details-box">
-      <img src="assets/{{ project.projectType }}.png">
-      <h1>{{ project.projectType }}</h1>
+      <div class="project-img">
+        <img src="assets/{{ project.projectType }}.png">
+      </div>
+      <h1>{{ types[project.projectType] }}</h1>
       <h1></h1>
     </div>
   </div>

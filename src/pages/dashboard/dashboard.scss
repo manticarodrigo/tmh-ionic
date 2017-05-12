@@ -17,15 +17,19 @@ page-dashboard {
         right: 15px;
         margin: auto;
       }
+      
     }
     img {
       width: 15px;
       margin: 10px;
     }
     .menu {
+      padding: 15px 0px 0px;
       margin: auto;
       width: 75%;
-      display: table;
+      @media only screen and (min-width: 700px) {
+        display: table;
+      }
       table-layout: fixed;
       div {
         display: table-cell;
@@ -61,7 +65,7 @@ page-dashboard {
    }
  }
 .dashboard-header {
-    margin: 20px 0px;
+    margin: 0px 0px 20px;
     padding: 0px 20px;
     background-color: color($colors, primary);
     width: 100%;

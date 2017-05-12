@@ -91,4 +91,21 @@ export class ProjectService {
     });
   }
 
+  getProjectDetailType(projectId, type) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("Fetching project details for type:");
+      console.log(projectId);
+      console.log(type);
+      const endpoint = this.api + "/tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type/project-id/" + projectId + "/project-detail-type-str/" + type;
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("Found project detail:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
 }

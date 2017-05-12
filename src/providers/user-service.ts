@@ -56,9 +56,9 @@ export class UserService {
 
   register(firstName, lastName, email, password, password2, callback) {
     const self = this;
-    const token = btoa('manticarodrigo@gmail.com:xlemrotm34711');
+    const token = btoa("manticarodrigo@gmail.com:xlemrotm34711")
     const headers = this.generateHeader(token);
-    const endpoint = this.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/-group-ids/-organization-ids/-role-ids/-user-group-ids/send-email/true?p_auth=[BFTnbXbd]";
+    const endpoint = this.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/-group-ids/-organization-ids/-role-ids/-user-group-ids/send-email/true";
     console.log(endpoint);
     this.http.post(endpoint, {headers: headers})
     .map(res => res.json())
@@ -146,6 +146,9 @@ export class UserService {
     .subscribe(data => {
       console.log("Fetched user:");
       console.log(data);
+      if (!data.exception) {
+        data.shortName = data.firstName + ' ' + data.lastName.split('')[0] + '.';
+      }
       callback(data);
     })
   }
