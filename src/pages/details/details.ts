@@ -25,6 +25,20 @@ export class Details {
     UPLOADED_FURNITURE: false
   };
   view = 'DRAWING';
+  selectedDrawing = {
+    id: 1,
+    url: "assets/sample-floorplan.jpg"
+  };
+  drawings = [
+    {
+      id: 1,
+      url: "assets/sample-floorplan.jpg"
+    },
+    {
+      id: 2,
+      url: "assets/STUDIO.png"
+    }
+  ];
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
@@ -101,6 +115,12 @@ export class Details {
       }
     });
     popover.present();
+  }
+
+  selectDrawing(drawing) {
+    console.log("thumb pressed for drawing:");
+    console.log(drawing);
+    this.selectedDrawing = drawing;
   }
 
 }

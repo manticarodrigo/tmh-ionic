@@ -34,10 +34,16 @@
       <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
     </div>
     <div *ngIf="view == 'DRAWING' && status['UPLOADED_DRAWING']" class="collab-image">
-      <img src="assets/sample-floorplan.jpg">
-      <div class="collab-thumb"><img src="assets/sample-floorplan.jpg"><img src="TODO:close" (click)"deleteItem()"></div>
+      <img class="selected-img" [src]="selectedDrawing.url">
+      <div class="collab-thumb-wrapper">
+        <div class="collab-thumb" *ngFor="let thumb of drawings">
+          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedDrawing.id" (click)="selectDrawing(thumb)">
+          <img class="delete" src="assets/delete.png" (click)="deleteDrawing(thumb)">
+        </div>
+      </div>
       <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
+
   </div>
   <div class="project-details">
     <h1>Project Details</h1>
