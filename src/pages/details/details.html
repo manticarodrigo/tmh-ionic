@@ -23,7 +23,21 @@
 
 <ion-content>
   <div class="collab-workzone">
-    <button class="chat-fab" ion-fab (click)="chatPressed()">
+    <div class="collab-details-menu-desktop desktop">
+      <div class="menu-item" [class.inactive]="view != 'DRAWING'" (click)="selectMenuItem('DRAWING')">
+        <img src="assets/drawing.png">
+        <a class="desktop">YOUR ROOM</a>
+      </div>
+      <div class="menu-item" [class.inactive]="view != 'INSPIRATION'" (click)="selectMenuItem('INSPIRATION')">
+        <img src="assets/inspiration.png">
+        <a class="desktop">INSPIRATION</a>
+      </div>
+      <div class="menu-item" [class.inactive]="view != 'FURNITURE'" (click)="selectMenuItem('FURNITURE')">
+        <img src="assets/furniture.png">
+        <a class="desktop">EXISTING FURNITURE</a>
+      </div>
+    </div>
+    <button class="chat-fab mobile" ion-fab (click)="chatPressed()">
       <img src="assets/chats.png">
     </button>
     <div *ngIf="view == 'DRAWING' && !status['UPLOADED_DRAWING']" class="collab-alert">
@@ -43,18 +57,15 @@
       </div>
       <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
-    <div class="collab-details-menu">
+    <div class="collab-details-menu-mobile mobile">
       <div class="menu-item" [class.inactive]="view != 'DRAWING'" (click)="selectMenuItem('DRAWING')">
         <img src="assets/drawing.png">
-        <a class="desktop">YOUR ROOM</a>
       </div>
       <div class="menu-item" [class.inactive]="view != 'INSPIRATION'" (click)="selectMenuItem('INSPIRATION')">
         <img src="assets/inspiration.png">
-        <a class="desktop">INSPIRATION</a>
       </div>
       <div class="menu-item" [class.inactive]="view != 'FURNITURE'" (click)="selectMenuItem('FURNITURE')">
         <img src="assets/furniture.png">
-        <a class="desktop">EXISTING FURNITURE</a>
       </div>
     </div>
   </div>
