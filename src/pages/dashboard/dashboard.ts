@@ -4,6 +4,8 @@ import { IonicPage, NavController, NavParams, AlertController, PopoverController
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 
+import { DetailsPage } from '../details/details';
+
 @IonicPage()
 @Component({
   selector: 'page-dashboard',
@@ -224,7 +226,7 @@ export class Dashboard {
   }
 
   selectedProject(project) {
-    var page = 'Details';
+    var page = DetailsPage;
     if (project.projectStatus == 'DETAILS') {
       
     }

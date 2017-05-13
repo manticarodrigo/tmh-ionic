@@ -11,6 +11,9 @@ import { ProjectService } from '../providers/project-service';
 import { SocketService } from '../providers/socket-service';
 import { ChatService } from '../providers/chat-service';
 
+import { ChatPage } from '../pages/chat/chat';
+import { DetailsPage } from '../pages/details/details';
+
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -23,7 +26,9 @@ import { FacebookService } from 'ngx-facebook';
 @NgModule({
   declarations: [
     TheManHome,
-    TabsPage
+    TabsPage,
+    ChatPage,
+    DetailsPage
   ],
   imports: [
     BrowserModule,
@@ -36,7 +41,9 @@ import { FacebookService } from 'ngx-facebook';
   bootstrap: [IonicApp],
   entryComponents: [
     TheManHome,
-    TabsPage
+    TabsPage,
+    ChatPage,
+    DetailsPage
   ],
   providers: [
     StatusBar,

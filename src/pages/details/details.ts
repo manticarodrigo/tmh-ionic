@@ -3,12 +3,13 @@ import { IonicPage, NavController, NavParams, AlertController, PopoverController
 
 import { UserService } from '../../providers/user-service';
 
-@IonicPage()
+import { ChatPage } from '../chat/chat';
+
 @Component({
   selector: 'page-details',
-  templateUrl: 'details.html',
+  templateUrl: 'details.html'
 })
-export class Details {
+export class DetailsPage {
   user: any;
   project: any;
   types = {

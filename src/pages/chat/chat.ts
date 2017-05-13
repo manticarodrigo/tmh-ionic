@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Input } from '@angular/core';
 import { IonicPage, NavController, ActionSheetController, AlertController, LoadingController, NavParams, ViewController, Content } from 'ionic-angular';
 // import { Camera, PhotoViewer } from 'ionic-native';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -7,14 +7,13 @@ import { ChatService } from '../../providers/chat-service';
 import { UserService } from '../../providers/user-service';
 import { ImageService } from '../../providers/image-service';
 
-@IonicPage()
 @Component({
   selector: 'page-chat',
   templateUrl: 'chat.html',
 })
-export class Chat {
+export class ChatPage {
   @ViewChild(Content) content: Content;
-  project: any;
+  @Input() project: any;
   messages: any;
   message = {
     text: '',
@@ -38,7 +37,9 @@ export class Chat {
       photoURL: this.userService.currentUser.photoURL,
       loading: false
     }
-    this.project = this.navParams.get('project');
+    if (this.navParams.get('project')) {
+      this.project = this.navParams.get('project');
+    }
     this.fetchMessages();
     this.observeMessages();
   }
