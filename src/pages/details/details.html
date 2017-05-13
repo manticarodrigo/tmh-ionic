@@ -26,12 +26,17 @@
     <button class="chat-fab" ion-fab (click)="chatPressed()">
       <img src="assets/chats.png">
     </button>
-    <div class="collab-alert">
+    <div *ngIf="view == 'DRAWING' && !status['UPLOADED_DRAWING']" class="collab-alert">
       <h1>WELCOME TO YOUR DESIGN STUDIO!</h1>
       <p>Please upload pictures of your space and a hand drawn floor plan. The floor plan should be from a birds eye view and include height and width of each wall.</p>
-      <p> Please also include dimensions for doors, windows, or any dditional items that could affect the design.</p>
+      <p> Please also include dimensions for doors, windows, or any additional items that could affect the design.</p>
       <p class="note">( 2 Picture Limit)</p>
       <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
+    </div>
+    <div *ngIf="view == 'DRAWING' && status['UPLOADED_DRAWING']" class="collab-image">
+      <img src="assets/sample-floorplan.jpg">
+      <div class="collab-thumb"><img src="assets/sample-floorplan.jpg"><img src="TODO:close" (click)"deleteItem()"></div>
+      <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
   </div>
   <div class="project-details">
@@ -41,7 +46,14 @@
         <img src="assets/{{ project.projectType }}.png">
       </div>
       <h1>{{ types[project.projectType] }}</h1>
-      <h1></h1>
+      <h1>$2k or less</h1>
+      <h4>Project Notes</h4>
+      <p>Style: Industrial & Scandinavian/Transitional, Modern, Scandinavian, Modern</p>
+      <p>ZIP Code: 90066</p>
+      <p>Share your space with: family</p>
+      <p>Pet friendly options: yes</p>
+      <p>Pet friendly options: yes</p>
+      <p>Limited access: yes</p>
     </div>
   </div>
 </ion-content>

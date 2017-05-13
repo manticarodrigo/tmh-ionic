@@ -19,6 +19,12 @@ export class Details {
     DINING_ROOM: 'DINING ROOM',
     HOME_OFFICE: 'OFFICE'
   }
+  status = {
+    UPLOADED_DRAWING: true,
+    UPLOADED_INSPIRATION: false,
+    UPLOADED_FURNITURE: false
+  };
+  view = 'DRAWING';
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
