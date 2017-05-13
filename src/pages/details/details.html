@@ -43,23 +43,38 @@
       </div>
       <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
-
+    <div class="collab-details-menu">
+      <div class="menu-item" [class.inactive]="view != 'DRAWING'" (click)="selectMenuItem('DRAWING')">
+        <img src="assets/drawing.png">
+        <a class="desktop">YOUR ROOM</a>
+      </div>
+      <div class="menu-item" [class.inactive]="view != 'INSPIRATION'" (click)="selectMenuItem('INSPIRATION')">
+        <img src="assets/inspiration.png">
+        <a class="desktop">INSPIRATION</a>
+      </div>
+      <div class="menu-item" [class.inactive]="view != 'FURNITURE'" (click)="selectMenuItem('FURNITURE')">
+        <img src="assets/furniture.png">
+        <a class="desktop">EXISTING FURNITURE</a>
+      </div>
+    </div>
   </div>
   <div class="project-details">
-    <h1>Project Details</h1>
-    <div *ngIf="project" class="project-details-box">
-      <div class="project-img">
-        <img src="assets/{{ project.projectType }}.png">
+    <div class="project-details-wrapper">
+      <h1>Project Details</h1>
+      <div *ngIf="project" class="project-details-box">
+        <div class="project-img">
+          <img src="assets/{{ project.projectType }}.png">
+        </div>
+        <h1>{{ types[project.projectType] }}</h1>
+        <h1>$2k or less</h1>
+        <h4>Project Notes</h4>
+        <p>Style: Industrial & Scandinavian/Transitional, Modern, Scandinavian, Modern</p>
+        <p>ZIP Code: 90066</p>
+        <p>Share your space with: family</p>
+        <p>Pet friendly options: yes</p>
+        <p>Pet friendly options: yes</p>
+        <p>Limited access: yes</p>
       </div>
-      <h1>{{ types[project.projectType] }}</h1>
-      <h1>$2k or less</h1>
-      <h4>Project Notes</h4>
-      <p>Style: Industrial & Scandinavian/Transitional, Modern, Scandinavian, Modern</p>
-      <p>ZIP Code: 90066</p>
-      <p>Share your space with: family</p>
-      <p>Pet friendly options: yes</p>
-      <p>Pet friendly options: yes</p>
-      <p>Limited access: yes</p>
     </div>
   </div>
 </ion-content>

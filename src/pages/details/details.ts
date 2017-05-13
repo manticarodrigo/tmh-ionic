@@ -123,4 +123,10 @@ export class Details {
     this.selectedDrawing = drawing;
   }
 
+  selectMenuItem(item) {
+    console.log("menu item pressed:");
+    console.log(item);
+    this.view = item;
+  }
+
 }
