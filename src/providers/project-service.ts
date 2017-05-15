@@ -147,4 +147,38 @@ export class ProjectService {
     return Promise.all(promises);
   }
 
+  fetchQuestionAnswer(project, questionNum) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("fetching question answer for question num:");
+      console.log(questionNum);
+      const questionMap = {
+        1: 20454,
+        2: 20455,
+        3: 20456,
+        4: 20457,
+        5: 20458
+      }
+      var questionId = questionMap[questionNum];
+      const endpoint = this.api + "/tmh-project-portlet.userquestionanswer/fetch-by-user-id-question-id/userId/" + project.userId + "/questionId/" + questionId;
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("found question answer:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  fetchQuestionAnswers(project) {
+    console.log("fetching question answers for project:");
+      console.log(project.projectId);
+    var promises = [];
+    for (var i=1;i<6;i++) {
+      promises.push(this.fetchQuestionAnswer(project, i));
+    }
+    return Promise.all(promises);
+  }
+
 }

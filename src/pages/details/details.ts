@@ -39,7 +39,7 @@ export class DetailsPage {
   drawings: any;
   inspirations: any;
   furnitures: any;
-
+  answers = {};
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
@@ -70,6 +70,52 @@ export class DetailsPage {
           self.drawings = files;
         });
       }
+    });
+    this.projectService.getProjectDetailType(this.project.projectId, "INSPIRATION")
+    .then(data => {
+      console.log("component received detail");
+      console.log(data);
+      if (!data['exception']) {
+        var ids = [];
+        for (var key in data) {
+          const file = data[key];
+          ids.push(file.fileEntryId);
+        }
+        self.projectService.getFileEntries(ids)
+        .then(files => {
+          console.log("component received files");
+          console.log(files);
+          self.status.UPLOADED_INSPIRATION = true;
+          self.selectedInspiration = files[0];
+          self.inspirations = files;
+        });
+      }
+    });
+    this.projectService.getProjectDetailType(this.project.projectId, "FURNITURE")
+    .then(data => {
+      console.log("component received detail");
+      console.log(data);
+      if (!data['exception']) {
+        var ids = [];
+        for (var key in data) {
+          const file = data[key];
+          ids.push(file.fileEntryId);
+        }
+        self.projectService.getFileEntries(ids)
+        .then(files => {
+          console.log("component received files");
+          console.log(files);
+          self.status.UPLOADED_FURNITURE = true;
+          self.selectedFurniture = files[0];
+          self.furnitures = files;
+        });
+      }
+    });
+    this.projectService.fetchQuestionAnswers(this.project)
+    .then(answers => {
+      console.log("component received answers:");
+      console.log(answers);
+      self.answers = answers;
     });
   }
 

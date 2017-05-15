@@ -91,7 +91,7 @@ export class UserService {
 
   setCurrentUser(user, token) {
     const self = this;
-    console.log("Setting current user and token:");
+    console.log("setting current user and token:");
     console.log(user);
     console.log(token);
     const headers = this.generateHeader(token);
@@ -101,7 +101,7 @@ export class UserService {
         self.fetchGroups();
         self.imageForUser(user)
         .then(url => {
-          console.log("Found user image url:");
+          console.log("found user image url:");
           console.log(url);
           if (url) {
             user.photoURL = url;
@@ -134,7 +134,7 @@ export class UserService {
     return new Promise((resolve, reject) => {
       self.imageService.getImage(user.portraitId, headers, (data) => {
         if (data) {
-          console.log("Adding data to dropdown image");
+          console.log("adding data to dropdown image");
           console.log(data);
           var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
           if (data.modifiedDate) {
@@ -142,7 +142,7 @@ export class UserService {
           }
           resolve(photoURL);
         } else {
-          console.log("No image found");
+          console.log("no image found");
           resolve(null);
         }
       });
@@ -159,7 +159,7 @@ export class UserService {
     this.http.get(endpoint, {headers: this.headers})
     .map(res => res.json())
     .subscribe(data => {
-      console.log("Fetched user:");
+      console.log("fetched user:");
       console.log(data);
       if (!data.exception) {
         data.shortName = data.firstName + ' ' + data.lastName.split('')[0] + '.';
@@ -169,7 +169,7 @@ export class UserService {
   }
 
   fetchUsers(uids): Promise<any> {
-    console.log("Getting users with ids: " + JSON.stringify(uids));
+    console.log("getting users with ids: " + JSON.stringify(uids));
     const self = this;
     var promises = [];
     uids.forEach(uid => {
@@ -179,7 +179,7 @@ export class UserService {
               self.http.get(endpoint, {headers: self.headers})
               .map(res => res.json())
               .subscribe(data => {
-                console.log("Fetched user:");
+                console.log("fetched user:");
                 console.log(data);
                 if (!data.exception) {
                   data.shortName = data.firstName + ' ' + data.lastName.split('')[0] + '.';
@@ -201,7 +201,7 @@ export class UserService {
     this.http.get(endpoint, {headers: this.headers})
     .map(res => res.json())
     .subscribe(data => {
-      console.log("Fetched groups:");
+      console.log("fetched groups:");
       console.log(data);
       if (!data.exception) {
         for (var key in data) {
