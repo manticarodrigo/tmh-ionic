@@ -118,7 +118,7 @@
         <h1>{{ types[project.projectType] }}</h1>
         <h1 *ngIf="answers[4]">{{ answers[4].answer }}</h1>
         <h4>Project Notes</h4>
-        <p>Style: Industrial & Scandinavian/Transitional, Modern, Scandinavian, Modern</p>
+        <p *ngIf="project.style">Style: {{ project.style }}</p>
         <p *ngIf="answers[0]">ZIP Code: {{ answers[0].answer }}</p>
         <p *ngIf="answers[1]">Share your space with: {{ answers[1].answer }}</p>
         <p *ngIf="answers[2]">Pet friendly options: {{ answers[2].answer }}</p>
