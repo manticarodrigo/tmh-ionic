@@ -11,6 +11,20 @@ export class UserService {
   currentUser: any;
   headers: any;
   api: any;
+  groups = {
+    client: {
+      groupId: 20484,
+    },
+    designer: {
+      groupId: 20488
+    },
+    operator: {
+      groupId: 20492
+    },
+    guest: {
+      groupId: 20182
+    }
+  }
   
   constructor(private http: Http,
               private storage: Storage,
@@ -84,6 +98,7 @@ export class UserService {
     return new Promise((resolve, reject) => {
       if (user && token) {
         self.headers = headers;
+        self.fetchGroups();
         self.imageForUser(user)
         .then(url => {
           console.log("Found user image url:");
@@ -150,34 +165,66 @@ export class UserService {
         data.shortName = data.firstName + ' ' + data.lastName.split('')[0] + '.';
       }
       callback(data);
-    })
+    });
   }
 
   fetchUsers(uids): Promise<any> {
-      console.log("Getting users with ids: " + JSON.stringify(uids));
-      const self = this;
-      var promises = [];
-      uids.forEach(uid => {
-          if (uid) {
-            let promise = new Promise((resolve, reject) => {
-                const endpoint = this.api + "/user/get-user-by-id/userId/" + uid + "?p_auth=[kgKg7erN]";
-                self.http.get(endpoint, {headers: self.headers})
-                .map(res => res.json())
-                .subscribe(data => {
-                  console.log("Fetched user:");
-                  console.log(data);
-                  if (!data.exception) {
-                    data.shortName = data.firstName + ' ' + data.lastName.split('')[0] + '.';
-                    resolve(data);
-                  } else {
-                    resolve(null);
-                  }
-                })
-            });
-            promises.push(promise);
-          }
-      });
-      return Promise.all(promises);
-    }
+    console.log("Getting users with ids: " + JSON.stringify(uids));
+    const self = this;
+    var promises = [];
+    uids.forEach(uid => {
+        if (uid) {
+          let promise = new Promise((resolve, reject) => {
+              const endpoint = this.api + "/user/get-user-by-id/userId/" + uid;
+              self.http.get(endpoint, {headers: self.headers})
+              .map(res => res.json())
+              .subscribe(data => {
+                console.log("Fetched user:");
+                console.log(data);
+                if (!data.exception) {
+                  data.shortName = data.firstName + ' ' + data.lastName.split('')[0] + '.';
+                  resolve(data);
+                } else {
+                  resolve(null);
+                }
+              })
+          });
+          promises.push(promise);
+        }
+    });
+    return Promise.all(promises);
+  }
+
+  fetchGroups() {
+    const self = this;
+    const endpoint = this.api + "/group/get-groups/companyId/20155/parentGroupId/0/site/true";
+    this.http.get(endpoint, {headers: this.headers})
+    .map(res => res.json())
+    .subscribe(data => {
+      console.log("Fetched groups:");
+      console.log(data);
+      if (!data.exception) {
+        for (var key in data) {
+          const group = data[key];
+          self.groups[group.name.toLowerCase()] = group;
+        }
+        console.log(self.groups);
+      }
+    });
+  }
+
+  hasUserGroup(user, group, callback) {
+    const self = this;
+    const endpoint = this.api + "/group/has-user-group/userId/" + user.userId + "/groupId/" + group.groupId;
+    this.http.get(endpoint, {headers: this.headers})
+    .map(res => res.json())
+    .subscribe(data => {
+      console.log("user has group:");
+      console.log(user.firstName);
+      console.log(group.name);
+      console.log(data);
+      callback(data);
+    });
+  }
 
 }

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+
 import { UserService } from '../../providers/user-service';
+import { ProjectService } from '../../providers/project-service';
 
 import { ChatPage } from '../chat/chat';
 
@@ -27,61 +29,48 @@ export class DetailsPage {
   }
   status = {
     UPLOADED_DRAWING: false,
-    UPLOADED_INSPIRATION: true,
-    UPLOADED_FURNITURE: true
+    UPLOADED_INSPIRATION: false,
+    UPLOADED_FURNITURE: false
   };
   view = 'DRAWING';
-  selectedDrawing = {
-    id: 1,
-    url: "assets/sample-floorplan.jpg"
-  };
-  selectedInspiration = {
-    id: 1,
-    url: "assets/sample-floorplan.jpg"
-  };
-  selectedFurniture = {
-    id: 1,
-    url: "assets/sample-floorplan.jpg"
-  };
-  drawings = [
-    {
-      id: 1,
-      url: "assets/sample-floorplan.jpg"
-    },
-    {
-      id: 2,
-      url: "assets/STUDIO.png"
-    }
-  ];
-  inspirations = [
-    {
-      id: 1,
-      url: "assets/sample-floorplan.jpg"
-    },
-    {
-      id: 2,
-      url: "assets/STUDIO.png"
-    }
-  ];
-  furnitures = [
-    {
-      id: 1,
-      url: "assets/sample-floorplan.jpg"
-    },
-    {
-      id: 2,
-      url: "assets/STUDIO.png"
-    }
-  ];
+  selectedDrawing: any;
+  selectedInspiration: any;
+  selectedFurniture: any;
+  drawings: any;
+  inspirations: any;
+  furnitures: any;
+
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
+              private projectService: ProjectService,
               private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
               private modalCtrl: ModalController,
               private platform: Platform) {
+    const self = this;
     this.user = this.userService.currentUser;
     this.project = this.navParams.get('project');
+    this.projectService.getProjectDetailType(this.project.projectId, "DRAWING")
+    .then(data => {
+      console.log("component received detail");
+      console.log(data);
+      if (!data['exception']) {
+        var ids = [];
+        for (var key in data) {
+          const file = data[key];
+          ids.push(file.fileEntryId);
+        }
+        self.projectService.getFileEntries(ids)
+        .then(files => {
+          console.log("component received files");
+          console.log(files);
+          self.status.UPLOADED_DRAWING = true;
+          self.selectedDrawing = files[0];
+          self.drawings = files;
+        });
+      }
+    });
   }
 
   homePressed() {

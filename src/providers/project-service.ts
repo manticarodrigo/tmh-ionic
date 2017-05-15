@@ -28,7 +28,7 @@ export class ProjectService {
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log("Found projects:");
+        console.log("found projects:");
         console.log(data);
         resolve(data);
       });
@@ -42,7 +42,7 @@ export class ProjectService {
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log("Found projects:");
+        console.log("found projects:");
         console.log(data);
         resolve(data);
       });
@@ -56,7 +56,7 @@ export class ProjectService {
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log("Found projects:");
+        console.log("found projects:");
         console.log(data);
         resolve(data);
       });
@@ -70,7 +70,7 @@ export class ProjectService {
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log("Found projects:");
+        console.log("found projects:");
         console.log(data);
         resolve(data);
       });
@@ -84,7 +84,7 @@ export class ProjectService {
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log("Found projects:");
+        console.log("found projects:");
         console.log(data);
         resolve(data);
       });
@@ -94,18 +94,57 @@ export class ProjectService {
   getProjectDetailType(projectId, type) {
     const self = this;
     return new Promise((resolve, reject) => {
-      console.log("Fetching project details for type:");
+      console.log("fetching project details for type:");
       console.log(projectId);
       console.log(type);
       const endpoint = this.api + "/tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type/project-id/" + projectId + "/project-detail-type-str/" + type;
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log("Found project detail:");
+        console.log("found project detail:");
         console.log(data);
         resolve(data);
       });
     });
+  }
+
+  getFileEntry(fileEntryId) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("fetching file with entry id:");
+      console.log(fileEntryId);
+      const endpoint = this.api + "/dlfileentry/get-file-entry/fileEntryId/" + fileEntryId;
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("found file data:");
+        console.log(data);
+        if (!data.exception) {
+          const repositoryId = data.repositoryId;
+          const folderId = data.folderId;
+          const title = data.title;
+          const uuid = data.uuid;
+          const version = data.version;
+          const createDate = data.createDate;
+          const url = "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
+          data.url = url;
+          resolve(data);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  getFileEntries(ids) {
+    console.log("fetching files with ids:");
+    console.log(ids);
+    var promises = [];
+    for (var key in ids) {
+      const id = ids[key];
+      promises.push(this.getFileEntry(id));
+    }
+    return Promise.all(promises);
   }
 
 }
