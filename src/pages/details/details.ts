@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, PopoverController, Platform } from 'ionic-angular';
-
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 import { UserService } from '../../providers/user-service';
 
 import { ChatPage } from '../chat/chat';
@@ -10,8 +9,14 @@ import { ChatPage } from '../chat/chat';
   templateUrl: 'details.html'
 })
 export class DetailsPage {
+  // Chat vars
+  false = false;
+  minimized = false;
+  maximized = false;
+  // User & project vars
   user: any;
   project: any;
+  // Step flow
   types = {
     BEDROOM: 'BEDROOM',
     LIVING_ROOM: 'LIVING ROOM',
@@ -45,6 +50,7 @@ export class DetailsPage {
               private userService: UserService,
               private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
+              private modalCtrl: ModalController,
               private platform: Platform) {
     this.user = this.userService.currentUser;
     this.project = this.navParams.get('project');
@@ -128,6 +134,19 @@ export class DetailsPage {
     console.log("menu item pressed:");
     console.log(item);
     this.view = item;
+  }
+
+  maximizeChat() {
+    console.log("chat fab pressed for project");
+    this.maximized = !this.maximized;
+  }
+
+  chatToggled() {
+    console.log("chat toggled");
+    this.minimized = !this.minimized;
+    if (this.maximized) {
+      this.maximized = !this.maximized;
+    }
   }
 
 }

@@ -5,6 +5,7 @@ import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 
 import { DetailsPage } from '../details/details';
+import { ChatPage } from '../chat/chat';
 
 @IonicPage()
 @Component({
@@ -219,7 +220,7 @@ export class Dashboard {
   chatFor(project) {
     console.log("Chat pressed for project:");
     console.log(project);
-    let modal = this.modalCtrl.create('Chat', {
+    let modal = this.modalCtrl.create(ChatPage, {
       project: project
     });
     modal.present();

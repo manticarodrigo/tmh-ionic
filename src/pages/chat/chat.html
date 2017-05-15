@@ -10,7 +10,7 @@
         </ion-title>
         <ion-buttons end>
             <button class="exit" ion-fab (click)="dismiss()">
-                    <img src="assets/exit.png">
+                <img src="assets/exit.png">
             </button>
         </ion-buttons>
     </ion-navbar>
@@ -38,14 +38,14 @@
 </ion-content>
 <ion-footer class="chat-footer">
   <form name="chat-form">
-      <button class="attach" type="button" (click)="presentActionSheet()">
-          <img src="assets/attach.png">
-      </button>
-      <div class="chat-message">
-          <ion-textarea type="text" name="chat-message" [(ngModel)]="message.text" placeholder="Enter a message" autocorrect="on"></ion-textarea>
-      </div>
-      <button ion-button class="send" type="button" (click)="send()">
-          SEND
-      </button>
+    <button class="attach" type="button" (click)="presentActionSheet()">
+    <img src="assets/attach.png">
+    </button>
+    <div class="chat-message">
+    <ion-textarea type="text" name="chat-message" [(ngModel)]="message.text" placeholder="Enter a message" autocorrect="on"></ion-textarea>
+    </div>
+    <button ion-button class="send" type="button" (click)="send()">
+    SEND
+    </button>
   </form>
 </ion-footer>

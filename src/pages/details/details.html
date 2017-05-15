@@ -1,4 +1,4 @@
-<ion-header>
+<ion-header [hidden]="maximized">
   <ion-navbar>
     <ion-buttons left>
       <button ion-button (click)="homePressed()">
@@ -14,7 +14,12 @@
     </ion-buttons>
   </ion-navbar>
   <div class="sub-nav">
-    <button ion-button type="button" (click)="selectTab()" full>
+    <div class="desktop menu">
+      <div><a class="active">1. DETAILS</a></div>
+      <div><a (click)="selectedTabLink('DESIGN')">2. DESIGN</a></div>
+      <div><a (click)="selectedTabLink('FINAL_DELIVERY')">3. FINAL DELIVERY</a></div>
+    </div>
+    <button class="mobile" ion-button type="button" (click)="selectTab()" full>
       1. DETAILS
       <img src="assets/down.png">
     </button>
@@ -22,7 +27,7 @@
 </ion-header>
 
 <ion-content>
-  <div class="collab-workzone">
+  <div class="collab-workzone" [class.maximized]="minimized">
     <div class="collab-details-menu-desktop desktop">
       <div class="menu-item" [class.inactive]="view != 'DRAWING'" (click)="selectMenuItem('DRAWING')">
         <img src="assets/drawing.png">
@@ -37,7 +42,7 @@
         <a class="desktop">EXISTING FURNITURE</a>
       </div>
     </div>
-    <button class="chat-fab mobile" ion-fab (click)="chatPressed()">
+    <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
     <div *ngIf="view == 'DRAWING' && !status['UPLOADED_DRAWING']" class="collab-alert">
@@ -68,7 +73,12 @@
         <img src="assets/furniture.png">
       </div>
     </div>
-    <page-chat [project]="project" class="chat-wrapper desktop"></page-chat>
+    <div class="chat-header desktop" [class.header-minimized]="minimized" [class.header-maximized]="maximized" (click)="chatToggled()">
+      <img class="chat-img" src="assets/chat.png">
+      <h2 class="chat-title">Chat</h2>
+      <img class="chat-minimize" src="assets/down-arrow.png">
+    </div>
+    <page-chat [project]="project" [class.wrapper-minimized]="minimized" [class.wrapper-maximized]="maximized" class="chat-wrapper desktop"></page-chat>
   </div>
   <div class="project-details">
     <div class="project-details-wrapper">

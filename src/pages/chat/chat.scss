@@ -1,6 +1,7 @@
 page-chat {
-  .toolbar {
+  .toolbar-title {
     text-transform: capitalize;
+    font-weight: 500;
   }
   .toolbar-background {
     background-color: #fff !important;
@@ -34,7 +35,7 @@ page-chat {
       }
   }
   .alert-text {
-    max-width: 300px;
+    max-width: 75%;
     text-align: center;
     margin: 0;
     color: color($colors, primary);
