@@ -26,16 +26,44 @@ export class DetailsPage {
     HOME_OFFICE: 'OFFICE'
   }
   status = {
-    UPLOADED_DRAWING: true,
-    UPLOADED_INSPIRATION: false,
-    UPLOADED_FURNITURE: false
+    UPLOADED_DRAWING: false,
+    UPLOADED_INSPIRATION: true,
+    UPLOADED_FURNITURE: true
   };
   view = 'DRAWING';
   selectedDrawing = {
     id: 1,
     url: "assets/sample-floorplan.jpg"
   };
+  selectedInspiration = {
+    id: 1,
+    url: "assets/sample-floorplan.jpg"
+  };
+  selectedFurniture = {
+    id: 1,
+    url: "assets/sample-floorplan.jpg"
+  };
   drawings = [
+    {
+      id: 1,
+      url: "assets/sample-floorplan.jpg"
+    },
+    {
+      id: 2,
+      url: "assets/STUDIO.png"
+    }
+  ];
+  inspirations = [
+    {
+      id: 1,
+      url: "assets/sample-floorplan.jpg"
+    },
+    {
+      id: 2,
+      url: "assets/STUDIO.png"
+    }
+  ];
+  furnitures = [
     {
       id: 1,
       url: "assets/sample-floorplan.jpg"
@@ -128,6 +156,18 @@ export class DetailsPage {
     console.log("thumb pressed for drawing:");
     console.log(drawing);
     this.selectedDrawing = drawing;
+  }
+
+  selectInspiration(inspiration) {
+    console.log("thumb pressed for inspiration:");
+    console.log(inspiration);
+    this.selectedInspiration = inspiration;
+  }
+
+  selectFurniture(furniture) {
+    console.log("thumb pressed for furniture:");
+    console.log(furniture);
+    this.selectedFurniture = furniture;
   }
 
   selectMenuItem(item) {

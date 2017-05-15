@@ -39,19 +39,23 @@ export class ChatPage {
     }
     if (this.navParams.get('project')) {
       this.project = this.navParams.get('project');
+      console.log("found project for chat:");
+      console.log(this.project);
+      this.chatService.join(this.project.projectId);
+      this.fetchMessages();
+      this.observeMessages();
     }
-    this.fetchMessages();
-    this.observeMessages();
   }
 
   ionViewWillLoad() {
     this.statusBar.styleDefault();
-    this.chatService.join(this.project.projectId);
   }
 
   ionViewWillLeave() {
     this.statusBar.styleLightContent();
-    this.chatService.leave(this.project.projectId);
+    if (this.project) {
+      this.chatService.leave(this.project.projectId);
+    }
   }
 
   fetchMessages() {

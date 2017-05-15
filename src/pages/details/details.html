@@ -62,6 +62,34 @@
       </div>
       <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
+    <div *ngIf="view == 'INSPIRATION' && !status['UPLOADED_INSPIRATION']" class="collab-alert">
+      <p>Upload inspiration images that you would like your designer to reference for your space.</p>
+      <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
+    </div>
+    <div *ngIf="view == 'INSPIRATION' && status['UPLOADED_INSPIRATION']" class="collab-image">
+      <img class="selected-img" [src]="selectedInspiration.url">
+      <div class="collab-thumb-wrapper">
+        <div class="collab-thumb" *ngFor="let thumb of inspirations">
+          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedInspiration.id" (click)="selectInspiration(thumb)">
+          <img class="delete" src="assets/delete.png" (click)="deleteInspiration(thumb)">
+        </div>
+      </div>
+      <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+    </div>
+    <div *ngIf="view == 'FURNITURE' && !status['UPLOADED_FURNITURE']" class="collab-alert">
+      <p>Upload pictures and note measurements of any existing furniture that you would like the designer to incorporate into their designs.</p>
+      <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
+    </div>
+    <div *ngIf="view == 'FURNITURE' && status['UPLOADED_FURNITURE']" class="collab-image">
+      <img class="selected-img" [src]="selectedFurniture.url">
+      <div class="collab-thumb-wrapper">
+        <div class="collab-thumb" *ngFor="let thumb of furnitures">
+          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedFurniture.id" (click)="selectFurniture(thumb)">
+          <img class="delete" src="assets/delete.png" (click)="deleteFurniture(thumb)">
+        </div>
+      </div>
+      <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+    </div>
     <div class="collab-details-menu-mobile mobile">
       <div class="menu-item" [class.inactive]="view != 'DRAWING'" (click)="selectMenuItem('DRAWING')">
         <img src="assets/drawing.png">
