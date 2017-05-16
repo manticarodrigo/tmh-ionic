@@ -27,61 +27,23 @@
 </ion-header>
 
 <ion-content>
-  <div class="collab-workzone" [class.maximized]="minimized">
+  <div class="collab-final-delivery">
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
-    <div *ngIf="view == 'DRAWING' && viewMode == 'CLIENT' && !status['UPLOADED_DRAWING']" class="collab-alert">
-      <h1>WELCOME TO YOUR DESIGN STUDIO!</h1>
-      <p>Please upload pictures of your space and a hand drawn floor plan. The floor plan should be from a birds eye view and include height and width of each wall.</p>
-      <p> Please also include dimensions for doors, windows, or any additional items that could affect the design.</p>
-      <p class="note">( 2 Picture Limit)</p>
-      <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
-    </div>
-    <div *ngIf="view == 'DRAWING' && viewMode == 'CLIENT' && status['UPLOADED_DRAWING']" class="collab-image">
-      <img class="selected-img" [src]="selectedDrawing.url">
-      <div class="collab-thumb-wrapper">
-        <div class="collab-thumb" *ngFor="let thumb of drawings">
-          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedDrawing.id" (click)="selectDrawing(thumb)">
-          <img class="delete" src="assets/delete.png" (click)="deleteDrawing(thumb)">
-        </div>
-      </div>
-      <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
-    </div>
-    <div *ngIf="view == 'INSPIRATION' && viewMode == 'CLIENT' && !status['UPLOADED_INSPIRATION']" class="collab-alert">
-      <p>Upload inspiration images that you would like your designer to reference for your space.</p>
-      <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
-    </div>
-    <div *ngIf="view == 'INSPIRATION' && viewMode == 'CLIENT' && status['UPLOADED_INSPIRATION']" class="collab-image">
-      <img class="selected-img" [src]="selectedInspiration.url">
-      <div class="collab-thumb-wrapper">
-        <div class="collab-thumb" *ngFor="let thumb of inspirations">
-          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedInspiration.id" (click)="selectInspiration(thumb)">
-          <img class="delete" src="assets/delete.png" (click)="deleteInspiration(thumb)">
-        </div>
-      </div>
-      <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
-    </div>
-    <div *ngIf="view == 'FURNITURE' && viewMode == 'CLIENT' && !status['UPLOADED_FURNITURE']" class="collab-alert">
-      <p>Upload pictures and note measurements of any existing furniture that you would like the designer to incorporate into their designs.</p>
-      <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
-    </div>
-    <div *ngIf="view == 'FURNITURE' && viewMode == 'CLIENT' && status['UPLOADED_FURNITURE']" class="collab-image">
-      <img class="selected-img" [src]="selectedFurniture.url">
-      <div class="collab-thumb-wrapper">
-        <div class="collab-thumb" *ngFor="let thumb of furnitures">
-          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedFurniture.id" (click)="selectFurniture(thumb)">
-          <img class="delete" src="assets/delete.png" (click)="deleteFurniture(thumb)">
-        </div>
-      </div>
-      <button (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+    <div class="designer-note">
+      <h4 *ngIf="client">Hi {{ client.firstName }}!</h4>
+      {{ project.designerNote }}
     </div>
   </div>
-  <button class="mobile footer-dropdown" ion-button type="button" (click)="selectFooterTab()" full>
-    DESIGNER NOTE
-    <img src="assets/down.png">
-  </button>
+  <div class="footer">
+    <button class="mobile footer-dropdown" ion-button type="button" (click)="selectFooterTab()" full>
+      DESIGNER NOTE
+      <img src="assets/down.png">
+    </button>
+  </div>
 </ion-content>
+
 <div class="chat-header desktop" [class.header-minimized]="minimized" [class.header-maximized]="maximized" (click)="chatToggled()">
   <img class="chat-img" src="assets/chat.png">
   <h2 class="chat-title">Chat</h2>
