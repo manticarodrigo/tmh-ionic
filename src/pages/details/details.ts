@@ -23,12 +23,12 @@ export class DetailsPage {
   client: any;
   // Step flow
   types = {
-    BEDROOM: 'BEDROOM',
-    LIVING_ROOM: 'LIVING ROOM',
-    MULTIPURPOSE_ROOM: 'MULTIPURPOSE ROOM',
-    STUDIO: 'STUDIO',
-    DINING_ROOM: 'DINING ROOM',
-    HOME_OFFICE: 'OFFICE'
+    BEDROOM: 'Bedroom',
+    LIVING_ROOM: 'Living Room',
+    MULTIPURPOSE_ROOM: 'Multipurpose Room',
+    STUDIO: 'Studio',
+    DINING_ROOM: 'Dining Room',
+    HOME_OFFICE: 'Office'
   }
   status = {
     UPLOADED_DRAWING: false,
@@ -190,6 +190,7 @@ export class DetailsPage {
   }
 
   selectTab() {
+    const self = this;
     console.log("Toggling tab dropdown!");
     let popover = this.popoverCtrl.create('TabDropdown', {
       tabs: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
@@ -202,7 +203,9 @@ export class DetailsPage {
         if (data == 'FINAL DELIVERY')
           page = FinalDeliveryPage;
         if (page)
-          this.navCtrl.setRoot(page);
+          this.navCtrl.setRoot(page, {
+            project: self.project
+          });
       }
     });
     popover.present();

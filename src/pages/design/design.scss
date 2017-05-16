@@ -1,4 +1,17 @@
 page-design {
+  .toolbar-title {
+    @media only screen and (max-width: 700px) {
+      font-size: 16px !important;
+      .page {
+        display: block;
+        font-size: 14px !important;
+      }
+    }
+    font-size: 26px;
+    .page {
+      font-size: 16px;
+    }
+  }
   .fixed-content {
     background-color: color($colors, secondary);
   }
@@ -139,6 +152,26 @@ page-design {
       .button {
         max-width: 300px;
       }
+    }
+  }
+  .collection-box {
+    position: relative;
+    @media only screen and (min-width: 700px) {
+      padding-left: 7.5%;
+      .button {
+        position: absolute;
+        top: 40px;
+        right: 7.5%;
+        width: 250px !important;
+      }
+    }
+    padding: 20px;
+    background-color: #fff;
+    p {
+      max-width: 350px;
+    }
+    .button {
+      width: 100%;
     }
   }
   .project-items {

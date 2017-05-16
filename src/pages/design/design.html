@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title>Design</ion-title>
+    <ion-title><span *ngIf="client">{{ client.firstName }}'s </span><span *ngIf="project">{{ types[project.projectType] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="dropdown" ion-button (click)="toggleDropdown()">
         <img *ngIf="user" [src]="user.photoURL">
@@ -52,9 +52,10 @@
       <img src="conceptboard.url">
     </div>
   </div>
-  <div class="collection-box">
+  <div *ngIf="viewMode == 'CLIENT' && items" class="collection-box">
     <h1>YOUR COLLECTION</h1>
     <p>Review your furnishings and note the items that you would like to see alternatives from your designer. Happy with the collection? Go ahead and approve all!</p>
+    <button ion-button type="button">APPROVE & SUBMIT</button>
   </div>
   <ion-grid *ngIf="items" class="project-items">
     <ion-row class="project-items-wrapper">

@@ -22,6 +22,14 @@ export class DesignPage {
   project: any;
   client: any;
   // Step flow
+  types = {
+    BEDROOM: 'Bedroom',
+    LIVING_ROOM: 'Living Room',
+    MULTIPURPOSE_ROOM: 'Multipurpose Room',
+    STUDIO: 'Studio',
+    DINING_ROOM: 'Dining Room',
+    HOME_OFFICE: 'Office'
+  }
   view = 'APPROVE';
   viewMode = 'CLIENT';
   concepts: any;
@@ -140,6 +148,7 @@ export class DesignPage {
   }
 
   selectTab() {
+    const self = this;
     console.log("Toggling tab dropdown!");
     let popover = this.popoverCtrl.create('TabDropdown', {
       tabs: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
@@ -152,7 +161,9 @@ export class DesignPage {
         if (data == 'FINAL DELIVERY')
           page = FinalDeliveryPage;
         if (page)
-          this.navCtrl.setRoot(page);
+          this.navCtrl.setRoot(page, {
+            project: self.project
+          });
       }
     });
     popover.present();
