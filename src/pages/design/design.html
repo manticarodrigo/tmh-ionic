@@ -15,9 +15,9 @@
   </ion-navbar>
   <div class="sub-nav">
     <div class="desktop menu">
-      <div><a (click)="selectedTabLink('DETAILS')">1. DETAILS</a></div>
+      <div><a (click)="selectTabLink('DETAILS')">1. DETAILS</a></div>
       <div><a class="active">2. DESIGN</a></div>
-      <div><a (click)="selectedTabLink('FINAL_DELIVERY')">3. FINAL DELIVERY</a></div>
+      <div><a (click)="selectTabLink('FINAL_DELIVERY')">3. FINAL DELIVERY</a></div>
     </div>
     <button class="mobile" ion-button type="button" (click)="selectTab()" full>
       1. DESIGN
@@ -45,11 +45,19 @@
       </div>
       <button (click)="approveConcept()" ion-button full type="button">APPROVE CONCEPT</button>
     </div>
-    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && floorplan" class="collab-alert">
-      <img src="floorplan.url">
+    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && !floorplan" class="collab-alert">
+      <h1>HANG TIGHT</h1>
+      <p>Your designer is hard at work putting together the Floor Plan of your room! We will send you an email when it's time for your to make a selection.</p>
     </div>
-    <div *ngIf="view == 'CONCEPT_BOARD' && viewMode == 'CLIENT' && conceptboard" class="collab-alert">
-      <img src="conceptboard.url">
+    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && floorplan" class="collab-image">
+      <img [src]="floorplan.url" class="floorplan-img">
+    </div>
+    <div *ngIf="view == 'CONCEPT_BOARD' && viewMode == 'CLIENT' && conceptboard" class="collab-image">
+      <img [src]="conceptboard.url" class="selected-img">
+    </div>
+    <div *ngIf="view != 'APPROVE'" class="collab-design-switcher">
+      <a (click)="selectFloorplan()">FLOOR PLAN</a>
+      <a (click)="selectConceptboard()">CONCEPT BOARD</a>
     </div>
   </div>
   <div *ngIf="viewMode == 'CLIENT' && items" class="collection-box">

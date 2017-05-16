@@ -37,7 +37,6 @@ export class DesignPage {
   floorplan: any;
   conceptboard: any;
   items: any;
-  itemFiles: any;
   collectionTotal: any;
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
@@ -62,6 +61,64 @@ export class DesignPage {
         }
       });
     }
+    this.projectService.getProjectDetailType(this.project.projectId, "CONCEPT")
+    .then(data => {
+      console.log("design page received concepts:");
+      console.log(data);
+      if (!data['exception']) {
+        var ids = [];
+        for (var key in data) {
+          const detail = data[key];
+          ids.push(detail.fileEntryId);
+          if (detail && detail.projectDetailStatus == 'APPROVED') {
+            self.conceptboard = {};
+            console.log("concept was approved:");
+            console.log(detail);
+            self.projectService.getFileEntry(detail.fileEntryId)
+            .then(data => {
+              console.log("design page received approved concept file:");
+              console.log(data);
+              if (!data['exception']) {
+                self.conceptboard = data;
+                if (!self.floorplan) {
+                  self.view = 'CONCEPT_BOARD';
+                }
+              }
+            });
+          }
+        }
+        if (!self.conceptboard) {
+          self.projectService.getFileEntries(ids)
+          .then(files => {
+            console.log("design page received concept files:");
+            console.log(files);
+            self.concepts = data;
+            self.selectedConcept = data[0];
+          });
+        }
+      }
+    });
+    this.projectService.getProjectDetailType(this.project.projectId, "FLOOR_PLAN")
+    .then(data => {
+      console.log("design page received floorplan:");
+      console.log(data);
+      if (!data['exception']) {
+        var ids = [];
+        for (var key in data) {
+          const file = data[key];
+          ids.push(file.fileEntryId);
+        }
+        self.projectService.getFileEntry(ids[0])
+        .then(data => {
+          console.log("design page received floorplan file:");
+          console.log(data);
+          if (!data['exception']) {
+            self.floorplan = data;
+            self.view = 'FLOOR_PLAN';
+          }
+        });
+      }
+    });
     this.projectService.fetchItems(this.project)
     .then(data => {
       console.log("design page received item data:");
@@ -149,7 +206,7 @@ export class DesignPage {
 
   selectTab() {
     const self = this;
-    console.log("Toggling tab dropdown!");
+    console.log("toggling tab dropdown");
     let popover = this.popoverCtrl.create('TabDropdown', {
       tabs: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     });
@@ -169,6 +226,21 @@ export class DesignPage {
     popover.present();
   }
 
+  selectTabLink(link) {
+    const self = this;
+    console.log("selected tab link:");
+    console.log(link);
+    var page: any;
+    if (link == 'DETAILS')
+      page = DetailsPage;
+    if (link == 'FINAL DELIVERY')
+      page = FinalDeliveryPage;
+    if (page)
+      this.navCtrl.setRoot(page, {
+        project: self.project
+      });
+  }
+
   selectMenuItem(item) {
     console.log("menu item pressed:");
     console.log(item);
@@ -186,6 +258,16 @@ export class DesignPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
+  }
+
+  selectFloorplan() {
+    console.log("selected switcher floorplan link");
+    this.view = 'FLOOR_PLAN';
+  }
+
+  selectConceptboard() {
+    console.log("selected switcher conceptboard link");
+    this.view = 'CONCEPT_BOARD';
   }
 
 }

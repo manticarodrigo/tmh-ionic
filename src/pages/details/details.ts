@@ -69,7 +69,7 @@ export class DetailsPage {
     }
     this.projectService.getProjectDetailType(this.project.projectId, "DRAWING")
     .then(data => {
-      console.log("component received detail");
+      console.log("details page received drawings:");
       console.log(data);
       if (!data['exception']) {
         var ids = [];
@@ -79,7 +79,7 @@ export class DetailsPage {
         }
         self.projectService.getFileEntries(ids)
         .then(files => {
-          console.log("component received files");
+          console.log("details page received drawings files:");
           console.log(files);
           self.status.UPLOADED_DRAWING = true;
           self.selectedDrawing = files[0];
@@ -89,7 +89,7 @@ export class DetailsPage {
     });
     this.projectService.getProjectDetailType(this.project.projectId, "INSPIRATION")
     .then(data => {
-      console.log("component received detail");
+      console.log("details page received inspirations:");
       console.log(data);
       if (!data['exception']) {
         var ids = [];
@@ -99,7 +99,7 @@ export class DetailsPage {
         }
         self.projectService.getFileEntries(ids)
         .then(files => {
-          console.log("component received files");
+          console.log("details page received inspirations files");
           console.log(files);
           self.status.UPLOADED_INSPIRATION = true;
           self.selectedInspiration = files[0];
@@ -109,7 +109,7 @@ export class DetailsPage {
     });
     this.projectService.getProjectDetailType(this.project.projectId, "FURNITURE")
     .then(data => {
-      console.log("component received detail");
+      console.log("details page received furnitures:");
       console.log(data);
       if (!data['exception']) {
         var ids = [];
@@ -119,7 +119,7 @@ export class DetailsPage {
         }
         self.projectService.getFileEntries(ids)
         .then(files => {
-          console.log("component received files");
+          console.log("details page received furnitures files:");
           console.log(files);
           self.status.UPLOADED_FURNITURE = true;
           self.selectedFurniture = files[0];
@@ -129,7 +129,7 @@ export class DetailsPage {
     });
     this.projectService.fetchQuestionAnswers(this.project)
     .then(answers => {
-      console.log("component received answers:");
+      console.log("details page received answers:");
       console.log(answers);
       self.answers = answers;
     });
@@ -191,7 +191,7 @@ export class DetailsPage {
 
   selectTab() {
     const self = this;
-    console.log("Toggling tab dropdown!");
+    console.log("toggling tab dropdown");
     let popover = this.popoverCtrl.create('TabDropdown', {
       tabs: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     });
@@ -209,6 +209,21 @@ export class DetailsPage {
       }
     });
     popover.present();
+  }
+
+  selectTabLink(link) {
+    const self = this;
+    console.log("selected tab link:");
+    console.log(link);
+    var page: any;
+    if (link == 'DESIGN')
+      page = DesignPage;
+    if (link == 'FINAL DELIVERY')
+      page = FinalDeliveryPage;
+    if (page)
+      this.navCtrl.setRoot(page, {
+        project: self.project
+      });
   }
 
   selectDrawing(drawing) {
