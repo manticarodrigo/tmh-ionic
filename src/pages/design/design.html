@@ -49,7 +49,7 @@
       <h1>HANG TIGHT</h1>
       <p>Your designer is hard at work putting together the Floor Plan of your room! We will send you an email when it's time for your to make a selection.</p>
     </div>
-    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && floorplan" class="collab-image">
+    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && floorplan" class="collab-image" id="map">
       <img [src]="floorplan.url" class="floorplan-img">
     </div>
     <div *ngIf="view == 'CONCEPT_BOARD' && viewMode == 'CLIENT' && conceptboard" class="collab-image">
