@@ -181,4 +181,20 @@ export class ProjectService {
     return Promise.all(promises);
   }
 
+  fetchItems(project) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("fetching items for project:");
+      console.log(project.projectId);
+      const endpoint = this.api + "/tmh-project-portlet.projectitem/find-by-project-id/projectId/" + project.projectId;
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("found project items:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
 }

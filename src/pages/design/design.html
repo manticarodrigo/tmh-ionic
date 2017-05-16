@@ -1,18 +1,83 @@
-<!--
-  Generated template for the Design page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-
   <ion-navbar>
+    <ion-buttons left>
+      <button ion-button (click)="homePressed()">
+        <img style="width:54px;margin:5px;" src="assets/logo.png">
+      </button>
+    </ion-buttons>
     <ion-title>Design</ion-title>
+    <ion-buttons end>
+      <button class="dropdown" ion-button (click)="toggleDropdown()">
+        <img *ngIf="user" [src]="user.photoURL">
+        <img *ngIf="!user" src="assets/tmh.png">
+      </button>
+    </ion-buttons>
   </ion-navbar>
-
+  <div class="sub-nav">
+    <div class="desktop menu">
+      <div><a (click)="selectedTabLink('DETAILS')">1. DETAILS</a></div>
+      <div><a class="active">2. DESIGN</a></div>
+      <div><a (click)="selectedTabLink('FINAL_DELIVERY')">3. FINAL DELIVERY</a></div>
+    </div>
+    <button class="mobile" ion-button type="button" (click)="selectTab()" full>
+      1. DESIGN
+      <img src="assets/down.png">
+    </button>
+  </div>
 </ion-header>
 
-
-<ion-content padding>
-
+<ion-content>
+  <div class="collab-workzone" [class.maximized]="minimized">
+    <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
+      <img src="assets/chats.png">
+    </button>
+    <div *ngIf="view == 'APPROVE' && viewMode == 'CLIENT' && !concepts" class="collab-alert">
+      <h1>WELCOME TO THE DESIGN STAGE!</h1>
+      <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
+    </div>
+    <div *ngIf="view == 'APPROVE' && viewMode == 'CLIENT' && concepts" class="collab-image">
+      <img class="selected-img" [src]="selectedConcept.url">
+      <div class="collab-thumb-wrapper">
+        <div class="collab-thumb" *ngFor="let thumb of concepts">
+          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
+          <img class="delete" src="assets/delete.png" (click)="deleteDrawing(thumb)">
+        </div>
+      </div>
+      <button (click)="approveConcept()" ion-button full type="button">APPROVE CONCEPT</button>
+    </div>
+    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && floorplan" class="collab-alert">
+      <img src="floorplan.url">
+    </div>
+    <div *ngIf="view == 'CONCEPT_BOARD' && viewMode == 'CLIENT' && conceptboard" class="collab-alert">
+      <img src="conceptboard.url">
+    </div>
+  </div>
+  <div class="collection-box">
+    <h1>YOUR COLLECTION</h1>
+    <p>Review your furnishings and note the items that you would like to see alternatives from your designer. Happy with the collection? Go ahead and approve all!</p>
+  </div>
+  <ion-grid *ngIf="items" class="project-items">
+    <ion-row class="project-items-wrapper">
+      <h4>{{ items.length }} ITEMS</h4>
+      <h5 *ngIf="collectionTotal">Collection Total: ${{ collectionTotal }}.00</h5>
+      <ion-col col-12 col-sm *ngFor="let item of items; let i = index" class="project-items-box">
+        <div class="project-items-label">
+          ITEM {{ i + 1 }}
+        </div>
+        <div class="project-items-img">
+          <img *ngIf="item.url" [src]="item.url">
+        </div>
+        <h6>{{ item.itemMake }}</h6>
+        <p>{{ item.itemType }}</p>
+        <h2>${{ item.itemPrice }}</h2>
+        <button ion-button type="button">REQUEST ALTERNATIVES</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+<div class="chat-header desktop" [class.header-minimized]="minimized" [class.header-maximized]="maximized" (click)="chatToggled()">
+  <img class="chat-img" src="assets/chat.png">
+  <h2 class="chat-title">Chat</h2>
+  <img class="chat-minimize" src="assets/down-arrow.png">
+</div>
+<page-chat [project]="project" [class.wrapper-minimized]="minimized" [class.wrapper-maximized]="maximized" class="chat-wrapper desktop"></page-chat>

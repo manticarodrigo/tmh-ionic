@@ -13,6 +13,8 @@ import { ChatService } from '../providers/chat-service';
 
 import { ChatPage } from '../pages/chat/chat';
 import { DetailsPage } from '../pages/details/details';
+import { DesignPage } from '../pages/design/design';
+import { FinalDeliveryPage } from '../pages/final-delivery/final-delivery';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -28,7 +30,9 @@ import { FacebookService } from 'ngx-facebook';
     TheManHome,
     TabsPage,
     ChatPage,
-    DetailsPage
+    DetailsPage,
+    DesignPage,
+    FinalDeliveryPage
   ],
   imports: [
     BrowserModule,
@@ -43,7 +47,9 @@ import { FacebookService } from 'ngx-facebook';
     TheManHome,
     TabsPage,
     ChatPage,
-    DetailsPage
+    DetailsPage,
+    DesignPage,
+    FinalDeliveryPage
   ],
   providers: [
     StatusBar,

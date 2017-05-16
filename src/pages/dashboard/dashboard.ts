@@ -5,6 +5,8 @@ import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 
 import { DetailsPage } from '../details/details';
+import { DesignPage } from '../design/design';
+import { FinalDeliveryPage } from '../final-delivery/final-delivery';
 import { ChatPage } from '../chat/chat';
 
 @IonicPage()
@@ -227,10 +229,25 @@ export class Dashboard {
   }
 
   selectedProject(project) {
-    var page = DetailsPage;
-    if (project.projectStatus == 'DETAILS') {
-      
-    }
+    var page: any;
+    if (project.projectStatus == 'DETAILS')
+      page = DetailsPage;
+    if (project.projectStatus == 'DESIGN')
+      page = DetailsPage;
+    if (project.projectStatus == 'CONCEPTS')
+      page = DesignPage;
+    if (project.projectStatus == 'FLOOR_PLAN')
+      page = DesignPage;
+    if (project.projectStatus == 'REQUEST_ALTERNATIVES')
+      page = DesignPage;
+    if (project.projectStatus == 'FINAL_DELIVERY')
+      page = FinalDeliveryPage;
+    if (project.projectStatus == 'SHOPPING_CART')
+      page = FinalDeliveryPage;
+    if (project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX')
+      page = FinalDeliveryPage;
+    if (project.projectStatus == 'ARCHIVED')
+      page = FinalDeliveryPage;
     this.navCtrl.setRoot(page, {
       project: project
     });

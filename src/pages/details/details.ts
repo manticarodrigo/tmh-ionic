@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+import { NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 
+import { DesignPage } from '../design/design';
+import { FinalDeliveryPage } from '../final-delivery/final-delivery';
 import { ChatPage } from '../chat/chat';
 
 @Component({
@@ -18,6 +20,7 @@ export class DetailsPage {
   // User & project vars
   user: any;
   project: any;
+  client: any;
   // Step flow
   types = {
     BEDROOM: 'BEDROOM',
@@ -33,6 +36,7 @@ export class DetailsPage {
     UPLOADED_FURNITURE: false
   };
   view = 'DRAWING';
+  viewMode = 'CLIENT';
   selectedDrawing: any;
   selectedInspiration: any;
   selectedFurniture: any;
@@ -51,6 +55,18 @@ export class DetailsPage {
     const self = this;
     this.user = this.userService.currentUser;
     this.project = this.navParams.get('project');
+    if (this.project.userId == this.user.userId) {
+      console.log("current user's project");
+      this.client = this.user;
+    } else {
+      this.userService.fetchUser(this.project.userId, (data) => {
+        console.log("details page received project client data:");
+        console.log(data);
+        if (!data.exception) {
+          self.client = data;
+        }
+      });
+    }
     this.projectService.getProjectDetailType(this.project.projectId, "DRAWING")
     .then(data => {
       console.log("component received detail");
@@ -180,8 +196,13 @@ export class DetailsPage {
     });
     popover.onDidDismiss(data => {
       if (data) {
-        const tab = data.replace(" ", "");
-        this.navCtrl.setRoot(tab);
+        var page: any;
+        if (data == 'DESIGN')
+          page = DesignPage;
+        if (data == 'FINAL DELIVERY')
+          page = FinalDeliveryPage;
+        if (page)
+          this.navCtrl.setRoot(page);
       }
     });
     popover.present();
