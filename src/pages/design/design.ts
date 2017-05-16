@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 import * as Leaflet from 'leaflet';
 
@@ -116,6 +116,9 @@ export class DesignPage {
           if (!data['exception']) {
             self.floorplan = data;
             self.view = 'FLOOR_PLAN';
+            setTimeout(() => {
+              self.drawFloorplan();
+            }, 1000);
           }
         });
       }
@@ -137,39 +140,45 @@ export class DesignPage {
     });
   }
 
-  ionViewDidLoad() {
-    setTimeout(() => {
-      console.log("drawing map");
-      this.drawMap();
-    }, 3000);
-  }
+  drawFloorplan() {
+    const self = this;
+    console.log("drawing floorplan with marker map");
+    // create the floorplan map
+    var map = Leaflet.map('floorplan-map', {
+      attributionControl: false,
+      minZoom: 1,
+      maxZoom: 4,
+      center: [0, 0],
+      zoom: 1,
+      crs: Leaflet.CRS.Simple
+    });
+    // dimensions of the image
+    var w = map.getSize().x * 4,
+        h = map.getSize().y * 4,
+        url = self.floorplan.url;
+    console.log("map dimensions:");
+    console.log(w);
+    console.log(h);
 
-  drawMap() {
-    let map = Leaflet.map('map');
-    Leaflet.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoicGF0cmlja3IiLCJhIjoiY2l2aW9lcXlvMDFqdTJvbGI2eXUwc2VjYSJ9.trTzsdDXD2lMJpTfCVsVuA', {
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18
-    }).addTo(map);
+    // calculate the edges of the image, in coordinate space
+    var southWest = map.unproject([0, h], map.getMaxZoom()-1);
+    var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
+    var bounds = new Leaflet.LatLngBounds(southWest, northEast);
 
-    //web location
-    map.locate({ setView: true});
+    // add the image overlay, 
+    // so that it covers the entire map
+    Leaflet.imageOverlay(url, bounds).addTo(map);
 
-    //when we have a location draw a marker and accuracy circle
-    function onLocationFound(e) {
-      var radius = e.accuracy / 2;
+    // tell leaflet that the map is exactly as big as the image
+    map.setMaxBounds(bounds);
 
-      Leaflet.marker(e.latlng).addTo(map)
-          .bindPopup("You are within " + radius + " meters from this point").openPopup();
-
-      Leaflet.circle(e.latlng, radius).addTo(map);
+    // draw a marker
+    for (var key in self.items) {
+      const item = self.items[key];
+      var latlng = new Leaflet.LatLng(item.XCoordinate * 100, item.YCoordinate * 100);
+      Leaflet.marker(latlng).addTo(map)
+          .bindPopup("View detailed info for item " + key + " below.");
     }
-    map.on('locationfound', onLocationFound);
-    //alert on location error
-    function onLocationError(e) {
-      alert(e.message);
-    }
-
-    map.on('locationerror', onLocationError);
   }
 
   addItemPhotoUrl(fileEntryId, index) {
@@ -298,7 +307,10 @@ export class DesignPage {
 
   selectFloorplan() {
     console.log("selected switcher floorplan link");
-    this.view = 'FLOOR_PLAN';
+    if (this.view != 'FLOOR_PLAN') {
+      this.view = 'FLOOR_PLAN';
+      this.drawFloorplan();
+    }
   }
 
   selectConceptboard() {
