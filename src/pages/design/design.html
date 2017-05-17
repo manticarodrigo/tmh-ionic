@@ -26,8 +26,8 @@
   </div>
 </ion-header>
 
-<ion-content>
-  <div class="collab-workzone" [class.maximized]="minimized">
+<ion-content [class.minimized]="minimized">
+  <div class="collab-workzone">
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>

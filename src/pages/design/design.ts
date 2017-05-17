@@ -37,6 +37,7 @@ export class DesignPage {
   selectedConcept: any;
   conceptboard: any;
   floorplan: any;
+  floorplanMap: any;
   items: any;
   collectionTotal: any;
   constructor(private navCtrl: NavController,
@@ -144,8 +145,9 @@ export class DesignPage {
     const self = this;
     console.log("drawing floorplan with marker map");
     // create the floorplan map
-    var map = Leaflet.map('floorplan-map', {
+    this.floorplanMap = Leaflet.map('floorplan-map', {
       attributionControl: false,
+      scrollWheelZoom: false,
       minZoom: 1,
       maxZoom: 4,
       center: [0, 0],
@@ -153,30 +155,30 @@ export class DesignPage {
       crs: Leaflet.CRS.Simple
     });
     // dimensions of the image
-    var w = map.getSize().x * 4,
-        h = map.getSize().y * 4,
+    var w = this.floorplanMap.getSize().x * 4,
+        h = this.floorplanMap.getSize().y * 4,
         url = self.floorplan.url;
     console.log("map dimensions:");
     console.log(w);
     console.log(h);
 
     // calculate the edges of the image, in coordinate space
-    var southWest = map.unproject([0, h], map.getMaxZoom()-1);
-    var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
+    var southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
+    var northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
     var bounds = new Leaflet.LatLngBounds(southWest, northEast);
 
     // add the image overlay, 
     // so that it covers the entire map
-    Leaflet.imageOverlay(url, bounds).addTo(map);
+    Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
 
     // tell leaflet that the map is exactly as big as the image
-    map.setMaxBounds(bounds);
+    this.floorplanMap.setMaxBounds(bounds);
 
     // draw a marker
     for (var key in self.items) {
       const item = self.items[key];
       var latlng = new Leaflet.LatLng(item.XCoordinate * 100, item.YCoordinate * 100);
-      Leaflet.marker(latlng).addTo(map)
+      Leaflet.marker(latlng).addTo(this.floorplanMap)
           .bindPopup("View detailed info for item " + key + " below.");
     }
   }
@@ -303,6 +305,10 @@ export class DesignPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
+    this.floorplanMap.remove();
+    setTimeout(() => {
+      this.drawFloorplan();
+    }, 1000);
   }
 
   selectFloorplan() {

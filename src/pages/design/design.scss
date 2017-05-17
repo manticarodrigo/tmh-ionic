@@ -1,4 +1,17 @@
 page-design {
+  @media only screen and (min-width: 700px) {
+    .collab-workzone, .collection-box, .project-items {
+      padding-right: 340px !important;
+    }
+  }
+  // Remove padding for chat space from page when minimized on desktop
+  .minimized {
+    @media only screen and (min-width: 700px) {
+      .collab-workzone, .collection-box, .project-items {
+        padding-right: 5px !important;
+      }
+    }
+  }
   .toolbar-title {
     @media only screen and (max-width: 700px) {
       font-size: 16px !important;
@@ -63,13 +76,6 @@ page-design {
       }
     }
   }
-
-  // Remove padding for chat space from collab-workzone when minimized on desktop
-  .maximized {
-    @media only screen and (min-width: 700px) {
-      padding-right: 5px !important;
-    }
-  }
   .collab-workzone {
     position: relative;
     background-image: url('../assets/constructor_bg.png');
@@ -80,7 +86,7 @@ page-design {
       padding-top: 50px;
     }
     @media only screen and (min-width: 700px) {
-      padding-right: 346px;
+      // padding-right: 346px;
       min-height: 500px;
     }
     .chat-fab {
@@ -114,6 +120,7 @@ page-design {
     .collab-image {
       margin: 10px 10px 20px;
       text-align: center;
+      background-color: rgba(255,255,255,0);
       .selected-img {
         max-width: 100%;
         max-height: 100%;
@@ -126,6 +133,7 @@ page-design {
         max-height: 100%;
         margin: auto;
         object-fit: contain;
+        opacity: 0.25;
       }
       .collab-thumb-wrapper {
         position: relative;
@@ -186,8 +194,9 @@ page-design {
     @media only screen and (min-width: 700px) {
       padding-left: 7.5%;
       .button {
-        position: absolute;
-        top: 40px;
+        display: block;
+        float: right;
+        top: -105px;
         right: 7.5%;
         width: 250px !important;
       }
@@ -206,6 +215,9 @@ page-design {
     margin: auto;
     position: relative;
     @media only screen and (max-width: 700px) {
+      .project-items-box {
+        margin: 10px auto !important;
+      }
       .project-items-box:nth-of-type(1) {
         margin-top: 20px !important;
       }
@@ -236,7 +248,7 @@ page-design {
       }
       .project-items-box {
         position: relative;
-        margin: 10px auto;
+        margin: 10px;
         padding: 10px;
         max-width: 240px;
         width: 240px;
