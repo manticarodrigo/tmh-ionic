@@ -18,6 +18,7 @@ export class IntlAddress {
   }
 
   dismiss() {
+    console.log("dismiss pressed");
     this.viewCtrl.dismiss();
   }
 

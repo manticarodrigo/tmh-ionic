@@ -188,7 +188,6 @@
         <li>Detailed set-up instructions</li>
       </ul>
     </div>
-    <
   </ion-grid>
 
   <ion-grid *ngIf="step == 4" class="step4">
@@ -283,7 +282,7 @@
         <ion-input [(ngModel)]="card.name" type="text" placeholder="NAME ON CARD"></ion-input>
         <br>
         <p>Expiration Date</p>
-        <ion-datetime [(ngModel)]="card.expDate" displayFormat="MM/YYYY" pickerFormat="MM/YYYY" placeholder="MM/YYYY"></ion-datetime>
+        <ion-datetime [(ngModel)]="card.expDate" type="text" displayFormat="MM/YYYY" pickerFormat="MM/YYYY" placeholder="MM/YYYY"></ion-datetime>
         <br>
         <p>Security Code</p>
         <ion-input [(ngModel)]="card.code" maxlength="3" type="text" placeholder="***"></ion-input>

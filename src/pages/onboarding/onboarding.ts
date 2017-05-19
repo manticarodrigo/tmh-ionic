@@ -73,7 +73,7 @@ export class Onboarding {
 
   backPressed() {
     console.log("back pressed");
-    if (this.step == 2) {
+    if (this.step == 2 || this.step == 3) {
       this.styleQuestions = {
         1: {
           answer: '',
@@ -91,6 +91,9 @@ export class Onboarding {
           answer: '',
           answering: false
         }
+      }
+      if (this.step == 3) {
+        this.styleQuestions[1].answering = true;
       }
     }
     this.step = this.step - 1;

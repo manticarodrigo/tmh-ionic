@@ -155,8 +155,8 @@ export class DesignPage {
       crs: Leaflet.CRS.Simple
     });
     // dimensions of the image
-    var w = 3000, // this.floorplanMap.getSize().x * 4,
-        h = 2250, // this.floorplanMap.getSize().y * 4,
+    var w = this.floorplanMap.getSize().x * 4,
+        h = this.floorplanMap.getSize().y * 4,
         url = self.floorplan.url;
     console.log("map dimensions:");
     console.log(w);
@@ -166,20 +166,27 @@ export class DesignPage {
     var southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
     var northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
     var bounds = new Leaflet.LatLngBounds(southWest, northEast);
-
+    
     // add the image overlay, 
     // so that it covers the entire map
     Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
-
+    
+    this.floorplanMap.fitBounds(bounds);
+    
     // tell leaflet that the map is exactly as big as the image
     this.floorplanMap.setMaxBounds(bounds);
 
     // draw a marker
     for (var key in self.items) {
       const item = self.items[key];
-      var latlng = new Leaflet.LatLng(item.XCoordinate * 100, item.YCoordinate * 100);
+      var latlng = new Leaflet.LatLng(item.YCoordinate * -200, item.XCoordinate * 200);
+      console.log("adding marker at coordinates:");
+      console.log(item.YCoordinate * 10);
+      console.log(item.XCoordinate * 10);
+      console.log(latlng);
+      const itemNum = Number(key) + 1;
       Leaflet.marker(latlng).addTo(this.floorplanMap)
-          .bindPopup("View detailed info for item " + key + " below.");
+          .bindPopup("View detailed info for item " + itemNum + " below.");
     }
   }
 
