@@ -187,15 +187,21 @@ export class DesignPage {
       // The text could also be letters instead of numbers if that's more appropriate
       var numberIcon = Leaflet.divIcon({
             className: "number-icon",
-            iconSize: [25, 41],
-            iconAnchor: [10, 44],
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
             popupAnchor: [3, -40],
             html: String(itemNum)       
       });
       var marker = new Leaflet.Marker(latlng, {
-          icon:   numberIcon
+          draggable: true,
+          icon: numberIcon
       });
-      
+      marker.on("drag", function(e) {
+        console.log("moving marker");
+        var marker = e.target;
+        var position = marker.getLatLng();
+        console.log(position);
+      });
       marker.addTo(this.floorplanMap)
         .bindPopup(this.createPopup(item));
     }

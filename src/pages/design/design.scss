@@ -135,6 +135,11 @@ page-design {
         object-fit: contain;
         opacity: 0.25;
       }
+      .leaflet-control-zoom.leaflet-bar.leaflet-control {
+        border-radius: 2px;
+        border: none;
+        box-shadow: 0px 1px 4px rgba(0,0,0,0.3);
+      }
       .number-icon {
         background-color: #5794D9;
         width: 30px !important;
