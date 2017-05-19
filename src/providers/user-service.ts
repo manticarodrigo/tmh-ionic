@@ -9,6 +9,7 @@ import { ImageService } from './image-service';
 @Injectable()
 export class UserService {
   currentUser: any;
+  currentUserGroup = 'CLIENT';
   headers: any;
   api: any;
   groups = {
@@ -95,6 +96,7 @@ export class UserService {
     console.log(user);
     console.log(token);
     const headers = this.generateHeader(token);
+    this.setCurrentUserGroup(user);
     return new Promise((resolve, reject) => {
       if (user && token) {
         self.headers = headers;
@@ -126,6 +128,30 @@ export class UserService {
         resolve(null);
       }
     });
+  }
+
+  setCurrentUserGroup(user) {
+    const self = this;
+    console.log("setting current user group for user");
+    console.log(user);
+    this.hasUserGroup(user, this.groups.designer.groupId, (data) => {
+      if (!data.exception && data == true) {
+        console.log("setting current user group to DESIGNER");
+        self.currentUserGroup = 'DESIGNER';
+      }
+    });
+    this.hasUserGroup(user, this.groups.operator.groupId, (data) => {
+      if (!data.exception && data == true) {
+        console.log("setting current user group to OPERATOR");
+        self.currentUserGroup = 'OPERATOR';
+      }
+    });
+    this.hasUserGroup(user, this.groups.guest.groupId, (data) => {
+      if (!data.exception) {
+        console.log("setting current user group to GUEST");
+        self.currentUserGroup = 'GUEST';
+      }
+    })
   }
 
   imageForUser(user) {

@@ -16,6 +16,7 @@ import { ChatPage } from '../chat/chat';
 })
 export class Dashboard {
   user: any;
+  viewMode = 'CLIENT';
   projects: Array<any>;
   projectUsers = {};
   tab = 'IN_PROGRESS';
@@ -53,12 +54,9 @@ export class Dashboard {
               private userService: UserService,
               private projectService: ProjectService) {
     const self = this;
-    if (this.userService.currentUser) {
-      self.user = self.userService.currentUser;
-      self.loadProjects();
-    } else {
-      console.log("No current user in dashboard");
-    }
+    this.user = this.userService.currentUser;
+    this.viewMode = this.userService.currentUserGroup;
+    this.loadProjects();
   }
 
   homePressed() {

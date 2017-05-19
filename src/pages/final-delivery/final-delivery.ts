@@ -54,6 +54,7 @@ export class FinalDeliveryPage {
               private platform: Platform) {
     const self = this;
     this.user = this.userService.currentUser;
+    this.viewMode = this.userService.currentUserGroup;
     this.project = this.navParams.get('project');
     if (this.project.userId == this.user.userId) {
       console.log("current user's project");
