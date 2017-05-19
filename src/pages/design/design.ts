@@ -39,6 +39,7 @@ export class DesignPage {
   floorplan: any;
   floorplanMap: any;
   items: any;
+  markers = {};
   collectionTotal: any;
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
@@ -189,20 +190,20 @@ export class DesignPage {
             className: "number-icon",
             iconSize: [30, 30],
             iconAnchor: [15, 30],
-            popupAnchor: [3, -40],
+            popupAnchor: [0, -30],
             html: String(itemNum)       
       });
-      var marker = new Leaflet.Marker(latlng, {
+      self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
           draggable: true,
           icon: numberIcon
       });
-      marker.on("drag", function(e) {
+      self.markers[item.projectItemId].on("drag", function(e) {
         console.log("moving marker");
         var marker = e.target;
         var position = marker.getLatLng();
         console.log(position);
       });
-      marker.addTo(this.floorplanMap)
+      self.markers[item.projectItemId].addTo(this.floorplanMap)
         .bindPopup(this.createPopup(item));
     }
   }
