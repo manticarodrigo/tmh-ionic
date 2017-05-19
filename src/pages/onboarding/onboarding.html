@@ -93,7 +93,7 @@
       <h2>Select which style best fits you:</h2>
     </div>
     <ion-row *ngFor="let i of [1,2,3,4]" class="style-question" [class.active]="styleQuestions[i].answering == true">
-      <ion-col col-12 col-sm>
+      <ion-col>
         <div class="style-button" (click)="selectedStyle(i, 1)">
           <div class="style-button-content">
             <img class="check" src="assets/check.png">
@@ -101,7 +101,7 @@
           </div>
         </div>
       </ion-col>
-      <ion-col col-12 col-sm>
+      <ion-col>
         <div class="style-button" (click)="selectedStyle(i, 2)">
           <div class="style-button-content">
             <img class="check" src="assets/check.png">

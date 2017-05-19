@@ -50,7 +50,7 @@
       <p>Your designer is hard at work putting together the Floor Plan of your room! We will send you an email when it's time for your to make a selection.</p>
     </div>
     <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && floorplan" class="collab-image" id="floorplan-map">
-      <img [src]="floorplan.url" class="floorplan-img">
+      <img [src]="floorplan.url" id="floorplan-img">
     </div>
     <div *ngIf="view == 'CONCEPT_BOARD' && viewMode == 'CLIENT' && conceptboard" class="collab-image">
       <img [src]="conceptboard.url" class="selected-img">

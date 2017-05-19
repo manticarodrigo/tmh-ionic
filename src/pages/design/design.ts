@@ -155,8 +155,8 @@ export class DesignPage {
       crs: Leaflet.CRS.Simple
     });
     // dimensions of the image
-    var w = this.floorplanMap.getSize().x * 4,
-        h = this.floorplanMap.getSize().y * 4,
+    var w = 3000, // this.floorplanMap.getSize().x * 4,
+        h = 2250, // this.floorplanMap.getSize().y * 4,
         url = self.floorplan.url;
     console.log("map dimensions:");
     console.log(w);
