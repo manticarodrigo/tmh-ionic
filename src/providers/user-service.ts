@@ -75,7 +75,7 @@ export class UserService {
     const headers = this.generateHeader(token);
     const endpoint = this.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/-group-ids/-organization-ids/-role-ids/-user-group-ids/send-email/true";
     console.log(endpoint);
-    this.http.post(endpoint, {headers: headers})
+    this.http.get(endpoint, {headers: headers})
     .map(res => res.json())
     .subscribe(data => {
       console.log("register returned data");
@@ -107,6 +107,8 @@ export class UserService {
           console.log(url);
           if (url) {
             user.photoURL = url;
+          } else {
+            user.photoURL = 'assets/user-placeholder.png';
           }
           self.currentUser = user;
           self.storage.set('user', user);
@@ -134,24 +136,28 @@ export class UserService {
     const self = this;
     console.log("setting current user group for user");
     console.log(user);
-    this.hasUserGroup(user, this.groups.designer.groupId, (data) => {
-      if (!data.exception && data == true) {
-        console.log("setting current user group to DESIGNER");
-        self.currentUserGroup = 'DESIGNER';
-      }
-    });
-    this.hasUserGroup(user, this.groups.operator.groupId, (data) => {
-      if (!data.exception && data == true) {
-        console.log("setting current user group to OPERATOR");
-        self.currentUserGroup = 'OPERATOR';
-      }
-    });
-    this.hasUserGroup(user, this.groups.guest.groupId, (data) => {
-      if (!data.exception) {
-        console.log("setting current user group to GUEST");
-        self.currentUserGroup = 'GUEST';
-      }
-    })
+    if (!user) {
+      this.currentUserGroup = 'CLIENT';
+    } else {
+      this.hasUserGroup(user, this.groups.designer.groupId, (data) => {
+        if (!data.exception && data == true) {
+          console.log("setting current user group to DESIGNER");
+          self.currentUserGroup = 'DESIGNER';
+        }
+      });
+      this.hasUserGroup(user, this.groups.operator.groupId, (data) => {
+        if (!data.exception && data == true) {
+          console.log("setting current user group to OPERATOR");
+          self.currentUserGroup = 'OPERATOR';
+        }
+      });
+      this.hasUserGroup(user, this.groups.guest.groupId, (data) => {
+        if (!data.exception) {
+          console.log("setting current user group to GUEST");
+          self.currentUserGroup = 'GUEST';
+        }
+      });
+    }
   }
 
   imageForUser(user) {

@@ -1,8 +1,8 @@
 <ion-menu side="right" [content]="content">
   <ion-content>
     <div class="header">
-     <img *ngIf="user" [src]="user.photoURL">
-     <img *ngIf="!user" src="assets/user-placeholder.png">
+     <img *ngIf="user && user.photoURL" [src]="user.photoURL">
+     <img *ngIf="!user || !user.photoURL" src="assets/user-placeholder.png">
      <h4 *ngIf="user">
       {{ user.firstName }} {{ user.lastName }}
      </h4>

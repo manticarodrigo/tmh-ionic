@@ -8,8 +8,8 @@
     <ion-title>Dashboard</ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button  menuToggle>
-        <img *ngIf="user" [src]="user.photoURL">
-        <img *ngIf="!user" src="assets/tmh.png">
+        <img *ngIf="user && user.photoURL" [src]="user.photoURL">
+        <img *ngIf="!user || !user.photoURL" src="assets/tmh.png">
       </button>
     </ion-buttons>
   </ion-navbar>
