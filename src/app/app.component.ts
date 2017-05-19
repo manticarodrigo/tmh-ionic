@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import { Nav, Platform, MenuController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Storage } from '@ionic/storage';
@@ -16,6 +16,7 @@ export class TheManHome {
   rootPage:any = 'Login';
   user: any;
   constructor(private platform: Platform,
+              private menuCtrl: MenuController,
               private statusBar: StatusBar,
               private splashScreen: SplashScreen,
               private storage: Storage,
@@ -64,20 +65,25 @@ export class TheManHome {
 
     profilePressed() {
       console.log("view profile pressed");
+      this.menuCtrl.close();
       this.nav.setRoot('Profile');
     }
 
     allPressed() {
       console.log("all projects pressed");
+      this.menuCtrl.close();
       this.nav.setRoot('Dashboard');
     }
 
     newPressed() {
       console.log("new project pressed");
+      this.menuCtrl.close();
       this.nav.setRoot('Onboarding');
     }
 
     logout() {
+      console.log("logout pressed");
+      this.menuCtrl.close();
       this.userService.logout();
       this.nav.setRoot('Login');
     }

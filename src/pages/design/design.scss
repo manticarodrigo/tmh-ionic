@@ -135,6 +135,22 @@ page-design {
         object-fit: contain;
         opacity: 0.25;
       }
+      .number-icon {
+        background-color: #5794D9;
+        width: 30px !important;
+        max-height: 30px;
+        border-radius: 50%;
+        color: #fff;
+        font-weight: 700;
+        line-height: 30px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+      .leaflet-popup-content {
+        text-align: center;
+        h1, h2, p {
+          margin: 0px 0px;
+        }
+      }
       .collab-thumb-wrapper {
         position: relative;
         display: table;

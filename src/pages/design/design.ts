@@ -156,8 +156,8 @@ export class DesignPage {
       crs: Leaflet.CRS.Simple
     });
     // dimensions of the image
-    var w = this.floorplanMap.getSize().x * 4,
-        h = this.floorplanMap.getSize().y * 4,
+    var w = this.floorplanMap.getSize().x,
+        h = this.floorplanMap.getSize().y,
         url = self.floorplan.url;
     console.log("map dimensions:");
     console.log(w);
@@ -180,15 +180,42 @@ export class DesignPage {
     // draw a marker
     for (var key in self.items) {
       const item = self.items[key];
-      var latlng = new Leaflet.LatLng(item.YCoordinate * -200, item.XCoordinate * 200);
+      var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
       console.log("adding marker at coordinates:");
-      console.log(item.YCoordinate * 10);
-      console.log(item.XCoordinate * 10);
       console.log(latlng);
       const itemNum = Number(key) + 1;
-      Leaflet.marker(latlng).addTo(this.floorplanMap)
-          .bindPopup("View detailed info for item " + itemNum + " below.");
+      // The text could also be letters instead of numbers if that's more appropriate
+      var numberIcon = Leaflet.divIcon({
+            className: "number-icon",
+            iconSize: [25, 41],
+            iconAnchor: [10, 44],
+            popupAnchor: [3, -40],
+            html: String(itemNum)       
+      });
+      var marker = new Leaflet.Marker(latlng, {
+          icon:   numberIcon
+      });
+      
+      marker.addTo(this.floorplanMap)
+        .bindPopup(this.createPopup(item));
     }
+  }
+
+  createPopup(item) {
+    var popup = "";
+    if (item.url) {
+      popup += "<img src='" + item.url + "'>";
+    }
+    if (item.itemMake) {
+      popup += "<h1>" + item.itemMake + "</h1>";
+    }
+    if (item.itemType) {
+      popup += "<p>" + item.itemType + "</p>";
+    }
+    if (item.itemPrice) {
+      popup += "<h2>$" + item.itemPrice + "</h2>";
+    }
+    return popup;
   }
 
   addItemPhotoUrl(fileEntryId, index) {
