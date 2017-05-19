@@ -3,8 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { TheManHome } from './app.component';
 
-import { TabsPage } from '../pages/tabs/tabs';
-
 import { UserService } from '../providers/user-service';
 import { ImageService } from '../providers/image-service';
 import { ProjectService } from '../providers/project-service';
@@ -28,7 +26,6 @@ import { FacebookService } from 'ngx-facebook';
 @NgModule({
   declarations: [
     TheManHome,
-    TabsPage,
     ChatPage,
     DetailsPage,
     DesignPage,
@@ -45,7 +42,6 @@ import { FacebookService } from 'ngx-facebook';
   bootstrap: [IonicApp],
   entryComponents: [
     TheManHome,
-    TabsPage,
     ChatPage,
     DetailsPage,
     DesignPage,

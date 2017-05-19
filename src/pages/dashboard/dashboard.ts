@@ -83,37 +83,6 @@ export class Dashboard {
     alert.present();
   }
 
-  toggleDropdown() {
-    console.log("Toggling dropdown!");
-    let popover = this.popoverCtrl.create('Dropdown');
-    let width = this.platform.width();
-    let ev = {
-      target : {
-        getBoundingClientRect : () => {
-          return {
-            top: '25'
-          };
-        }
-      }
-    };
-    popover.onDidDismiss(data => {
-      if (data == 'PROFILE') {
-        this.navCtrl.setRoot('Profile');
-      }
-      if (data == 'ALL') {
-        this.navCtrl.setRoot('Dashboard');
-      }
-      if (data == 'NEW') {
-        this.navCtrl.setRoot('Onboarding');
-      }
-      if (data == 'LOGOUT') {
-        this.userService.logout();
-        this.navCtrl.setRoot('Login');
-      }
-    });
-    popover.present({ev});
-  }
-
   selectedTabLink(tab) {
     this.tab = tab;
     this.loadProjects();
@@ -124,13 +93,22 @@ export class Dashboard {
     let popover = this.popoverCtrl.create('TabDropdown', {
       tabs: ['ALL', 'IN PROGRESS', 'COMPLETED', 'ARCHIVED', 'UP NEXT']
     });
+    let ev = {
+      target : {
+        getBoundingClientRect : () => {
+          return {
+            top: '145'
+          };
+        }
+      }
+    };
     popover.onDidDismiss(data => {
       if (data) {
         this.tab = data.replace(" ", "_");
         this.loadProjects();
       }
     });
-    popover.present();
+    popover.present({ev});
   }
 
 

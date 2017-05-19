@@ -198,57 +198,8 @@ export class DesignPage {
   }
 
   homePressed() {
-    let alert = this.alertCtrl.create({
-      title: 'NEW PROJECT',
-      message: 'Press start to begin a new project.',
-      buttons: 
-      [{
-          text: 'Cancel',
-          role: 'cancel',
-          handler: data => {
-              console.log('Cancel pressed');
-          }
-      },
-      {
-          text: 'Start',
-          handler: data => {
-              this.navCtrl.setRoot('Onboarding')
-          }
-      }]
-    });
-    alert.present();
-  }
-
-  toggleDropdown() {
-    console.log("Toggling dropdown!");
-    let popover = this.popoverCtrl.create('Dropdown');
-    let width = this.platform.width();
-    let ev = {
-      target : {
-        getBoundingClientRect : () => {
-          return {
-            top: '65',
-            left: width
-          };
-        }
-      }
-    };
-    popover.onDidDismiss(data => {
-      if (data == 'PROFILE') {
-        this.navCtrl.setRoot('Profile');
-      }
-      if (data == 'ALL') {
-        this.navCtrl.setRoot('Dashboard');
-      }
-      if (data == 'NEW') {
-        this.navCtrl.setRoot('Onboarding');
-      }
-      if (data == 'LOGOUT') {
-        this.userService.logout();
-        this.navCtrl.setRoot('Login');
-      }
-    });
-    popover.present({ev});
+    console.log("logo pressed");
+    this.navCtrl.setRoot('Dashboard');
   }
 
   selectTab() {
@@ -257,6 +208,15 @@ export class DesignPage {
     let popover = this.popoverCtrl.create('TabDropdown', {
       tabs: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     });
+    let ev = {
+      target : {
+        getBoundingClientRect : () => {
+          return {
+            top: '145'
+          };
+        }
+      }
+    };
     popover.onDidDismiss(data => {
       if (data) {
         var page: any;
@@ -270,7 +230,7 @@ export class DesignPage {
           });
       }
     });
-    popover.present();
+    popover.present({ev});
   }
 
   selectTabLink(link) {
@@ -280,7 +240,7 @@ export class DesignPage {
     var page: any;
     if (link == 'DETAILS')
       page = DetailsPage;
-    if (link == 'FINAL DELIVERY')
+    if (link == 'FINAL_DELIVERY')
       page = FinalDeliveryPage;
     if (page)
       this.navCtrl.setRoot(page, {

@@ -71,58 +71,34 @@ export class Onboarding {
     this.user = this.userService.currentUser;
   }
 
-  homePressed() {
-    let alert = this.alertCtrl.create({
-      title: 'NEW PROJECT',
-      message: 'Are you sure you want to start over?',
-      buttons: 
-      [{
-          text: 'Cancel',
-          role: 'cancel',
-          handler: data => {
-              console.log('Cancel pressed');
-          }
-      },
-      {
-          text: 'Start Over',
-          handler: data => {
-              this.navCtrl.setRoot('Onboarding')
-          }
-      }]
-      });
-    alert.present();
-  }
-
-  toggleDropdown() {
-    console.log("Toggling dropdown!");
-    let popover = this.popoverCtrl.create('Dropdown');
-    let width = this.platform.width();
-    let ev = {
-      target : {
-        getBoundingClientRect : () => {
-          return {
-            top: '65',
-            left: width
-          };
+  backPressed() {
+    console.log("back pressed");
+    if (this.step == 2) {
+      this.styleQuestions = {
+        1: {
+          answer: '',
+          answering: false
+        },
+        2: {
+          answer: '',
+          answering: false
+        },
+        3: {
+          answer: '',
+          answering: false
+        },
+        4: {
+          answer: '',
+          answering: false
         }
       }
-    };
-    popover.onDidDismiss(data => {
-      if (data == 'PROFILE') {
-        this.navCtrl.setRoot('Profile');
-      }
-      if (data == 'ALL') {
-        this.navCtrl.setRoot('Dashboard');
-      }
-      if (data == 'NEW') {
-        this.navCtrl.setRoot('Onboarding');
-      }
-      if (data == 'LOGOUT') {
-        this.userService.logout();
-        this.navCtrl.setRoot('Login');
-      }
-    });
-    popover.present({ev});
+    }
+    this.step = this.step - 1;
+  }
+
+  homePressed() {
+    console.log("logo pressed");
+    this.navCtrl.setRoot('Dashboard');
   }
 
   startProject() {

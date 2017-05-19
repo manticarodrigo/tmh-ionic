@@ -7,7 +7,7 @@
     </ion-buttons>
     <ion-title><span *ngIf="client">{{ client.firstName }}'s </span><span *ngIf="project">{{ types[project.projectType] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
-      <button class="dropdown" ion-button (click)="toggleDropdown()">
+      <button class="avatar" ion-button menuToggle>
         <img *ngIf="user" [src]="user.photoURL">
         <img *ngIf="!user" src="assets/tmh.png">
       </button>

@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { Storage } from '@ionic/storage';
 
 import { UserService } from '../providers/user-service';
+import { ImageService } from '../providers/image-service';
 import { SocketService } from '../providers/socket-service'; 
 
 @Component({
@@ -13,12 +14,13 @@ import { SocketService } from '../providers/socket-service';
 export class TheManHome {
   @ViewChild(Nav) nav: Nav;
   rootPage:any = 'Login';
-
+  user: any;
   constructor(private platform: Platform,
               private statusBar: StatusBar,
               private splashScreen: SplashScreen,
               private storage: Storage,
               private userService: UserService,
+              private imageService: ImageService,
               private socketService: SocketService) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
@@ -48,7 +50,8 @@ export class TheManHome {
           console.log('Stored user found');
           self.userService.setCurrentUser(user, token)
           .then(user => {
-            this.nav.setRoot('Dashboard');
+            self.user = user;
+            self.nav.setRoot('Dashboard');
           })
           .catch(error => {
             console.log(error);
@@ -57,5 +60,25 @@ export class TheManHome {
       });
 
       // }); // clear cache for login debug
+    }
+
+    profilePressed() {
+      console.log("view profile pressed");
+      this.nav.setRoot('Profile');
+    }
+
+    allPressed() {
+      console.log("all projects pressed");
+      this.nav.setRoot('Dashboard');
+    }
+
+    newPressed() {
+      console.log("new project pressed");
+      this.nav.setRoot('Onboarding');
+    }
+
+    logout() {
+      this.userService.logout();
+      this.nav.setRoot('Login');
     }
 }

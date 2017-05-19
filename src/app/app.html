@@ -1,1 +1,29 @@
-<ion-nav [root]="rootPage"></ion-nav>
+<ion-menu side="right" [content]="content">
+  <ion-content>
+    <div class="header">
+     <img *ngIf="user" [src]="user.photoURL">
+     <img *ngIf="!user" src="assets/user-placeholder.png">
+     <h4 *ngIf="user">
+      {{ user.firstName }} {{ user.lastName }}
+     </h4>
+     <p *ngIf="user">
+      {{ user.emailAddress }}
+     </p>
+     <h4 *ngIf="!user">
+      User
+     </h4>
+     <p *ngIf="!user">
+      user@email.com
+     </p>
+     <button (click)="profilePressed()" ion-button full type="button">
+       VIEW PROFILE
+     </button>
+   </div>
+   <a (click)="allPressed()">ALL PROJECTS</a>
+   <a (click)="newPressed()">NEW PROJECT</a>
+   <a (click)="logout()">LOGOUT</a>
+  </ion-content>
+
+</ion-menu>
+
+<ion-nav id="nav" [root]="rootPage" #content></ion-nav>

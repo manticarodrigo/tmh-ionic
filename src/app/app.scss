@@ -87,7 +87,40 @@ button {
   font-weight: 700;
 }
 
-.dropdown {
+/* Sidemenu style */
+
+ion-menu {
+  .header {
+    padding: 20px !important;
+    border-bottom: 1px solid color($colors, light);
+    img {
+      width: 60px;
+      float: left;
+      margin: 5px 10px 10px 0px;
+      border-radius: 8px;
+    }
+    h4 {
+      padding-top: 8px;
+      margin: 0px;
+      font-weight: 600;
+    }
+    p {
+      margin-top: 0px;
+    }
+    button {
+      
+    }
+  }
+  a {
+    display: block;
+    margin: 20px;
+
+  }
+}
+
+/* Avatar styles */
+
+.avatar {
     padding-right: 10px;
     img {
         width: 30px;

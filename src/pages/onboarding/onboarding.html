@@ -6,7 +6,7 @@
       </button>
     </ion-buttons>
     <ion-buttons end>
-      <button class="dropdown" ion-button (click)="toggleDropdown()">
+      <button class="avatar" ion-button menuToggle>
         <img *ngIf="user" [src]="user.photoURL">
         <img *ngIf="!user" src="assets/tmh.png">
       </button>
@@ -15,6 +15,10 @@
 </ion-header>
 
 <ion-content text-center padding>
+
+  <div *ngIf="step > 0" class="step-back-button">
+    <button ion-button type="button" (click)="backPressed()"><img src="assets/left-arrow.png">BACK</button>
+  </div>
 
   <div *ngIf="step == 0" class="welcome">
     <h1>WELCOME TO<br>THE MAN HOME</h1>
@@ -34,24 +38,30 @@
       <ion-col col-12 col-sm>
         <div class="space-button" (click)="selectedType('LIVING_ROOM')">
           <div class="space-button-content">
-            <img src="assets/LIVING_ROOM.png">
-            <h4>Living Room</h4>
+            <div class="space-button-content-center">
+              <img src="assets/LIVING_ROOM.png">
+              <h4>Living Room</h4>
+            </div>
           </div>
         </div>
       </ion-col>
       <ion-col col-12 col-sm>
         <div class="space-button" (click)="selectedType('BEDROOM')">
           <div class="space-button-content">
-            <img src="assets/BEDROOM.png">
-            <h4>Bedroom</h4>
+            <div class="space-button-content-center">
+              <img src="assets/BEDROOM.png">
+              <h4>Bedroom</h4>
+            </div>
           </div>
         </div>
       </ion-col>
       <ion-col col-12 col-sm>
         <div class="space-button" (click)="selectedType('DINING_ROOM')">
           <div class="space-button-content">
-            <img src="assets/DINING_ROOM.png">
-            <h4>Dining Room</h4>
+            <div class="space-button-content-center">
+              <img src="assets/DINING_ROOM.png">
+              <h4>Dining Room</h4>
+            </div>
           </div>
         </div>
       </ion-col>
@@ -60,24 +70,30 @@
       <ion-col col-12 col-sm>
         <div class="space-button" (click)="selectedType('HOME_OFFICE')">
           <div class="space-button-content">
-            <img src="assets/HOME_OFFICE.png">
-            <h4>Home Office</h4>
+            <div class="space-button-content-center">
+              <img src="assets/HOME_OFFICE.png">
+              <h4>Home Office</h4>
+            </div>
           </div>
         </div>
       </ion-col>
       <ion-col col-12 col-sm>
         <div class="space-button" (click)="selectedType('STUDIO')">
           <div class="space-button-content">
-            <img class="wide" src="assets/STUDIO.png">
-            <h4>Studio</h4>
+            <div class="space-button-content-center">
+              <img class="wide" src="assets/STUDIO.png">
+              <h4>Studio</h4>
+            </div>
           </div>
         </div>
       </ion-col>
       <ion-col col-12 col-sm>
         <div class="space-button" (click)="selectedType('MULTIPURPOSE_ROOM')">
           <div class="space-button-content">
-            <img class="wide" src="assets/MULTIPURPOSE_ROOM.png">
-            <h4>Multipurpose Room</h4>
+            <div class="space-button-content-center">
+              <img class="wide" src="assets/MULTIPURPOSE_ROOM.png">
+              <h4>Multipurpose Room</h4>
+            </div>
           </div>
         </div>
       </ion-col>
