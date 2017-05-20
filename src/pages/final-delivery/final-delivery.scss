@@ -72,17 +72,25 @@ page-final-delivery {
   }
   .collab-final-delivery {
     position: relative;
-    background-image: url('../assets/constructor_bg.png');
-    background-repeat: repeat;
-    background-size: cover;
     padding: 5px;
     @media only screen and (max-width: 700px) {
       padding-top: 50px;
     }
     @media only screen and (min-width: 700px) {
-      padding-left: 95px;
-      padding-right: 346px;
+      padding-bottom: 80px;
       min-height: 500px;
+    }
+    .admin-segment {
+      z-index: 1000;
+      @media only screen and (max-width: 700px) {
+        position: absolute;
+        top: 10px;
+        left: 15px;
+      }
+      width: 200px;
+      background-color: #fff;
+      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+      border-radius: 2px;
     }
     .chat-fab {
       position: absolute;
@@ -102,6 +110,18 @@ page-final-delivery {
         max-width: 500px;
         margin: 50px auto;
       }
+      h6 {
+        border-bottom: 2px solid #D8D8D8;
+        text-align: left;
+      }
+      textarea {
+        margin: 10px 0;
+        resize: none;
+        min-height: 200px;
+        width: 100%;
+        background-color: #F8F5F5;
+        padding: 10px;
+      }
       text-align: center;
       margin: 20px;
       padding: 20px;
@@ -114,8 +134,39 @@ page-final-delivery {
     }
   }
   .footer {
+    box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     background-color: #fff;
-    padding: 20px;
+    @media only screen and (max-width: 700px) {
+      padding: 20px;
+    }
+    .footer-menu {
+      .button {
+        position: relative;
+        width: 13.9%;
+        padding: 68px 0 8px;
+        color: #414141;
+        img {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 20px;
+          left: 0;
+          margin: auto;
+          max-width: 40px;
+        }
+      }
+      .button:hover {
+        background-color: color($colors, primary);
+        color: #fff;
+        img {
+          filter: brightness(100);
+        }
+      }
+    }
     .footer-dropdown {
       position: relative;
       background-color: #fff;

@@ -28,15 +28,59 @@
 
 <ion-content>
   <div class="collab-final-delivery">
+    <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode" class="admin-segment">
+      <ion-segment-button value="CLIENT">
+        CLIENT
+      </ion-segment-button>
+      <ion-segment-button value="DESIGNER">
+        DESIGNER
+      </ion-segment-button>
+    </ion-segment>
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
-    <div class="designer-note">
+    <div *ngIf="view == 'DESIGNER_NOTE' && viewMode == 'CLIENT'" class="designer-note">
       <h4 *ngIf="client">Hi {{ client.firstName }}!</h4>
-      {{ project.designerNote }}
+      <p *ngIf="project.designerNote != ''">{{ project.designerNote }}</p>
+      <p *ngIf="project.designerNote == ''">Your designer is hard at work putting together the Final Delivery of your room! It will be uploaded within the next 48-72 hours!</p>
+    </div>
+    <div *ngIf="view == 'DESIGNER_NOTE' && viewMode == 'DESIGNER'" class="designer-note">
+      <h6>Leave a kind note for your client.</h6>
+      <ion-textarea [(ngModel)]="designerNote" name="DESIGNER_NOTE"></ion-textarea>
+      <button ion-button type="button" (click)="saveDesignerNote()">SAVE</button>
     </div>
   </div>
   <div class="footer">
+    <div class="desktop footer-menu">
+      <div class="button" (click)="selectFooterTabLink('DESIGNER_NOTE')">
+        <img src="assets/list.png">
+        Designer Note
+      </div>
+      <div class="button" (click)="selectFooterTabLink('FLOOR_PLAN')">
+        <img src="assets/floor-plan.png">
+        Floor Plan
+      </div>
+      <div class="button" (click)="selectFooterTabLink('CONCEPT_BOARD')">
+        <img src="assets/concept.png">
+        Concept Board
+      </div>
+      <div class="button" (click)="selectFooterTabLink('3D_MODEL')">
+        <img src="assets/3d-model.png">
+        3D Model
+      </div>
+      <div class="button" (click)="selectFooterTabLink('SNAPSHOTS')">
+        <img src="assets/snapshot.png">
+        Snapshots
+      </div>
+      <div class="button" (click)="selectFooterTabLink('FINAL_NOTES')">
+        <img src="assets/note.png">
+        Final Notes
+      </div>
+      <div class="button" (click)="selectFooterTabLink('SHOPPING_CART')">
+        <img src="assets/cart.png">
+        Shopping Cart
+      </div>
+    </div>
     <button class="mobile footer-dropdown" ion-button type="button" (click)="selectFooterTab()" full>
       DESIGNER NOTE
       <img src="assets/down.png">

@@ -31,15 +31,9 @@ export class FinalDeliveryPage {
     UPLOADED_INSPIRATION: false,
     UPLOADED_FURNITURE: false
   };
-  view = 'DRAWING';
+  view = 'DESIGNER_NOTE';
   viewMode = 'CLIENT';
-  selectedDrawing: any;
-  selectedInspiration: any;
-  selectedFurniture: any;
-  drawings: any;
-  inspirations: any;
-  furnitures: any;
-  answers = {};
+  designerNote = '';
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
@@ -50,8 +44,18 @@ export class FinalDeliveryPage {
               private platform: Platform) {
     const self = this;
     this.user = this.userService.currentUser;
-    // this.viewMode = this.userService.currentUserGroup;
+    if (this.userService.currentUserGroups.designer) {
+      console.log("current user is a designer");
+      this.viewMode = "DESIGNER";
+    }
+    if (this.user.admin) {
+      console.log("current user is an admin");
+      this.viewMode = "DESIGNER";
+    }
     this.project = this.navParams.get('project');
+    if (this.project.designerNote != '') {
+      this.designerNote = this.project.designerNote;
+    }
     if (this.project.userId == this.user.userId) {
       console.log("current user's project");
       this.client = this.user;
@@ -64,72 +68,6 @@ export class FinalDeliveryPage {
         }
       });
     }
-    this.projectService.getProjectDetailType(this.project.projectId, "DRAWING")
-    .then(data => {
-      console.log("details page received drawings:");
-      console.log(data);
-      if (!data['exception']) {
-        var ids = [];
-        for (var key in data) {
-          const file = data[key];
-          ids.push(file.fileEntryId);
-        }
-        self.projectService.getFileEntries(ids)
-        .then(files => {
-          console.log("details page received drawings files:");
-          console.log(files);
-          self.status.UPLOADED_DRAWING = true;
-          self.selectedDrawing = files[0];
-          self.drawings = files;
-        });
-      }
-    });
-    this.projectService.getProjectDetailType(this.project.projectId, "INSPIRATION")
-    .then(data => {
-      console.log("details page received inspirations:");
-      console.log(data);
-      if (!data['exception']) {
-        var ids = [];
-        for (var key in data) {
-          const file = data[key];
-          ids.push(file.fileEntryId);
-        }
-        self.projectService.getFileEntries(ids)
-        .then(files => {
-          console.log("details page received inspirations files");
-          console.log(files);
-          self.status.UPLOADED_INSPIRATION = true;
-          self.selectedInspiration = files[0];
-          self.inspirations = files;
-        });
-      }
-    });
-    this.projectService.getProjectDetailType(this.project.projectId, "FURNITURE")
-    .then(data => {
-      console.log("details page received furnitures:");
-      console.log(data);
-      if (!data['exception']) {
-        var ids = [];
-        for (var key in data) {
-          const file = data[key];
-          ids.push(file.fileEntryId);
-        }
-        self.projectService.getFileEntries(ids)
-        .then(files => {
-          console.log("details page received furnitures files:");
-          console.log(files);
-          self.status.UPLOADED_FURNITURE = true;
-          self.selectedFurniture = files[0];
-          self.furnitures = files;
-        });
-      }
-    });
-    this.projectService.fetchQuestionAnswers(this.project)
-    .then(answers => {
-      console.log("details page received answers:");
-      console.log(answers);
-      self.answers = answers;
-    });
   }
 
   homePressed() {
@@ -174,28 +112,24 @@ export class FinalDeliveryPage {
       });
   }
 
-  selectDrawing(drawing) {
-    console.log("thumb pressed for drawing:");
-    console.log(drawing);
-    this.selectedDrawing = drawing;
+  selectFooterTab() {
+    const self = this;
+    console.log("toggling tab dropdown");
+    let popover = this.popoverCtrl.create('TabDropdown', {
+      tabs: ['DESIGNER NOTE', 'FLOOR PLAN', 'CONCEPT BOARD', '3D MODEL', 'SNAPSHOTS', 'FINAL NOTES', 'SHOPPING CART']
+    });
+    popover.onDidDismiss(data => {
+      if (data) {
+        self.view = data.replace(" ", "_");
+      }
+    });
+    popover.present();
   }
 
-  selectInspiration(inspiration) {
-    console.log("thumb pressed for inspiration:");
-    console.log(inspiration);
-    this.selectedInspiration = inspiration;
-  }
-
-  selectFurniture(furniture) {
-    console.log("thumb pressed for furniture:");
-    console.log(furniture);
-    this.selectedFurniture = furniture;
-  }
-
-  selectMenuItem(item) {
-    console.log("menu item pressed:");
-    console.log(item);
-    this.view = item;
+  selectFooterTabLink(link) {
+    console.log("selected footer tab link:");
+    console.log(link);
+    this.view = link;
   }
 
 }
