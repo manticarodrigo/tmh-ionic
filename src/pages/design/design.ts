@@ -118,10 +118,11 @@ export class DesignPage {
           console.log(data);
           if (!data['exception']) {
             self.floorplan = data;
-            self.view = 'FLOOR_PLAN';
+            self.view = 'SPINNER';
             setTimeout(() => {
+              self.view = 'FLOOR_PLAN';
               self.drawFloorplan();
-            }, 1000);
+            }, 2000);
           }
         });
       }
@@ -193,16 +194,12 @@ export class DesignPage {
             popupAnchor: [0, -30],
             html: String(itemNum)       
       });
+      // Add the each marker to the marker map with projectItemId as key
       self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
           draggable: true,
           icon: numberIcon
       });
-      self.markers[item.projectItemId].on("drag", function(e) {
-        console.log("moving marker");
-        var marker = e.target;
-        var position = marker.getLatLng();
-        console.log(position);
-      });
+      // Add popups
       self.markers[item.projectItemId].addTo(this.floorplanMap)
         .bindPopup(this.createPopup(item));
     }
@@ -223,6 +220,23 @@ export class DesignPage {
       popup += "<h2>$" + item.itemPrice + "</h2>";
     }
     return popup;
+  }
+
+  editMarkerLocations() {
+    console.log("edit marker location activated");
+    const self = this;
+    // Keep track of drag events
+    for (var key in this.items) {
+      const item = this.items[key];
+      console.log(key);
+      console.log(item);
+      self.markers[item.projectItemId].on("drag", function(e) {
+        console.log("moving marker");
+        var marker = e.target;
+        var position = marker.getLatLng();
+        console.log(position);
+      });
+    }
   }
 
   addItemPhotoUrl(fileEntryId, index) {

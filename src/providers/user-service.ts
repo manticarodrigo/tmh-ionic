@@ -104,7 +104,8 @@ export class UserService {
     console.log(user);
     console.log(token);
     const headers = this.generateHeader(token);
-    this.setCurrentUserGroup(user);
+    this.setCurrentUserGroups(user);
+    this.checkIfAdmin(user);
     return new Promise((resolve, reject) => {
       if (user && token) {
         self.headers = headers;
@@ -139,7 +140,7 @@ export class UserService {
     });
   }
 
-  setCurrentUserGroup(user) {
+  setCurrentUserGroups(user) {
     const self = this;
     console.log("setting current user group for " + user.firstName);
     if (!user) {
@@ -160,6 +161,29 @@ export class UserService {
           }
         });
       }
+    }
+  }
+
+  checkIfAdmin(user) {
+    const self = this;
+    console.log("checking admin role for " + user.firstName);
+    if (user) {
+      self.getUserRoles(user)
+      .then(data => {
+        console.log("fetches current user roles");
+        console.log(data);
+        if (!data['exception']) {
+          for (var key in data) {
+            const role = data[key];
+            if (role.name == "Administrator") {
+              console.log("welcome back " + user.firstName + ".");
+              console.log("you're an admin, and liferay says:");
+              console.log(role.description);
+              self.currentUser.admin = true;
+            }
+          }
+        }
+      });
     }
   }
 
@@ -265,7 +289,7 @@ export class UserService {
   getUserRoles(user) {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = this.api + "/role/get-user-roles/user-id/33104" + user.userId;
+      const endpoint = this.api + "/role/get-user-roles/user-id/" + user.userId;
       this.http.get(endpoint, {headers: this.headers})
       .map(res => res.json())
       .subscribe(data => {
