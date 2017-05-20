@@ -46,25 +46,36 @@
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
     </div>
-    <div *ngIf="view == 'APPROVE' && viewMode == 'CLIENT' && concepts" class="collab-image">
+    <div *ngIf="view == 'APPROVE' && viewMode == 'DESIGNER' && !concepts" class="collab-alert">
+      <h1>WELCOME TO THE DESIGN STAGE!</h1>
+      <p>Please upload 2 concept boards based on your client's information and style. Once all boards have been uploaded and confirmed, submit to the client and the 10 business day timeline will begin.</p>
+      <button (click)="uploadConcept()" ion-button full type="button">UPLOAD</button>
+    </div>
+    <div *ngIf="view == 'APPROVE' && concepts" class="collab-image">
+      <p *ngIf="view == 'DESIGNER'">Your client has received your submission. Feel free to edit and resubmit before their approval.</p>
       <img class="selected-img" [src]="selectedConcept.url">
       <div class="collab-thumb-wrapper">
         <div class="collab-thumb" *ngFor="let thumb of concepts">
           <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
-          <img class="delete" src="assets/delete.png" (click)="deleteDrawing(thumb)">
+          <img *ngIf="view == 'DESIGNER'" class="delete" src="assets/delete.png" (click)="deleteConcept(thumb)">
         </div>
       </div>
-      <button (click)="approveConcept()" ion-button full type="button">APPROVE CONCEPT</button>
+      <button *ngIf="view == 'CLIENT'" (click)="approveConcept(thumb)" ion-button full type="button">APPROVE CONCEPT</button>
+      <button *ngIf="view == 'DESIGNER'" (click)="submitConcepts()" ion-button full type="button">SUBMIT</button>
     </div>
-    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && !floorplan" class="collab-alert">
+    <div *ngIf="view == 'APPROVE' && conceptboard && !floorplan && viewMode == 'CLIENT'" class="collab-alert">
       <h1>HANG TIGHT</h1>
       <p>Your designer is hard at work putting together the Floor Plan of your room! We will send you an email when it's time for your to make a selection.</p>
     </div>
-    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT' && floorplan" class="collab-image" id="floorplan-map">
+    <div *ngIf="view == 'APPROVE' && conceptboard && !floorplan && viewMode == 'DESIGNER'" class="collab-alert">
+      <p>Using the floor plan provided by the client, create and upload a floor plan to begin the design process.</p>
+      <button (click)="uploadFloorplan()" ion-button full type="button">UPLOAD</button>
+    </div>
+    <div *ngIf="view == 'FLOOR_PLAN' && floorplan" class="collab-image" id="floorplan-map">
       <img [src]="floorplan.url" id="floorplan-img">
       <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
     </div>
-    <div *ngIf="view == 'CONCEPT_BOARD' && viewMode == 'CLIENT' && conceptboard" class="collab-image">
+    <div *ngIf="view == 'CONCEPT_BOARD' && conceptboard" class="collab-image">
       <img [src]="conceptboard.url" class="selected-img">
     </div>
     <div *ngIf="view != 'APPROVE'" class="collab-design-switcher">

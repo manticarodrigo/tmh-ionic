@@ -74,15 +74,16 @@ export class DesignPage {
         }
       });
     }
-    this.projectService.getProjectDetailType(this.project.projectId, "CONCEPT")
+    Promise.all([this.projectService.getProjectDetailType(this.project.projectId, "CONCEPT"), this.projectService.getProjectDetailType(this.project.projectId, "FLOOR_PLAN")])
     .then(data => {
-      console.log("design page received concepts:");
+      console.log("design page received concepts and floorplan:");
       console.log(data);
       if (!data['exception']) {
-        var ids = [];
-        for (var key in data) {
-          const detail = data[key];
-          ids.push(detail.fileEntryId);
+        const concepts = data[0];
+        var conceptIds = [];
+        for (var key in concepts) {
+          const detail = concepts[key];
+          conceptIds.push(detail.fileEntryId);
           if (detail && detail.projectDetailStatus == 'APPROVED') {
             self.conceptboard = {};
             console.log("concept was approved:");
@@ -93,44 +94,35 @@ export class DesignPage {
               console.log(data);
               if (!data['exception']) {
                 self.conceptboard = data;
-                if (!self.floorplan) {
-                  self.view = 'CONCEPT_BOARD';
-                }
               }
             });
           }
         }
-        if (!self.conceptboard) {
-          self.projectService.getFileEntries(ids)
-          .then(files => {
-            console.log("design page received concept files:");
-            console.log(files);
-            self.concepts = data;
-            self.selectedConcept = data[0];
-          });
+        self.projectService.getFileEntries(conceptIds)
+        .then(files => {
+          console.log("design page received concept files:");
+          console.log(files);
+          self.concepts = data;
+          self.selectedConcept = data[0];
+        });
+        const floorplans = data[1];
+        var floorplanIds = [];
+        for (var key in floorplans) {
+          const file = floorplans[key];
+          floorplanIds.push(file.fileEntryId);
         }
-      }
-    });
-    this.projectService.getProjectDetailType(this.project.projectId, "FLOOR_PLAN")
-    .then(data => {
-      console.log("design page received floorplan:");
-      console.log(data);
-      if (!data['exception']) {
-        var ids = [];
-        for (var key in data) {
-          const file = data[key];
-          ids.push(file.fileEntryId);
-        }
-        self.projectService.getFileEntry(ids[0])
+        self.projectService.getFileEntry(floorplanIds[0])
         .then(data => {
           console.log("design page received floorplan file:");
           console.log(data);
           if (!data['exception']) {
             self.floorplan = data;
-            self.view = 'FLOOR_PLAN';
             self.drawFloorplan();
           }
         });
+        if (!concepts['exception'] && !floorplans['exception'] ) {
+          self.view = 'FLOOR_PLAN';
+        }
       }
     });
     this.projectService.fetchItems(this.project)
@@ -322,12 +314,6 @@ export class DesignPage {
       });
   }
 
-  selectMenuItem(item) {
-    console.log("menu item pressed:");
-    console.log(item);
-    this.view = item;
-  }
-
   maximizeChat() {
     console.log("chat fab pressed for project");
     this.maximized = !this.maximized;
@@ -354,6 +340,10 @@ export class DesignPage {
   selectConceptboard() {
     console.log("selected switcher conceptboard link");
     this.view = 'CONCEPT_BOARD';
+  }
+
+  uploadConcept() {
+    console.log("upload concept pressed");
   }
 
 }
