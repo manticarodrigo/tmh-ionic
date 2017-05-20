@@ -31,7 +31,7 @@
 
 <ion-content [class.minimized]="minimized">
   <div class="collab-workzone">
-    <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode">
+    <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
       </ion-segment-button>

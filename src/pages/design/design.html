@@ -31,7 +31,7 @@
 
 <ion-content [class.minimized]="minimized">
   <div class="collab-workzone">
-    <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode">
+    <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
       </ion-segment-button>
@@ -83,16 +83,58 @@
       <a (click)="selectConceptboard()">CONCEPT BOARD</a>
     </div>
   </div>
-  <div *ngIf="viewMode == 'CLIENT' && items" class="collection-box">
+  <div class="project-items-view-switcher">
+    <ion-segment [(ngModel)]="itemsViewMode">
+      <ion-segment-button value="PENDING">
+        PENDING
+      </ion-segment-button>
+      <ion-segment-button value="APPROVED">
+        APPROVED
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+  <div *ngIf="viewMode == 'CLIENT' && items && project.projectStatus != 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>YOUR COLLECTION</h1>
     <p>Review your furnishings and note the items that you would like to see alternatives from your designer. Happy with the collection? Go ahead and approve all!</p>
-    <button ion-button type="button">APPROVE & SUBMIT</button>
+    <button ion-button type="button" (click)="approveCollection()">APPROVE & SUBMIT</button>
+  </div>
+  <div *ngIf="viewMode == 'CLIENT' && items && project.projectStatus == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
+    <h1>ALTERNATES REQUESTED</h1>
+    <p>Please wait for your designer to submit alternatives for the items you requested.</p>
+    <button ion-button type="button" disabled>APPROVE & SUBMIT</button>
+  </div>
+  <div *ngIf="viewMode == 'CLIENT' && items && itemsViewMode == 'APPROVED'" class="collection-box">
+    <h1>APPROVED ITEMS</h1>
+    <p>Below are the items approved from the previous stage. These items can be further discussed with your designer if needed.</p>
+  </div>
+  <div *ngIf="viewMode == 'CLIENT' && !items" class="collection-box">
+    <h1>YOUR COLLECTION</h1>
+    <p>Please wait for your designer to add furniture items to the floorplan before you approve or request alternatives.</p>
+  </div>
+  <div *ngIf="viewMode == 'DESIGNER' && !items" class="collection-box">
+    <h1>{{ types[project.projectType] }} COLLECTION</h1>
+    <p>Add furniture to fill the space. Press and hold at a location on the floorplan to add a new item.</p>
+  </div>
+  <div *ngIf="viewMode == 'DESIGNER' && items && project.projectStatus != 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
+    <h1>{{ types[project.projectType] }} COLLECTION</h1>
+    <p>Continue adding furniture to fill the space. When you're satisfied with the collection, go ahead and submit it to your client.</p>
+    <button ion-button type="button" (click)="submitCollection()">SUBMIT COLLECTION</button>
+  </div>
+  <div *ngIf="viewMode == 'DESIGNER' && items && project.projectStatus == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
+    <h1>ALTERNATES REQUESTED:</h1>
+    <p>Review the items below. Your client wants to see alternatives furniture for them. When you're satisfied with the collection, go ahead and submit it to your client.</p>
+    <button ion-button type="button" (click)="submitAlternatives()">SUBMIT ALTERNATIVES</button>
+  </div>
+  <div *ngIf="viewMode == 'DESIGNER' && items && itemsViewMode == 'APPROVED'" class="collection-box">
+    <h1>APPROVED ITEMS</h1>
+    <p>The client has already approved the following items:</p>
+    <button ion-button type="button" (click)="submitAlternatives()">SUBMIT ALTERNATIVES</button>
   </div>
   <ion-grid *ngIf="items" class="project-items">
+    <h4>{{ items.length }} ITEMS</h4>
+    <h5 *ngIf="collectionTotal">Collection Total: ${{ collectionTotal }}.00</h5>
     <ion-row class="project-items-wrapper">
-      <h4>{{ items.length }} ITEMS</h4>
-      <h5 *ngIf="collectionTotal">Collection Total: ${{ collectionTotal }}.00</h5>
-      <ion-col col-12 col-sm *ngFor="let item of items; let i = index" class="project-items-box">
+      <ion-col col-12 col-sm *ngFor="let item of items; let i = index" [class.hidden]="!isItemVisible(item)" class="project-items-box">
         <div class="project-items-label">
           ITEM {{ i + 1 }}
         </div>
@@ -102,7 +144,11 @@
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>
         <h2>${{ item.itemPrice }}</h2>
-        <button ion-button type="button">REQUEST ALTERNATIVES</button>
+        <button *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVES' && viewMode == 'CLIENT'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
+        <button *ngIf="item.projectItemStatus == 'SUBMITTED' && viewMode == 'CLIENT'" ion-button type="button" (click)="viewAlternative(item)">VIEW ALTERNATIVES</button>
+        <button *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVES' && viewMode == 'DESIGNER'" ion-button type="button" (click)="offerAlternative(item)">OFFER ALTERNATIVES</button>
+        <button *ngIf="item.projectItemStatus == 'SUBMITTED' && viewMode == 'DESIGNER'" ion-button type="button" (click)="viewAlternative(item)">ALTERNATIVES ADDED</button>
+        <button *ngIf="item.projectItemStatus != 'REQUEST_ALTERNATIVES' && item.projectItemStatus != 'REQUEST_ALTERNATIVES' && viewMode == 'DESIGNER'" ion-button type="button" (click)="editItem(item)">EDIT</button>
       </ion-col>
     </ion-row>
   </ion-grid>

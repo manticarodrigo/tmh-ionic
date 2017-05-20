@@ -33,6 +33,7 @@ export class DesignPage {
   }
   view = 'APPROVE';
   viewMode = 'CLIENT';
+  itemsViewMode = 'PENDING';
   concepts: any;
   selectedConcept: any;
   conceptboard: any;
@@ -140,6 +141,14 @@ export class DesignPage {
         self.collectionTotal = collectionTotal;
       }
     });
+  }
+
+  isItemVisible(item) {
+    if (this.itemsViewMode == 'PENDING' && item.projectItemStatus != 'APPROVED')
+      return true;
+    if (this.itemsViewMode == 'APPROVED' && item.projectItemStatus == 'APPROVED')
+      return true;
+    return false;
   }
 
   getDaysLeftStringFrom(timestamp) {
@@ -325,7 +334,9 @@ export class DesignPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
-    this.floorplanMap.remove();
+    if (this.floorplanMap) {
+      this.floorplanMap.remove();
+    }
     this.drawFloorplan();
   }
 

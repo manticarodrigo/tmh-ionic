@@ -1,14 +1,20 @@
 page-design {
   @media only screen and (min-width: 700px) {
-    .collab-workzone, .collection-box, .project-items {
+    .collab-workzone, .project-items-view-switcher, .project-items {
       padding-right: 340px !important;
+    }
+    .collection-box {
+      border-right: 340px solid #fff;
     }
   }
   // Remove padding for chat space from page when minimized on desktop
   .minimized {
     @media only screen and (min-width: 700px) {
-      .collab-workzone, .collection-box, .project-items {
+      .collab-workzone, .project-items-view-switcher, .project-items {
         padding-right: 5px !important;
+      }
+      .collection-box {
+        border-right:none !important;
       }
     }
   }
@@ -98,13 +104,15 @@ page-design {
       padding-top: 50px;
     }
     @media only screen and (min-width: 700px) {
-      // padding-right: 346px;
       min-height: 500px;
     }
-    .segment {
-      position: absolute;
-      top: 10px;
-      left: 15px;
+    .admin-segment {
+      z-index: 1000;
+      @media only screen and (max-width: 700px) {
+        position: absolute;
+        top: 10px;
+        left: 15px;
+      }
       width: 200px;
       background-color: #fff;
       box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
@@ -242,23 +250,37 @@ page-design {
   }
   .collection-box {
     position: relative;
+    box-sizing: content-box;
     @media only screen and (min-width: 700px) {
       padding-left: 7.5%;
       .button {
-        display: block;
-        float: right;
-        top: -105px;
-        right: 7.5%;
+        position: absolute;
+        top: 40px;
+        right: 40px;
         width: 250px !important;
       }
     }
     padding: 20px;
     background-color: #fff;
+    h1 {
+      text-transform: uppercase;
+    }
     p {
       max-width: 350px;
     }
     .button {
       width: 100%;
+    }
+  }
+  .project-items-view-switcher {
+    //padding: 10px;
+    background: #D3D3D3;
+    .segment {
+      max-width: 250px;
+      margin: auto;
+      .segment-button {
+        margin: 8px;
+      }
     }
   }
   .project-items {
@@ -297,6 +319,9 @@ page-design {
       @media only screen and (min-width: 700px) {
         width: 90%;
       }
+      .hidden {
+        display: none;
+      }
       .project-items-box {
         position: relative;
         margin: 10px;
@@ -330,7 +355,7 @@ page-design {
         }
         h2 {
           position: absolute;
-          bottom: 40px;
+          bottom: 45px;
           left: 50%;
           transform: translateX(-50%);
         }
