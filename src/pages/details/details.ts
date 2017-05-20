@@ -54,8 +54,8 @@ export class DetailsPage {
               private platform: Platform) {
     const self = this;
     this.user = this.userService.currentUser;
-    // this.viewMode = this.userService.currentUserGroup;
     this.project = this.navParams.get('project');
+    this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
     if (this.project.userId == this.user.userId) {
       console.log("current user's project");
       this.client = this.user;
@@ -134,6 +134,23 @@ export class DetailsPage {
       console.log(answers);
       self.answers = answers;
     });
+  }
+
+  getDaysLeftStringFrom(timestamp) {
+    if (timestamp) {
+      let date = new Date(timestamp);
+      date.setDate(date.getDate());
+      let now = new Date();
+      var seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+      var interval = Math.floor(seconds / 86400); // days
+      if (interval == 1)
+        return '1 day left';
+      if (interval > 0 && interval < 15)
+        return interval + ' days left';
+      return '0 days left';
+    } else {
+      return '';
+    }
   }
 
   homePressed() {

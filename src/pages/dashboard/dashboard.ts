@@ -62,9 +62,10 @@ export class Dashboard {
       this.tab = 'IN_PROGRESS';
       this.tabs = {
         IN_PROGRESS: 'IN PROGRESS',
+        UP_NEXT: 'UP NEXT',
         COMPLETED: 'COMPLETED',
         ARCHIVED: 'ARCHIVED',
-        UP_NEXT: 'UP NEXT'
+        
       };
     }
     this.loadProjects();
@@ -237,7 +238,7 @@ export class Dashboard {
       let now = new Date();
       var seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
       var interval = Math.floor(seconds / 86400); // days
-      if (interval > 0)
+      if (interval > 0 && interval < 15)
         return interval;
       return 0;
     } else {
