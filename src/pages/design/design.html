@@ -31,6 +31,14 @@
 
 <ion-content [class.minimized]="minimized">
   <div class="collab-workzone">
+    <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode">
+      <ion-segment-button value="CLIENT">
+        CLIENT
+      </ion-segment-button>
+      <ion-segment-button value="DESIGNER">
+        DESIGNER
+      </ion-segment-button>
+    </ion-segment>
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>

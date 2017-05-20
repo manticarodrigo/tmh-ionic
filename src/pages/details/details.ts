@@ -54,6 +54,14 @@ export class DetailsPage {
               private platform: Platform) {
     const self = this;
     this.user = this.userService.currentUser;
+    if (this.userService.currentUserGroups.designer) {
+      console.log("current user is a designer");
+      this.viewMode = "DESIGNER";
+    }
+    if (this.user.admin) {
+      console.log("current user is an admin");
+      this.viewMode = "DESIGNER";
+    }
     this.project = this.navParams.get('project');
     this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
     if (this.project.userId == this.user.userId) {

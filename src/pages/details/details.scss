@@ -145,6 +145,15 @@ page-details {
         }
       }
     }
+    .segment {
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      width: 200px;
+      background-color: #fff;
+      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+      border-radius: 2px;
+    }
     .chat-fab {
       position: absolute;
       top: 8px;

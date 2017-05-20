@@ -101,6 +101,15 @@ page-design {
       // padding-right: 346px;
       min-height: 500px;
     }
+    .segment {
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      width: 200px;
+      background-color: #fff;
+      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+      border-radius: 2px;
+    }
     .chat-fab {
       position: absolute;
       top: 8px;
@@ -216,7 +225,7 @@ page-design {
       box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
       border-radius: 2px;
       padding: 0px 12px;
-      width: 218px;
+      width: 221px;
       height: 35px;
       line-height: 35px;
       background-color: #fff !important;
@@ -226,7 +235,8 @@ page-design {
         padding: 0px 5px;
       }
       a:nth-of-type(1) {
-        border-right: 0.5px solid color($colors, primary);
+        border-right: 0.5px solid rgba(0,0,0,0.25);
+        padding-right: 10px;
       }
     }
   }
