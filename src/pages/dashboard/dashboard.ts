@@ -19,14 +19,8 @@ export class Dashboard {
   viewMode = 'CLIENT';
   projects: Array<any>;
   projectUsers = {};
-  tab = 'IN_PROGRESS';
-  tabs = {
-    ALL: 'ALL',
-    IN_PROGRESS: 'IN PROGRESS',
-    COMPLETED: 'COMPLETED',
-    ARCHIVED: 'ARCHIVED',
-    UP_NEXT: 'UP NEXT'
-  }
+  tab = 'ALL';
+  tabs: any;
   types = {
     BEDROOM: 'Bedroom',
     LIVING_ROOM: 'Living Room',
@@ -34,7 +28,7 @@ export class Dashboard {
     STUDIO: 'Studio',
     DINING_ROOM: 'Dining Room',
     HOME_OFFICE: 'Office'
-  }
+  };
   phases = {
     DETAILS: 'Details',
     DESIGN: 'Design',
@@ -45,7 +39,7 @@ export class Dashboard {
     SHOPPING_CART: 'Shopping Cart',
     ESTIMATE_SHIPPING_AND_TAX: 'Estimate Shipping & Tax',
     ARCHIVED: 'Archived'
-  }
+  };
   constructor(private navCtrl: NavController,
               private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
@@ -53,9 +47,25 @@ export class Dashboard {
               private platform: Platform,
               private userService: UserService,
               private projectService: ProjectService) {
-    const self = this;
     this.user = this.userService.currentUser;
-    // this.viewMode = this.userService.currentUserGroup;
+    this.tabs = {
+      ALL: 'ALL',
+      COMPLETED: 'COMPLETED',
+    };
+    if (this.userService.currentUserGroups.designer) {
+      console.log("current user is a designer");
+      this.viewMode = "DESIGNER";
+    }
+    if (this.user.admin) {
+      console.log("current user is an admin");
+      this.tab = 'IN_PROGRESS';
+      this.tabs = {
+        IN_PROGRESS: 'IN PROGRESS',
+        COMPLETED: 'COMPLETED',
+        ARCHIVED: 'ARCHIVED',
+        UP_NEXT: 'UP NEXT'
+      };
+    }
     this.loadProjects();
   }
 
@@ -88,8 +98,15 @@ export class Dashboard {
 
   selectTab() {
     console.log("Toggling tab dropdown!");
+    var tabs = [];
+    for (var key in this.tabs) {
+      console.log(key);
+      const tab = this.tabs[key];
+      console.log(tab);
+      tabs.push(tab);
+    }
     let popover = this.popoverCtrl.create('TabDropdown', {
-      tabs: ['ALL', 'IN PROGRESS', 'COMPLETED', 'ARCHIVED', 'UP NEXT']
+      tabs: tabs
     });
     let ev = {
       target : {
@@ -109,20 +126,6 @@ export class Dashboard {
     popover.present({ev});
   }
 
-
-  fetchProjects() {
-    if (this.tab == 'ALL')
-      return this.projectService.findByUserId(this.userService.currentUser.userId);
-    if (this.tab == 'IN_PROGRESS')
-      return this.projectService.findByInProgress();
-    if (this.tab == 'COMPLETED')
-      return this.projectService.findByComplete();
-    if (this.tab == 'UP_NEXT')
-      return this.projectService.findByUpNext();
-    if (this.tab == 'ARCHIVED')
-      return this.projectService.findByArchived();
-  }
-
   loadProjects() {
     const self = this;
     self.fetchProjects()
@@ -132,6 +135,23 @@ export class Dashboard {
     .catch(error => {
       console.log(error);
     })
+  }
+
+
+  fetchProjects() {
+    if (this.tab == 'ALL' && this.viewMode == 'CLIENT')
+      return this.projectService.findByUserId(this.userService.currentUser.userId);
+    // TODO: implement designer project assignment in mongodb/express
+    // if (this.tab == 'ALL' && this.viewMode == 'DESIGNER')
+    //   return this.projectService.findByDesignerId(this.userService.currentUser.userId);
+    if (this.tab == 'IN_PROGRESS')
+      return this.projectService.findByInProgress();
+    if (this.tab == 'COMPLETED')
+      return this.projectService.findByComplete();
+    if (this.tab == 'UP_NEXT')
+      return this.projectService.findByUpNext();
+    if (this.tab == 'ARCHIVED')
+      return this.projectService.findByArchived();
   }
 
   processProjects(data) {

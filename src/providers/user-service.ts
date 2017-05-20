@@ -104,28 +104,28 @@ export class UserService {
     console.log(user);
     console.log(token);
     const headers = this.generateHeader(token);
-    this.setCurrentUserGroups(user);
-    this.checkIfAdmin(user);
     return new Promise((resolve, reject) => {
       if (user && token) {
         self.headers = headers;
+        self.currentUser = user;
+        self.setCurrentUserGroups();
+        self.checkIfAdmin();
         self.imageForUser(user)
         .then(url => {
           console.log("found user image url:");
           console.log(url);
           if (url) {
-            user.photoURL = url;
+            self.currentUser.photoURL = url;
           } else {
-            user.photoURL = 'assets/user-placeholder.png';
+            self.currentUser.photoURL = 'assets/user-placeholder.png';
           }
-          self.currentUser = user;
-          self.storage.set('user', user);
+          self.storage.set('user', self.currentUser);
           self.storage.set('token', token);
           resolve(user);
+          
         })
         .catch(error => {
           console.log(error);
-          self.currentUser = user;
           self.storage.set('user', user);
           self.storage.set('token', token);
           resolve(user);
@@ -140,51 +140,38 @@ export class UserService {
     });
   }
 
-  setCurrentUserGroups(user) {
+  setCurrentUserGroups() {
     const self = this;
-    console.log("setting current user group for " + user.firstName);
-    if (!user) {
-      self.currentUserGroups = {
-        client: true,
-        designer: false,
-        operator: false,
-        admin: false,
-      }
-    } else {
-      for (var name in self.groups) {
-        const group = self.groups[name];
-        self.hasUserGroup(user, group)
-        .then(data => {
-          if (!data['exception'] && data == true) {
-            console.log("current user has group " + group.name);
-            self.currentUserGroups[group.name.toLowerCase()] = true;
-          }
-        });
-      }
-    }
-  }
-
-  checkIfAdmin(user) {
-    const self = this;
-    console.log("checking admin role for " + user.firstName);
-    if (user) {
-      self.getUserRoles(user)
+    console.log("setting current user groups");
+    for (var name in self.groups) {
+      const group = self.groups[name];
+      self.hasUserGroup(self.currentUser, group)
       .then(data => {
-        console.log("fetches current user roles");
-        console.log(data);
-        if (!data['exception']) {
-          for (var key in data) {
-            const role = data[key];
-            if (role.name == "Administrator") {
-              console.log("welcome back " + user.firstName + ".");
-              console.log("you're an admin, and liferay says:");
-              console.log(role.description);
-              self.currentUser.admin = true;
-            }
-          }
+        if (!data['exception'] && data == true) {
+          console.log("current user has group " + group.name);
+          self.currentUserGroups[group.name.toLowerCase()] = true;
         }
       });
     }
+  }
+
+  checkIfAdmin() {
+    const self = this;
+    console.log("checking admin role for current user");
+    self.getUserRoles(this.currentUser)
+    .then(data => {
+      if (!data['exception']) {
+        for (var key in data) {
+          const role = data[key];
+          if (role.name == "Administrator") {
+            console.log("welcome back " + this.currentUser.firstName + ".");
+            console.log("you're an admin, and always remember what liferay says about at admins:");
+            console.log(role.descriptionCurrentValue);
+            self.currentUser.admin = true;
+          }
+        }
+      }
+    });
   }
 
   imageForUser(user) {
@@ -221,7 +208,10 @@ export class UserService {
       console.log("fetched user:");
       console.log(data);
       if (!data.exception) {
-        data.shortName = data.firstName + ' ' + data.lastName.split('')[0] + '.';
+        data.shortName = data.firstName;
+        if (data.lastName) {
+          data.shortName += ' ' + data.lastName.split('')[0] + '.';
+        }
       }
       callback(data);
     });
@@ -293,8 +283,8 @@ export class UserService {
       this.http.get(endpoint, {headers: this.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log(user.firstName + " has role " + data.name);
-        console.log(data.description);
+        console.log("user has roles:");
+        console.log(data);
         resolve(data);
       });
     });

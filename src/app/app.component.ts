@@ -14,7 +14,6 @@ import { SocketService } from '../providers/socket-service';
 export class TheManHome {
   @ViewChild(Nav) nav: Nav;
   rootPage:any = 'Login';
-  user: any;
   constructor(private platform: Platform,
               private menuCtrl: MenuController,
               private statusBar: StatusBar,
@@ -51,7 +50,6 @@ export class TheManHome {
           console.log('Stored user found');
           self.userService.setCurrentUser(user, token)
           .then(user => {
-            self.user = user;
             self.nav.setRoot('Dashboard');
           })
           .catch(error => {

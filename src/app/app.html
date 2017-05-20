@@ -1,18 +1,18 @@
 <ion-menu side="right" [content]="content">
   <ion-content>
     <div class="header">
-     <img *ngIf="user && user.photoURL" [src]="user.photoURL">
-     <img *ngIf="!user || !user.photoURL" src="assets/user-placeholder.png">
-     <h4 *ngIf="user">
-      {{ user.firstName }} {{ user.lastName }}
+     <img *ngIf="this.userService.currentUser && this.userService.currentUser.photoURL" [src]="this.userService.currentUser.photoURL">
+     <img *ngIf="!this.userService.currentUser || !this.userService.currentUser.photoURL" src="assets/user-placeholder.png">
+     <h4 *ngIf="this.userService.currentUser">
+      {{ this.userService.currentUser.firstName }} {{ this.userService.currentUser.lastName }}
      </h4>
-     <p *ngIf="user">
-      {{ user.emailAddress }}
+     <p *ngIf="this.userService.currentUser">
+      {{ this.userService.currentUser.emailAddress }}
      </p>
-     <h4 *ngIf="!user">
+     <h4 *ngIf="!this.userService.currentUser">
       User
      </h4>
-     <p *ngIf="!user">
+     <p *ngIf="!this.userService.currentUser">
       user@email.com
      </p>
      <button (click)="profilePressed()" ion-button full type="button">
