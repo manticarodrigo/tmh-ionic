@@ -9,21 +9,27 @@ import { ImageService } from './image-service';
 @Injectable()
 export class UserService {
   currentUser: any;
-  currentUserGroup = 'CLIENT';
+  currentUserGroups = {
+    client: true,
+    designer: false,
+    operator: false,
+    admin: false,
+  }
   headers: any;
+  adminHeaders: any;
   api: any;
   groups = {
     client: {
+      name: "Client",
       groupId: 20484,
     },
     designer: {
+      name: "Designer",
       groupId: 20488
     },
     operator: {
+      name: "Operator",
       groupId: 20492
-    },
-    guest: {
-      groupId: 20182
     }
   }
   
@@ -36,6 +42,10 @@ export class UserService {
     } else {
       this.api = 'http://stage.themanhome.com/api/jsonws';
     }
+    const token = btoa("rorrodev@gmail.com:themanhome2017")
+    const headers = this.generateHeader(token);
+    this.adminHeaders = headers;
+    this.fetchGroups();
   }
 
   generateHeader(token) {
@@ -71,11 +81,9 @@ export class UserService {
 
   register(firstName, lastName, email, password, password2, callback) {
     const self = this;
-    const token = btoa("manticarodrigo@gmail.com:xlemrotm34711")
-    const headers = this.generateHeader(token);
-    const endpoint = this.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/-group-ids/-organization-ids/-role-ids/-user-group-ids/send-email/true";
+    const endpoint = this.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/group-ids/" + [self.groups.client.groupId] + "/-organization-ids/-role-ids/-user-group-ids/send-email/true";
     console.log(endpoint);
-    this.http.get(endpoint, {headers: headers})
+    this.http.get(endpoint, {headers: this.adminHeaders})
     .map(res => res.json())
     .subscribe(data => {
       console.log("register returned data");
@@ -100,7 +108,6 @@ export class UserService {
     return new Promise((resolve, reject) => {
       if (user && token) {
         self.headers = headers;
-        self.fetchGroups();
         self.imageForUser(user)
         .then(url => {
           console.log("found user image url:");
@@ -134,29 +141,25 @@ export class UserService {
 
   setCurrentUserGroup(user) {
     const self = this;
-    console.log("setting current user group for user");
-    console.log(user);
+    console.log("setting current user group for " + user.firstName);
     if (!user) {
-      this.currentUserGroup = 'CLIENT';
+      self.currentUserGroups = {
+        client: true,
+        designer: false,
+        operator: false,
+        admin: false,
+      }
     } else {
-      this.hasUserGroup(user, this.groups.designer.groupId, (data) => {
-        if (!data.exception && data == true) {
-          console.log("setting current user group to DESIGNER");
-          self.currentUserGroup = 'DESIGNER';
-        }
-      });
-      this.hasUserGroup(user, this.groups.operator.groupId, (data) => {
-        if (!data.exception && data == true) {
-          console.log("setting current user group to OPERATOR");
-          self.currentUserGroup = 'OPERATOR';
-        }
-      });
-      this.hasUserGroup(user, this.groups.guest.groupId, (data) => {
-        if (!data.exception) {
-          console.log("setting current user group to GUEST");
-          self.currentUserGroup = 'GUEST';
-        }
-      });
+      for (var name in self.groups) {
+        const group = self.groups[name];
+        self.hasUserGroup(user, group)
+        .then(data => {
+          if (!data['exception'] && data == true) {
+            console.log("current user has group " + group.name);
+            self.currentUserGroups[group.name.toLowerCase()] = true;
+          }
+        });
+      }
     }
   }
 
@@ -230,7 +233,7 @@ export class UserService {
   fetchGroups() {
     const self = this;
     const endpoint = this.api + "/group/get-groups/companyId/20155/parentGroupId/0/site/true";
-    this.http.get(endpoint, {headers: this.headers})
+    this.http.get(endpoint, {headers: this.adminHeaders})
     .map(res => res.json())
     .subscribe(data => {
       console.log("fetched groups:");
@@ -245,17 +248,31 @@ export class UserService {
     });
   }
 
-  hasUserGroup(user, group, callback) {
+  hasUserGroup(user, group) {
     const self = this;
-    const endpoint = this.api + "/group/has-user-group/userId/" + user.userId + "/groupId/" + group.groupId;
-    this.http.get(endpoint, {headers: this.headers})
-    .map(res => res.json())
-    .subscribe(data => {
-      console.log("user has group:");
-      console.log(user.firstName);
-      console.log(group.name);
-      console.log(data);
-      callback(data);
+    return new Promise((resolve, reject) => {
+      const endpoint = this.api + "/group/has-user-group/userId/" + user.userId + "/groupId/" + group.groupId;
+      this.http.get(endpoint, {headers: this.adminHeaders})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log(user.firstName + " has group " + group.name);
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  getUserRoles(user) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      const endpoint = this.api + "/role/get-user-roles/user-id/33104" + user.userId;
+      this.http.get(endpoint, {headers: this.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log(user.firstName + " has role " + data.name);
+        console.log(data.description);
+        resolve(data);
+      });
     });
   }
 

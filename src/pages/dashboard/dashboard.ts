@@ -55,7 +55,7 @@ export class Dashboard {
               private projectService: ProjectService) {
     const self = this;
     this.user = this.userService.currentUser;
-    this.viewMode = this.userService.currentUserGroup;
+    // this.viewMode = this.userService.currentUserGroup;
     this.loadProjects();
   }
 
