@@ -136,10 +136,11 @@ ion-menu {
 }
 
 .popover-content {
-    // position: absolute;
-    // top: 55px !important;
-    // left: calc(100% - 290px) !important;
-    // width: 280px !important;
+    position: absolute;
+    top: 115px !important;
+    left: 0px !important;
+    width: 100% !important;
+    height: 100%;
     border-radius: 0 !important;
 }
 

@@ -147,15 +147,6 @@ export class DetailsPage {
     let popover = this.popoverCtrl.create('TabDropdown', {
       tabs: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     });
-    let ev = {
-      target : {
-        getBoundingClientRect : () => {
-          return {
-            top: '145'
-          };
-        }
-      }
-    };
     popover.onDidDismiss(data => {
       if (data) {
         var page: any;
@@ -169,7 +160,7 @@ export class DetailsPage {
           });
       }
     });
-    popover.present({ev});
+    popover.present();
   }
 
   selectTabLink(link) {

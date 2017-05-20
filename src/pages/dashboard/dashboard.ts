@@ -19,7 +19,7 @@ export class Dashboard {
   viewMode = 'CLIENT';
   projects: Array<any>;
   projectUsers = {};
-  tab = 'ALL';
+  tab = 'IN_PROGRESS';
   tabs: any;
   types = {
     BEDROOM: 'Bedroom',
@@ -49,7 +49,7 @@ export class Dashboard {
               private projectService: ProjectService) {
     this.user = this.userService.currentUser;
     this.tabs = {
-      ALL: 'ALL',
+      IN_PROGRESS: 'IN PROGRESS',
       COMPLETED: 'COMPLETED',
     };
     if (this.userService.currentUserGroups.designer) {
@@ -58,6 +58,7 @@ export class Dashboard {
     }
     if (this.user.admin) {
       console.log("current user is an admin");
+      this.viewMode = "ADMIN";
       this.tab = 'IN_PROGRESS';
       this.tabs = {
         IN_PROGRESS: 'IN PROGRESS',
@@ -108,42 +109,75 @@ export class Dashboard {
     let popover = this.popoverCtrl.create('TabDropdown', {
       tabs: tabs
     });
-    let ev = {
-      target : {
-        getBoundingClientRect : () => {
-          return {
-            top: '145'
-          };
-        }
-      }
-    };
     popover.onDidDismiss(data => {
       if (data) {
         this.tab = data.replace(" ", "_");
         this.loadProjects();
       }
     });
-    popover.present({ev});
+    popover.present();
   }
 
   loadProjects() {
     const self = this;
-    self.fetchProjects()
-    .then(data => {
-      self.processProjects(data);
-    })
-    .catch(error => {
-      console.log(error);
-    })
+    if (this.viewMode == 'CLIENT') {
+      self.fetchClientProjects()
+      .then(data => {
+        self.processProjects(data);
+      });
+    }
+    if (this.viewMode == "DESIGNER") {
+      console.log("no designer project assigment logic yet");
+    }
+    if (this.viewMode == "ADMIN") {
+      self.fetchProjects()
+      .then(data => {
+        self.processProjects(data);
+      });
+    }
   }
+
+  fetchClientProjects() {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      this.projectService.findByUserId(this.userService.currentUser.userId)
+      .then(data => {
+        if (this.tab == 'IN_PROGRESS') {
+          var projects = [];
+          if (!data['exception']) {
+            for (var key in data) {
+              const project = data[key];
+              const status = self.phases[project.projectStatus];
+              if (status != 'ARCHIVED') {
+                projects.push(project);
+              }
+            }
+            resolve(projects);
+          }
+        }
+        if (this.tab == 'COMPLETED') {
+          var projects = [];
+          if (!data['exception']) {
+            for (var key in data) {
+              const project = data[key];
+              const status = self.phases[project.projectStatus];
+              if (status == 'ARCHIVED') {
+                projects.push(project);
+              }
+            }
+            resolve(projects);
+          }
+        }
+      });
+    });
+  }
+
+  // TODO: implement designer project assignment in mongodb/express
+  // fetchDesignerProjects() {
+  //  return this.projectService.findByDesignerId(this.userService.currentUser.userId);
 
 
   fetchProjects() {
-    if (this.tab == 'ALL' && this.viewMode == 'CLIENT')
-      return this.projectService.findByUserId(this.userService.currentUser.userId);
-    // TODO: implement designer project assignment in mongodb/express
-    // if (this.tab == 'ALL' && this.viewMode == 'DESIGNER')
-    //   return this.projectService.findByDesignerId(this.userService.currentUser.userId);
     if (this.tab == 'IN_PROGRESS')
       return this.projectService.findByInProgress();
     if (this.tab == 'COMPLETED')
@@ -160,6 +194,7 @@ export class Dashboard {
     if (!data.exception) {
       for (var key in data) {
         const project = data[key];
+        const status = self.phases[project.projectStatus];
         project.projectTypeReadable = self.types[project.projectType]
         project.projectStatusReadable = self.phases[project.projectStatus]
         project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
