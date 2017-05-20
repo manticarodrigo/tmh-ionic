@@ -38,6 +38,7 @@ export class DesignPage {
   conceptboard: any;
   floorplan: any;
   floorplanMap: any;
+  loading = false;
   items: any;
   markers = {};
   collectionTotal: any;
@@ -118,11 +119,8 @@ export class DesignPage {
           console.log(data);
           if (!data['exception']) {
             self.floorplan = data;
-            self.view = 'SPINNER';
-            setTimeout(() => {
-              self.view = 'FLOOR_PLAN';
-              self.drawFloorplan();
-            }, 2000);
+            self.view = 'FLOOR_PLAN';
+            self.drawFloorplan();
           }
         });
       }
@@ -145,64 +143,68 @@ export class DesignPage {
   }
 
   drawFloorplan() {
+    console.log("drawing floorplan with marker map in 2 seconds");
     const self = this;
-    console.log("drawing floorplan with marker map");
-    // create the floorplan map
-    this.floorplanMap = Leaflet.map('floorplan-map', {
-      attributionControl: false,
-      scrollWheelZoom: false,
-      minZoom: 1,
-      maxZoom: 4,
-      center: [0, 0],
-      zoom: 1,
-      crs: Leaflet.CRS.Simple
-    });
-    // dimensions of the image
-    var w = this.floorplanMap.getSize().x,
-        h = this.floorplanMap.getSize().y,
-        url = self.floorplan.url;
-    console.log("map dimensions:");
-    console.log(w);
-    console.log(h);
-
-    // calculate the edges of the image, in coordinate space
-    var southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
-    var northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
-    var bounds = new Leaflet.LatLngBounds(southWest, northEast);
-    
-    // add the image overlay, 
-    // so that it covers the entire map
-    Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
-    
-    this.floorplanMap.fitBounds(bounds);
-    
-    // tell leaflet that the map is exactly as big as the image
-    this.floorplanMap.setMaxBounds(bounds);
-
-    // draw a marker
-    for (var key in self.items) {
-      const item = self.items[key];
-      var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
-      console.log("adding marker at coordinates:");
-      console.log(latlng);
-      const itemNum = Number(key) + 1;
-      // The text could also be letters instead of numbers if that's more appropriate
-      var numberIcon = Leaflet.divIcon({
-            className: "number-icon",
-            iconSize: [30, 30],
-            iconAnchor: [15, 30],
-            popupAnchor: [0, -30],
-            html: String(itemNum)       
+    self.loading = true;
+    setTimeout(() => {
+      // create the floorplan map
+      this.floorplanMap = Leaflet.map('floorplan-map', {
+        attributionControl: false,
+        scrollWheelZoom: false,
+        minZoom: 1,
+        maxZoom: 4,
+        center: [0, 0],
+        zoom: 1,
+        crs: Leaflet.CRS.Simple
       });
-      // Add the each marker to the marker map with projectItemId as key
-      self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
-          draggable: true,
-          icon: numberIcon
-      });
-      // Add popups
-      self.markers[item.projectItemId].addTo(this.floorplanMap)
-        .bindPopup(this.createPopup(item));
-    }
+      // dimensions of the image
+      var w = this.floorplanMap.getSize().x,
+          h = this.floorplanMap.getSize().y,
+          url = self.floorplan.url;
+      console.log("map dimensions:");
+      console.log(w);
+      console.log(h);
+
+      // calculate the edges of the image, in coordinate space
+      var southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
+      var northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
+      var bounds = new Leaflet.LatLngBounds(southWest, northEast);
+      
+      // add the image overlay, 
+      // so that it covers the entire map
+      Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
+      
+      this.floorplanMap.fitBounds(bounds);
+      
+      // tell leaflet that the map is exactly as big as the image
+      this.floorplanMap.setMaxBounds(bounds);
+
+      // draw a marker
+      for (var key in self.items) {
+        const item = self.items[key];
+        var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
+        console.log("adding marker at coordinates:");
+        console.log(latlng);
+        const itemNum = Number(key) + 1;
+        // The text could also be letters instead of numbers if that's more appropriate
+        var numberIcon = Leaflet.divIcon({
+              className: "number-icon",
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+              popupAnchor: [0, -30],
+              html: String(itemNum)       
+        });
+        // Add the each marker to the marker map with projectItemId as key
+        self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
+            draggable: true,
+            icon: numberIcon
+        });
+        // Add popups
+        self.markers[item.projectItemId].addTo(this.floorplanMap)
+          .bindPopup(this.createPopup(item));
+      }
+      self.loading = false;
+    }, 2000);
   }
 
   createPopup(item) {
@@ -313,9 +315,7 @@ export class DesignPage {
       this.maximized = !this.maximized;
     }
     this.floorplanMap.remove();
-    setTimeout(() => {
-      this.drawFloorplan();
-    }, 1000);
+    this.drawFloorplan();
   }
 
   selectFloorplan() {

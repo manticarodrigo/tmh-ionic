@@ -13,10 +13,6 @@ import { ChatPage } from '../chat/chat';
   templateUrl: 'final-delivery.html',
 })
 export class FinalDeliveryPage {
-  // Chat vars
-  false = false;
-  minimized = false;
-  maximized = false;
   // User & project vars
   user: any;
   project: any;
@@ -168,10 +164,10 @@ export class FinalDeliveryPage {
     console.log("selected tab link:");
     console.log(link);
     var page: any;
+    if (link == 'DETAILS')
+      page = DetailsPage;
     if (link == 'DESIGN')
       page = DesignPage;
-    if (link == 'FINAL DELIVERY')
-      page = FinalDeliveryPage;
     if (page)
       this.navCtrl.setRoot(page, {
         project: self.project
@@ -200,19 +196,6 @@ export class FinalDeliveryPage {
     console.log("menu item pressed:");
     console.log(item);
     this.view = item;
-  }
-
-  maximizeChat() {
-    console.log("chat fab pressed for project");
-    this.maximized = !this.maximized;
-  }
-
-  chatToggled() {
-    console.log("chat toggled");
-    this.minimized = !this.minimized;
-    if (this.maximized) {
-      this.maximized = !this.maximized;
-    }
   }
 
 }

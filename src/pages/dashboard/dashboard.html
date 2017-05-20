@@ -73,12 +73,22 @@
           <div class="type" item-left>
             <img src="assets/{{ project.projectType }}.png">
           </div>
-          <div (click)="chatFor(project)" class="chat" item-right>
+          <div class="chat" item-right>
             <img [class.inactive]="!project.initChat" src="assets/chat.png">
           </div>
         </div>
         <div class="details">
-          <p class="title"><b><span *ngIf="projectUsers[project.userId]">{{ projectUsers[project.userId].shortName }} - </span>{{ project.projectTypeReadable }} Project</b></p>
+          <p class="title">
+            <span *ngIf="!projectUsers[project.userId]">
+              <ion-spinner name="crescent"></ion-spinner>
+            </span>
+            <b>
+            <span *ngIf="projectUsers[project.userId]">
+              {{ projectUsers[project.userId].shortName }}
+            </span>
+             - {{ project.projectTypeReadable }} Project
+            </b>
+          </p>
           <div class="section">
             <p class="info">{{ project.modifiedDateReadable }}</p>
             <p class="sub-title">Edited</p>
@@ -98,7 +108,8 @@
           <img src="assets/{{ project.projectType }}.png">
         </div>
         <div class="section">
-          <p class="info"><span *ngIf="projectUsers[project.userId]">{{ projectUsers[project.userId].shortName }}</span></p>
+          <ion-spinner *ngIf="!projectUsers[project.userId]" name="crescent"></ion-spinner>
+          <p class="info" *ngIf="projectUsers[project.userId]">{{ projectUsers[project.userId].shortName }}</p>
         </div>
         <div class="section">
           <p class="info">{{ project.projectTypeReadable }}</p>
@@ -112,7 +123,7 @@
         <div class="section">
           <p class="info">{{ project.endDateReadable }}</p>
         </div>
-        <div (click)="chatFor(project)" class="section chat">
+        <div class="section chat">
           <img [class.inactive]="!project.initChat" src="assets/chat.png">
         </div>
       </div>

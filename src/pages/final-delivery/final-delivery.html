@@ -43,10 +43,3 @@
     </button>
   </div>
 </ion-content>
-
-<div class="chat-header desktop" [class.header-minimized]="minimized" [class.header-maximized]="maximized" (click)="chatToggled()">
-  <img class="chat-img" src="assets/chat.png">
-  <h2 class="chat-title">Chat</h2>
-  <img class="chat-minimize" src="assets/down-arrow.png">
-</div>
-<page-chat [project]="project" [class.wrapper-minimized]="minimized" [class.wrapper-maximized]="maximized" class="chat-wrapper desktop"></page-chat>

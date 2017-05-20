@@ -250,14 +250,14 @@ export class Dashboard {
     this.navCtrl.setRoot('Onboarding');
   }
 
-  chatFor(project) {
-    console.log("Chat pressed for project:");
-    console.log(project);
-    let modal = this.modalCtrl.create(ChatPage, {
-      project: project
-    });
-    modal.present();
-  }
+  // chatFor(project) {
+  //   console.log("Chat pressed for project:");
+  //   console.log(project);
+  //   let modal = this.modalCtrl.create(ChatPage, {
+  //     project: project
+  //   });
+  //   modal.present();
+  // }
 
   selectedProject(project) {
     var page: any;
