@@ -194,6 +194,10 @@ page-final-delivery {
     }
     .final-video {
       margin: 10px;
+      video {
+        width: 100%;
+        border: 5px solid color($colors, primary);
+      }
       .form {
         box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
         background-color: #fff;
@@ -211,6 +215,15 @@ page-final-delivery {
         .button {
           float: right;
         }
+      }
+    }
+  }
+  .snapshots {
+    .slide-zoom {
+      margin: 10px;
+      img {
+        border: 5px solid color($colors, primary);
+        object-fit: cover;
       }
     }
   }

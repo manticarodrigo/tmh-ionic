@@ -74,12 +74,10 @@
       <button ion-button type="button" (click)="uploadConceptBoard()">UPLOAD</button>
     </div>
     <div *ngIf="view == '3D_MODEL' && viewMode == 'CLIENT'" class="final-video">
-      <h4 *ngIf="client">Hi {{ client.firstName }}!</h4>
-      <video *ngIf="project.videoUrl != ''"><source src="{{ project.videoUrl }}"></video>
-      <p *ngIf="project.videoUrl == ''">Your designer is hard at work putting together the 3D model of your room.</p>
+      <video *ngIf="project.videoUrl != ''" controls><source src="{{ project.videoUrl }}"></video>
     </div>
     <div *ngIf="view == '3D_MODEL' && viewMode == 'DESIGNER'" class="final-video">
-      <video *ngIf="project.videoUrl != ''"><source src="{{ project.videoUrl }}"></video>
+      <video *ngIf="project.videoUrl != ''" controls><source src="{{ project.videoUrl }}"></video>
       <div class="form">
         <h1>Link Final 3D Model Video</h1>
         <ion-input [(ngModel)]="videoUrl" name="video-url" placeholder="PASTE LINK HERE"></ion-input>
