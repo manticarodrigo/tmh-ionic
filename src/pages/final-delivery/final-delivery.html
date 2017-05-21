@@ -28,7 +28,7 @@
 
 <ion-content>
   <div class="collab-final-delivery">
-    <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode" class="admin-segment">
+    <ion-segment *ngIf="user.admin && project.projectStatus == 'SHOPPING_CART' || project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || project.projectStatus == 'ARCHIVED'" [(ngModel)]="viewMode" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
       </ion-segment-button>
@@ -46,11 +46,68 @@
     </div>
     <div *ngIf="view == 'DESIGNER_NOTE' && viewMode == 'DESIGNER'" class="designer-note">
       <h6>Leave a kind note for your client.</h6>
-      <ion-textarea [(ngModel)]="designerNote" name="DESIGNER_NOTE"></ion-textarea>
+      <ion-textarea [(ngModel)]="designerNote" name="designer-note"></ion-textarea>
       <button ion-button type="button" (click)="saveDesignerNote()">SAVE</button>
     </div>
+    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT'" class="collab-image">
+      <img class="selected-img" [src]="floorplan.url">
+    </div>
+    <div *ngIf="view == 'FLOOR_PLAN' && floorplan && viewMode == 'DESIGNER'" class="collab-image">
+      <img class="selected-img" [src]="floorplan.url">
+      <button ion-button type="button" (click)="uploadFloorPlan()">UPLOAD NEW</button>
+    </div>
+    <div *ngIf="view == 'FLOOR_PLAN' && !floorplan && viewMode == 'DESIGNER'" class="collab-alert">
+      <h1>UPLOAD FINAL FLOOR PLAN</h1>
+      <p>Send your client a final image of their Floor Plan.</p>
+      <button ion-button type="button" (click)="uploadFloorPlan()">UPLOAD</button>
+    </div>
+    <div *ngIf="view == 'CONCEPT_BOARD' && viewMode == 'CLIENT'" class="collab-image">
+      <img class="selected-img" [src]="conceptboard.url">
+    </div>
+    <div *ngIf="view == 'CONCEPT_BOARD' && conceptboard && viewMode == 'DESIGNER'" class="collab-image">
+      <img class="selected-img" [src]="conceptboard.url">
+      <button ion-button type="button" (click)="uploadConceptBoard()">UPLOAD NEW</button>
+    </div>
+    <div *ngIf="view == 'CONCEPT_BOARD' && !conceptboard && viewMode == 'DESIGNER'" class="collab-alert">
+      <h1>UPLOAD FINAL CONCEPT BOARD</h1>
+      <p>Send your client a final image of their Concept Board.</p>
+      <button ion-button type="button" (click)="uploadConceptBoard()">UPLOAD</button>
+    </div>
+    <div *ngIf="view == '3D_MODEL' && viewMode == 'CLIENT'" class="final-video">
+      <h4 *ngIf="client">Hi {{ client.firstName }}!</h4>
+      <video *ngIf="project.videoUrl != ''"><source src="{{ project.videoUrl }}"></video>
+      <p *ngIf="project.videoUrl == ''">Your designer is hard at work putting together the 3D model of your room.</p>
+    </div>
+    <div *ngIf="view == '3D_MODEL' && viewMode == 'DESIGNER'" class="final-video">
+      <video *ngIf="project.videoUrl != ''"><source src="{{ project.videoUrl }}"></video>
+      <div class="form">
+        <h1>Link Final 3D Model Video</h1>
+        <ion-input [(ngModel)]="videoUrl" name="video-url" placeholder="PASTE LINK HERE"></ion-input>
+        <button ion-button type="button" (click)="saveVideoUrl()">SAVE</button>
+      </div>
+    </div>
+    <div *ngIf="view == 'SNAPSHOTS' && viewMode == 'CLIENT'" class="snapshots">
+      <ion-slides class="mobile">
+        <ion-slide *ngFor="let snapshot of snapshots" autoplay="2000">
+          <img [src]="snapshot.url">
+        </ion-slide>
+      </ion-slides>
+      <ion-slides class="desktop" slidesPerView="3" spaceBetween="20" autoplay="2000">
+        <ion-slide *ngFor="let snapshot of snapshots">
+          <img [src]="snapshot.url">
+        </ion-slide>
+      </ion-slides>
+    </div>
+    <div *ngIf="view == '3D_MODEL' && viewMode == 'DESIGNER'" class="final-video">
+      <video *ngIf="project.videoUrl != ''"><source src="{{ project.videoUrl }}"></video>
+      <div class="form">
+        <h1>Link Final 3D Model Video</h1>
+        <ion-input [(ngModel)]="videoUrl" name="video-url" placeholder="PASTE LINK HERE"></ion-input>
+        <button ion-button type="button" (click)="saveVideoUrl()">SAVE</button>
+      </div>
+    </div>
   </div>
-  <div class="footer">
+  <div class="footer" *ngIf="viewMode == 'CLIENT' && project.projectStatus == 'SHOPPING_CART' || project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || project.projectStatus == 'ARCHIVED'">
     <div class="desktop footer-menu">
       <div class="button" (click)="selectFooterTabLink('DESIGNER_NOTE')">
         <img src="assets/list.png">
@@ -82,7 +139,43 @@
       </div>
     </div>
     <button class="mobile footer-dropdown" ion-button type="button" (click)="selectFooterTab()" full>
-      DESIGNER NOTE
+      {{ stringForView(this.view) }}
+      <img src="assets/down.png">
+    </button>
+  </div>
+  <div class="footer" *ngIf="viewMode == 'DESIGNER'">
+    <div class="desktop footer-menu">
+      <div class="button" (click)="selectFooterTabLink('DESIGNER_NOTE')">
+        <img src="assets/list.png">
+        Designer Note
+      </div>
+      <div class="button" (click)="selectFooterTabLink('FLOOR_PLAN')">
+        <img src="assets/floor-plan.png">
+        Floor Plan
+      </div>
+      <div class="button" (click)="selectFooterTabLink('CONCEPT_BOARD')">
+        <img src="assets/concept.png">
+        Concept Board
+      </div>
+      <div class="button" (click)="selectFooterTabLink('3D_MODEL')">
+        <img src="assets/3d-model.png">
+        3D Model
+      </div>
+      <div class="button" (click)="selectFooterTabLink('SNAPSHOTS')">
+        <img src="assets/snapshot.png">
+        Snapshots
+      </div>
+      <div class="button" (click)="selectFooterTabLink('FINAL_NOTES')">
+        <img src="assets/note.png">
+        Final Notes
+      </div>
+      <div class="button" (click)="selectFooterTabLink('SHOPPING_CART')">
+        <img src="assets/cart.png">
+        Shopping Cart
+      </div>
+    </div>
+    <button class="mobile footer-dropdown" ion-button type="button" (click)="selectFooterTab()" full>
+      {{ stringForView(this.view) }}
       <img src="assets/down.png">
     </button>
   </div>

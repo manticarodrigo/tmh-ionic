@@ -12,7 +12,7 @@ export class ImageService {
     if (this.platform.is('core')) {
       this.api = '/api'
     } else {
-      this.api = 'http://stage.themanhome.com/api/jsonws'
+      this.api = 'http://104.198.251.107/api/jsonws'
     }
   }
 

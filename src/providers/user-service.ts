@@ -40,7 +40,7 @@ export class UserService {
     if (this.platform.is('core')) {
       this.api = '/api';
     } else {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
+      this.api = 'http://104.198.251.107/api/jsonws';
     }
     const token = btoa("rorrodev@gmail.com:themanhome2017")
     const headers = this.generateHeader(token);

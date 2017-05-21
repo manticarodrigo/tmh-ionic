@@ -73,11 +73,11 @@ page-final-delivery {
   .collab-final-delivery {
     position: relative;
     padding: 5px;
+    padding-bottom: 80px;
     @media only screen and (max-width: 700px) {
       padding-top: 50px;
     }
     @media only screen and (min-width: 700px) {
-      padding-bottom: 80px;
       min-height: 500px;
     }
     .admin-segment {
@@ -105,6 +105,63 @@ page-final-delivery {
         height: 17.5px;
       }
     }
+    .collab-alert {
+      @media only screen and (min-width: 700px) {
+        max-width: 500px;
+        margin: 50px auto;
+      }
+      text-align: center;
+      margin: 20px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+      .note {
+        font-weight: 600;
+        color: #C3C3C3;
+      }
+    }
+    .collab-image {
+      margin: 10px 10px 20px;
+      text-align: center;
+      .selected-img {
+        max-width: 100%;
+        max-height: 100%;
+        margin: auto;
+        object-fit: contain;
+        border: 5px solid color($colors, primary);
+      }
+      .collab-thumb-wrapper {
+        position: relative;
+        display: table;
+        table-layout: fixed;
+        margin: auto;
+        .collab-thumb {
+          position: relative;
+          display: table-cell;
+          .thumb-img {
+            background-color: #fff;
+            margin: 10px;
+            display: inline-block;
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
+          }
+          .active {
+            border: 5px solid color($colors, primary);
+          }
+          .delete {
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+          }
+        }
+      }
+      .button {
+        max-width: 300px;
+      }
+    }
     .designer-note {
       @media only screen and (min-width: 700px) {
         max-width: 500px;
@@ -130,6 +187,27 @@ page-final-delivery {
       .note {
         font-weight: 600;
         color: #C3C3C3;
+      }
+    }
+    .final-video {
+      margin: 10px;
+      .form {
+        box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+        background-color: #fff;
+        padding: 20px 20px 60px;
+        @media only screen and (min-width: 700px) {
+          max-width: 500px;
+          margin: 50px auto;
+        }
+        .input {
+          height: 50px;
+          line-height: 25px;
+          background-color: #F8F5F5;
+          margin: 20px 0;
+        }
+        .button {
+          float: right;
+        }
       }
     }
   }
@@ -183,6 +261,9 @@ page-final-delivery {
         margin: auto;
         width: 15px;
       }
+    }
+    .footer-dropdown:hover {
+      background-color: #fff;
     }
   }
 }

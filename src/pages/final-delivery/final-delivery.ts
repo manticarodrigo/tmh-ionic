@@ -34,6 +34,9 @@ export class FinalDeliveryPage {
   view = 'DESIGNER_NOTE';
   viewMode = 'CLIENT';
   designerNote = '';
+  floorplan: any;
+  conceptboard: any;
+  videoUrl = '';
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
@@ -68,6 +71,53 @@ export class FinalDeliveryPage {
         }
       });
     }
+    Promise.all([this.projectService.getProjectDetailType(this.project.projectId, "CONCEPT"), this.projectService.getProjectDetailType(this.project.projectId, "FLOOR_PLAN")])
+    .then(data => {
+      console.log("design page received concepts and floorplan:");
+      console.log(data);
+      if (!data['exception']) {
+        const concepts = data[0];
+        var conceptIds = [];
+        for (var key in concepts) {
+          const detail = concepts[key];
+          conceptIds.push(detail.fileEntryId);
+          if (detail && detail.projectDetailStatus == 'APPROVED') {
+            self.conceptboard = {};
+            console.log("concept was approved:");
+            console.log(detail);
+            self.projectService.getFileEntry(detail.fileEntryId)
+            .then(data => {
+              console.log("design page received approved concept file:");
+              console.log(data);
+              if (!data['exception']) {
+                self.conceptboard = data;
+              }
+            });
+          }
+        }
+        const floorplans = data[1];
+        var floorplanIds = [];
+        for (var key in floorplans) {
+          const file = floorplans[key];
+          floorplanIds.push(file.fileEntryId);
+        }
+        self.projectService.getFileEntry(floorplanIds[0])
+        .then(data => {
+          console.log("design page received floorplan file:");
+          console.log(data);
+          if (!data['exception']) {
+            self.floorplan = data;
+          }
+        });
+        if (!concepts['exception'] && !floorplans['exception'] ) {
+          self.view = 'FLOOR_PLAN';
+        }
+      }
+    });
+  }
+
+  stringForView(view) {
+    return view.replace("_", " ");
   }
 
   homePressed() {
@@ -120,7 +170,11 @@ export class FinalDeliveryPage {
     });
     popover.onDidDismiss(data => {
       if (data) {
-        self.view = data.replace(" ", "_");
+        if (data == 'SHOPPING CART') {
+          console.log("selected footer tab shopping cart");
+        } else {
+          self.view = data.replace(" ", "_");
+        }
       }
     });
     popover.present();
@@ -129,7 +183,11 @@ export class FinalDeliveryPage {
   selectFooterTabLink(link) {
     console.log("selected footer tab link:");
     console.log(link);
-    this.view = link;
+    if (link == 'SHOPPING_CART') {
+      console.log("selected footer tab shopping cart");
+    } else {
+      this.view = link;
+    }
   }
 
 }

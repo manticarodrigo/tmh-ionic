@@ -67,6 +67,11 @@
       <button ion-button (click)="startProject()" full>START NEW PROJECT</button>
     </ion-item>
 
+    <ion-item text-center class="no-projects" *ngIf="!projects && viewMode == 'DESIGNER'">
+      <h2>HANG TIGHT</h2>
+      <p>We are working hard to connect you with the right clients for you. Check back soon for assigned projects.</p>
+    </ion-item>
+
     <ion-item class="project" *ngFor="let project of projects" (click)="selectedProject(project)">
       <div class="mobile">
         <div class="header">
