@@ -98,13 +98,31 @@
         </ion-slide>
       </ion-slides>
     </div>
-    <div *ngIf="view == '3D_MODEL' && viewMode == 'DESIGNER'" class="final-video">
-      <video *ngIf="project.videoUrl != ''"><source src="{{ project.videoUrl }}"></video>
-      <div class="form">
-        <h1>Link Final 3D Model Video</h1>
-        <ion-input [(ngModel)]="videoUrl" name="video-url" placeholder="PASTE LINK HERE"></ion-input>
-        <button ion-button type="button" (click)="saveVideoUrl()">SAVE</button>
+    <div *ngIf="view == 'SNAPSHOTS' && viewMode == 'DESIGNER'" class="snapshots">
+      <ion-slides class="mobile">
+        <ion-slide *ngFor="let snapshot of snapshots" autoplay="2000">
+          <img [src]="snapshot.url">
+        </ion-slide>
+      </ion-slides>
+      <ion-slides class="desktop" slidesPerView="3" spaceBetween="20" autoplay="2000">
+        <ion-slide *ngFor="let snapshot of snapshots">
+          <img [src]="snapshot.url">
+        </ion-slide>
+      </ion-slides>
+      <div class="collab-alert">
+        <h1>UPLOAD FINAL SNAPSHOTS</h1>
+        <p class="note">( 6 Picture Limit)</p>
+        <button (click)="uploadSnapshot()" ion-button full type="button">UPLOAD</button>
       </div>
+    </div>
+    <div *ngIf="view == 'FINAL_NOTES' && viewMode == 'CLIENT'" class="designer-note">
+      <h1>FINAL NOTES</h1>
+      <p *ngIf="project.finalNote != ''">{{ project.finalNote }}</p>
+    </div>
+    <div *ngIf="view == 'FINAL_NOTES' && viewMode == 'DESIGNER'" class="designer-note">
+      <h6>Leave detailed notes about the design.</h6>
+      <ion-textarea [(ngModel)]="finalNote" name="final-note"></ion-textarea>
+      <button ion-button type="button" (click)="saveFinalNote()">SAVE</button>
     </div>
   </div>
   <div class="footer" *ngIf="viewMode == 'CLIENT' && project.projectStatus == 'SHOPPING_CART' || project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || project.projectStatus == 'ARCHIVED'">

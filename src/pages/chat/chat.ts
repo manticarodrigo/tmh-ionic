@@ -142,7 +142,7 @@ export class ChatPage {
   scrollToBottom() {
     console.log("Scrolling to bottom!");
     let dimensions = this.content.getContentDimensions();
-    if (this.content) {
+    if (this.content.getContentDimensions()) {
       this.content.scrollToBottom(300);
       // this.content.scrollTo(0, dimensions.scrollHeight, 250); //x, y, ms animation speed
     } else {

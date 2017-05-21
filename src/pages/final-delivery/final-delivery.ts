@@ -37,6 +37,8 @@ export class FinalDeliveryPage {
   floorplan: any;
   conceptboard: any;
   videoUrl = '';
+  snapshots: any;
+  finalNote = '';
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
@@ -71,15 +73,14 @@ export class FinalDeliveryPage {
         }
       });
     }
-    Promise.all([this.projectService.getProjectDetailType(this.project.projectId, "CONCEPT"), this.projectService.getProjectDetailType(this.project.projectId, "FLOOR_PLAN")])
+    this.projectService.getProjectDetailType(this.project.projectId, "CONCEPT")
     .then(data => {
       console.log("design page received concepts and floorplan:");
       console.log(data);
       if (!data['exception']) {
-        const concepts = data[0];
         var conceptIds = [];
-        for (var key in concepts) {
-          const detail = concepts[key];
+        for (var key in data) {
+          const detail = data[key];
           conceptIds.push(detail.fileEntryId);
           if (detail && detail.projectDetailStatus == 'APPROVED') {
             self.conceptboard = {};
@@ -95,10 +96,16 @@ export class FinalDeliveryPage {
             });
           }
         }
-        const floorplans = data[1];
+      }
+    });
+    this.projectService.getProjectDetailType(this.project.projectId, "FLOOR_PLAN")
+    .then(data => {
+      console.log("design page received concepts and floorplan:");
+      console.log(data);
+      if (!data['exception']) {
         var floorplanIds = [];
-        for (var key in floorplans) {
-          const file = floorplans[key];
+        for (var key in data) {
+          const file = data[key];
           floorplanIds.push(file.fileEntryId);
         }
         self.projectService.getFileEntry(floorplanIds[0])
@@ -109,9 +116,24 @@ export class FinalDeliveryPage {
             self.floorplan = data;
           }
         });
-        if (!concepts['exception'] && !floorplans['exception'] ) {
-          self.view = 'FLOOR_PLAN';
+      }
+    });
+    this.projectService.getProjectDetailType(this.project.projectId, "FINAL_SNAPSHOTS")
+    .then(data => {
+      console.log("details page received final snapshots:");
+      console.log(data);
+      if (!data['exception']) {
+        var ids = [];
+        for (var key in data) {
+          const file = data[key];
+          ids.push(file.fileEntryId);
         }
+        self.projectService.getFileEntries(ids)
+        .then(files => {
+          console.log("details page received final snapshot files:");
+          console.log(files);
+          self.snapshots = files;
+        });
       }
     });
   }
@@ -134,10 +156,10 @@ export class FinalDeliveryPage {
     popover.onDidDismiss(data => {
       if (data) {
         var page: any;
+        if (data == 'DETAILS')
+          page = DetailsPage;
         if (data == 'DESIGN')
           page = DesignPage;
-        if (data == 'FINAL DELIVERY')
-          page = FinalDeliveryPage;
         if (page)
           this.navCtrl.setRoot(page, {
             project: self.project
