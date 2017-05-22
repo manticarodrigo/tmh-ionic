@@ -123,6 +123,9 @@
       <button ion-button type="button" (click)="saveFinalNote()">SAVE</button>
     </div>
   </div>
+</ion-content>
+
+<ion-footer>
   <div class="footer" *ngIf="viewMode == 'CLIENT' && project.projectStatus == 'SHOPPING_CART' || project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || project.projectStatus == 'ARCHIVED'">
     <div class="desktop footer-menu">
       <div class="button" (click)="selectFooterTabLink('DESIGNER_NOTE')">
@@ -195,4 +198,4 @@
       <img src="assets/down.png">
     </button>
   </div>
-</ion-content>
+</ion-footer>

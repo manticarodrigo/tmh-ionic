@@ -9,11 +9,12 @@ export class ImageService {
 
   constructor(private http: Http,
               private platform: Platform) {
-    if (this.platform.is('core')) {
-      this.api = '/api'
-    } else {
-      this.api = 'http://104.198.251.107/api/jsonws'
-    }
+    // if (this.platform.is('core')) {
+    //   this.api = '/api'
+    // } else {
+    //   this.api = 'https://104.198.251.107/api/jsonws'
+    // }
+    this.api = 'https://104.198.251.107/api/jsonws'
   }
 
   getImage(id, headers, callback) {

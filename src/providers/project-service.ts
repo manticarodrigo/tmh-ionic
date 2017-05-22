@@ -14,11 +14,12 @@ export class ProjectService {
               private platform: Platform,
               private userService: UserService) {
     this.headers = this.userService.headers;
-    if (this.platform.is('core')) {
-      this.api = '/api'
-    } else {
-      this.api = 'http://104.198.251.107/api/jsonws'
-    }
+    // if (this.platform.is('core')) {
+    //   this.api = '/api'
+    // } else {
+    //   this.api = 'https://104.198.251.107/api/jsonws'
+    // }
+    this.api = 'https://104.198.251.107/api/jsonws'
   }
 
   findByUserId(id) {
