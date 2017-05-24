@@ -15,11 +15,11 @@ export class ProjectService {
               private userService: UserService) {
     this.headers = this.userService.headers;
     // if (this.platform.is('core')) {
-    //   this.api = '/api'
+    //   this.api = '/api';
     // } else {
-    //   this.api = 'https://104.198.251.107/api/jsonws'
+    //   this.api = 'http://stage.themanhome.com/api/jsonws';
     // }
-    this.api = 'https://104.198.251.107/api/jsonws'
+    this.api = 'http://stage.themanhome.com/api/jsonws';
   }
 
   findByUserId(id) {

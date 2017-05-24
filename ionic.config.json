@@ -6,7 +6,7 @@
   "proxies": [
     {
       "path": "/api",
-      "proxyUrl": "http://104.198.251.107/api/jsonws"
+      "proxyUrl": "http://stage.themanhome.com/api/jsonws"
     }
   ]
 }
