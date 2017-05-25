@@ -9,12 +9,12 @@ export class ImageService {
 
   constructor(private http: Http,
               private platform: Platform) {
-    // if (this.platform.is('core')) {
-    //   this.api = '/api';
-    // } else {
-    //   this.api = 'http://stage.themanhome.com/api/jsonws';
-    // }
-    this.api = 'http://stage.themanhome.com/api/jsonws';
+    if (this.platform.is('core')) {
+      this.api = '/api';
+    } else {
+      this.api = 'http://stage.themanhome.com/api/jsonws';
+    }
+    // this.api = 'http://stage.themanhome.com/api/jsonws';
   }
 
   getImage(id, headers, callback) {

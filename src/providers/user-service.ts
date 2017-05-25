@@ -37,12 +37,12 @@ export class UserService {
               private storage: Storage,
               private platform: Platform,
               private imageService: ImageService) {
-    // if (this.platform.is('core')) {
-    //   this.api = '/api';
-    // } else {
-    //   this.api = 'http://stage.themanhome.com/api/jsonws';
-    // }
-    this.api = 'http://stage.themanhome.com/api/jsonws';
+    if (this.platform.is('core')) {
+      this.api = '/api';
+    } else {
+      this.api = 'http://stage.themanhome.com/api/jsonws';
+    }
+    // this.api = 'http://stage.themanhome.com/api/jsonws';
     // const token = btoa("rorrodev@gmail.com:themanhome2017")
     const token = btoa("manticarodrigo@gmail.com:xlemrotm34711");
     const headers = this.generateHeader(token);
