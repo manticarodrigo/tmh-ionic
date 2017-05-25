@@ -121,7 +121,7 @@ ion-menu {
 /* Dropdown popover styles */
 .popover-content {
     position: absolute;
-    top: 135px !important;
+    top: 135px !important; // 115 browser builds, 135 mobile builds
     left: 0px !important;
     width: 100% !important;
     height: 100%;
