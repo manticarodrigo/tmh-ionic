@@ -266,6 +266,87 @@ page-details {
         }
       }
     }
+    /* Chat nested comp styles */
+
+    .chat-header {
+      z-index: 11;
+      position: absolute;
+      right: 15px;
+      top: 2%;
+      width: 325px;
+      height: 60px;
+      background-color: #fff;
+      .chat-img {
+        margin: 15px 12.5px 0px 20px;
+        float: left;
+        width: 30px;
+      }
+      .chat-title {
+        color: color($colors, primary);
+        font-size: 20px;
+        margin-top: 15px;
+      }
+      .chat-minimize {
+        position: absolute;
+        top: 22.5px;
+        right: 15px;
+        width: 19px;
+      }
+    }
+    .header-minimized {
+      background-color: color($colors, dark);
+      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+      .chat-img {
+        filter: brightness(100);
+      }
+      .chat-title {
+        color: #fff;
+      }
+      .chat-minimize {
+        transform: rotate(180deg);
+        filter: brightness(100);
+      }
+      top: calc(100% - 60px) !important;
+    }
+    .header-maximized {
+      @media only screen and (max-width: 700px) {
+        z-index: 101;
+        display: block;
+        position: fixed;
+        top: 0px !important;
+        right: 0px;
+        width: 80px;
+        overflow: hidden;
+        opacity: 0;
+      }
+    }
+    .chat-wrapper {
+      z-index: 2;
+      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
+      position: absolute;
+      right: 15px;
+      bottom: 0;
+      width: 325px;
+      height: 98%;
+    }
+    .wrapper-minimized {
+      display: none;
+    }
+    // Full screen chat component on mobile
+    .wrapper-maximized {
+      @media only screen and (max-width: 700px) {
+        box-shadow: none;
+        display: block;
+        z-index: 100;
+        position: fixed;
+        box-sizing: content-box;
+        border-top: 20px solid #000;
+        top: 0px;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 20px);
+      }
+    }
   }
   .project-details {
     padding: 20px;
@@ -280,7 +361,7 @@ page-details {
         margin-bottom: 20px;
       }
       .project-details-box {
-        min-height: 150px;
+        min-height: 200px;
         padding: 20px;
         background-color: #fff;
         box-shadow: 0px 1px 6px rgba(0,0,0,0.3);

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController, Platform } from 'ionic-angular';
-import { Facebook } from 'ionic-native';
+// import { Facebook } from 'ionic-native';
 import { FacebookService } from 'ngx-facebook';
 
 import { UserService } from '../../providers/user-service';
@@ -32,7 +32,7 @@ export class Login {
       // Check If Cordova/Mobile
       if (this.platform.is('cordova')) {
         // Native Facebook sdk
-        Facebook.browserInit(this.FB_APP_ID, "v2.8");
+        // Facebook.browserInit(this.FB_APP_ID, "v2.8");
       } else {
         // Web Facebook sdk
         this.fb.init({

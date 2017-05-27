@@ -35,6 +35,7 @@ export class Dashboard {
     CONCEPTS: 'Concepts',
     FLOOR_PLAN: 'Floor Plan',
     REQUEST_ALTERNATIVES: 'Request Alternatives',
+    ALTERNATIVES_READY: 'Alternatives Ready',
     FINAL_DELIVERY: 'Final Delivery',
     SHOPPING_CART: 'Shopping Cart',
     ESTIMATE_SHIPPING_AND_TAX: 'Estimate Shipping & Tax',
@@ -195,7 +196,6 @@ export class Dashboard {
     if (!data.exception) {
       for (var key in data) {
         const project = data[key];
-        const status = self.phases[project.projectStatus];
         project.projectTypeReadable = self.types[project.projectType]
         project.projectStatusReadable = self.phases[project.projectStatus]
         project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
@@ -261,6 +261,8 @@ export class Dashboard {
   // }
 
   selectedProject(project) {
+    console.log("selected project with status:");
+    console.log(project.projectStatus);
     var page: any;
     if (project.projectStatus == 'DETAILS')
       page = DetailsPage;
@@ -271,6 +273,8 @@ export class Dashboard {
     if (project.projectStatus == 'FLOOR_PLAN')
       page = DesignPage;
     if (project.projectStatus == 'REQUEST_ALTERNATIVES')
+      page = DesignPage;
+    if (project.projectStatus == 'ALTERNATIVES_READY')
       page = DesignPage;
     if (project.projectStatus == 'FINAL_DELIVERY')
       page = FinalDeliveryPage;
