@@ -1,10 +1,18 @@
 page-onboarding {
+  @media only screen and (min-width: 700px) {
+    .scroll-content {
+      margin: 50px 100px 0px !important;
+    }
+  }
+  .scroll-content {
+    overflow-y: auto !important;
+  }
+
   ion-content {
     background-image: url('../assets/ob_bg.png');
     background-repeat: no-repeat;
     background-size: cover;
   }
-
   ion-page > ion-content {
     background-color: transparent;
   }
@@ -340,7 +348,7 @@ page-onboarding {
   }
   .step4 {
     .zip-button-content {
-      max-width: 811px;
+      max-width: 411px;
       background-color: #fff;
       padding: 30px;
       margin: 10px auto;
@@ -357,15 +365,15 @@ page-onboarding {
       }
     }
     .final-question {
-      max-width: 811px;
+      max-width: 511px;
       background-color: #fff;
       padding: 30px;
       margin: 10px auto;
       h4, p {
-        text-align: left;
+        //text-align: left;
       }
       .button-inner {
-        justify-content:flex-start;
+        justify-content: flex-start;
         .check {
           position: absolute;
           top: 12.5px;
@@ -377,6 +385,8 @@ page-onboarding {
         color: color($colors, primary);
         border: 2px solid color($colors, primary);
         margin: 10px 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
         .check {
           width: 15px;
           display: none;
@@ -454,6 +464,7 @@ page-onboarding {
         width: 63%;
       }
       .card {
+        ion-datetime button{width: auto !important;}
         .datetime {
           padding-left: 8px;
         }
