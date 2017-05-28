@@ -208,6 +208,9 @@ page-design {
         .collab-thumb {
           position: relative;
           display: table-cell;
+          @media only screen and (max-width: 700px) {
+            display: inline-block !important;
+          }
           .thumb-img {
             background-color: #fff;
             margin: 10px;

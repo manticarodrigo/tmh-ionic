@@ -43,8 +43,8 @@ export class DesignPage {
   floorplanMap: any;
   pendingItems: any;
   approvedItems: any;
-  pendingItemsMap = {};
-  approvedItemsMap = {};
+  pendingItemsUrlMap = {};
+  approvedItemsUrlMap = {};
   pendingCollectionTotal = 0;
   approvedCollectionTotal = 0;
   constructor(private navCtrl: NavController,
@@ -148,9 +148,25 @@ export class DesignPage {
           if (item.projectItemStatus == 'APPROVED') {
             approvedItems.push(item);
             approvedCollectionTotal += item.itemPrice;
+            this.projectService.getFileEntry(item.fileEntryId)
+            .then(data => {
+              console.log("design page received item file");
+              console.log(data);
+              if (!data['exception']) {
+                self.approvedItemsUrlMap[item.fileEntryId] = data['url'];
+              }
+            });
           } else {
             pendingItems.push(item);
             pendingCollectionTotal += item.itemPrice;
+            this.projectService.getFileEntry(item.fileEntryId)
+            .then(data => {
+              console.log("design page received item file");
+              console.log(data);
+              if (!data['exception']) {
+                self.pendingItemsUrlMap[item.fileEntryId] = data['url'];
+              }
+            });
           }
         }
         if (pendingItems.length > 0) {
@@ -165,48 +181,10 @@ export class DesignPage {
         }
         self.pendingCollectionTotal = pendingCollectionTotal;
         self.approvedCollectionTotal = approvedCollectionTotal;
-        self.addPendingItemPhotoUrls();
-        self.addApprovedItemPhotoUrls();
       }
     });
   }
-
-  addPendingItemPhotoUrls() {
-    const self = this;
-    console.log("adding pending item photo urls");
-    for (var i in this.pendingItems) {
-      var item = self.pendingItems[i];
-      const fileEntryId = item.fileEntryId;
-      self.pendingItemsMap[fileEntryId] = i;
-      this.projectService.getFileEntry(fileEntryId)
-      .then(data => {
-        console.log("design page received item file");
-        console.log(data);
-        if (!data['exception']) {
-          self.pendingItems[self.pendingItemsMap[data['fileEntryId']]].url = data['url'];
-        }
-      });
-    }
-  }
-
-  addApprovedItemPhotoUrls() {
-    const self = this;
-    console.log("adding approved item photo urls");
-    for (var i in this.approvedItems) {
-      const item = self.approvedItems[i];
-      const fileEntryId = item.fileEntryId;
-      self.approvedItemsMap[fileEntryId] = i;
-      this.projectService.getFileEntry(fileEntryId)
-      .then(data => {
-        console.log("design page received item file");
-        console.log(data);
-        if (!data['exception']) {
-          self.approvedItems[self.approvedItemsMap[data['fileEntryId']]].url = data['url'];
-        }
-      });
-    }
-  }
-
+  
   getDaysLeftStringFrom(timestamp) {
     if (timestamp) {
       let date = new Date(timestamp);
@@ -320,17 +298,23 @@ export class DesignPage {
 
   createPopup(item) {
     var popup = "";
-    if (item.url) {
-      popup += "<img src='" + item.url + "'>";
+    if (this.itemsViewMode == 'PENDING') {
+      if (this.pendingItemsUrlMap[item.fileEntryId]) {
+        popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.pendingItemsUrlMap[item.fileEntryId] + "'>";
+      }
+    } else {
+      if (this.approvedItemsUrlMap[item.fileEntryId]) {
+        popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.approvedItemsUrlMap[item.fileEntryId] + "'>";
+      }
     }
     if (item.itemMake) {
-      popup += "<h1>" + item.itemMake + "</h1>";
+      popup += "<h3>" + item.itemMake + "</h3>";
     }
     if (item.itemType) {
       popup += "<p>" + item.itemType + "</p>";
     }
     if (item.itemPrice) {
-      popup += "<h2>$" + item.itemPrice + "</h2>";
+      popup += "<h4>$" + item.itemPrice/100 + "</h4>";
     }
     return popup;
   }
