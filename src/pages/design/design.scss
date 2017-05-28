@@ -158,7 +158,8 @@ page-design {
     }
     .collab-image {
       @media only screen and (min-width: 700px) {
-        margin: 10px 10px 50px !important;
+        margin: 10px 10px 60px !important;
+
       }
       position: relative;
       margin: 10px 10px 20px;
@@ -235,8 +236,8 @@ page-design {
       margin: 10px;
       @media only screen and (min-width: 700px) {
         position: absolute;
-        bottom: 0px;
-        left: 0px;
+        bottom: 5px;
+        left: 5px;
       }
       @media only screen and (max-width: 700px) {
         margin: 10px auto;

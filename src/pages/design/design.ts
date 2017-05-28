@@ -31,18 +31,20 @@ export class DesignPage {
     DINING_ROOM: 'Dining Room',
     HOME_OFFICE: 'Office'
   }
+  loading = true;
   view = 'APPROVE';
   viewMode = 'CLIENT';
   itemsViewMode = 'PENDING';
   concepts: any;
   selectedConcept: any;
   conceptboard: any;
+  markers = {};
   floorplan: any;
   floorplanMap: any;
-  loading = true;
   pendingItems: any;
   approvedItems: any;
-  markers = {};
+  pendingItemsMap = {};
+  approvedItemsMap = {};
   pendingCollectionTotal = 0;
   approvedCollectionTotal = 0;
   constructor(private navCtrl: NavController,
@@ -110,6 +112,7 @@ export class DesignPage {
           console.log(files);
           self.concepts = data;
           self.selectedConcept = data[0];
+          self.loading = false;
         });
         const floorplans = data[1];
         var floorplanIds = [];
@@ -162,39 +165,43 @@ export class DesignPage {
         }
         self.pendingCollectionTotal = pendingCollectionTotal;
         self.approvedCollectionTotal = approvedCollectionTotal;
-        self.addItemPhotoUrls();
+        self.addPendingItemPhotoUrls();
+        self.addApprovedItemPhotoUrls();
       }
     });
   }
 
-  addItemPhotoUrls() {
+  addPendingItemPhotoUrls() {
     const self = this;
-    console.log("adding item photo urls");
-    for (var i in this.approvedItems) {
-      const item = self.approvedItems[i];
+    console.log("adding pending item photo urls");
+    for (var i in this.pendingItems) {
+      var item = self.pendingItems[i];
       const fileEntryId = item.fileEntryId;
+      self.pendingItemsMap[fileEntryId] = i;
       this.projectService.getFileEntry(fileEntryId)
       .then(data => {
         console.log("design page received item file");
         console.log(data);
         if (!data['exception']) {
-          console.log("adding file url for item:");
-          console.log(self.approvedItems[i]);
-          self.approvedItems[i].url = data['url'];
+          self.pendingItems[self.pendingItemsMap[data['fileEntryId']]].url = data['url'];
         }
       });
     }
-    for (var i in this.pendingItems) {
-      const item = self.pendingItems[i];
+  }
+
+  addApprovedItemPhotoUrls() {
+    const self = this;
+    console.log("adding approved item photo urls");
+    for (var i in this.approvedItems) {
+      const item = self.approvedItems[i];
       const fileEntryId = item.fileEntryId;
+      self.approvedItemsMap[fileEntryId] = i;
       this.projectService.getFileEntry(fileEntryId)
       .then(data => {
         console.log("design page received item file");
         console.log(data);
         if (!data['exception']) {
-          console.log("adding file url for item:");
-          console.log(self.pendingItems[i]);
-          self.pendingItems[i].url = data['url'];
+          self.approvedItems[self.approvedItemsMap[data['fileEntryId']]].url = data['url'];
         }
       });
     }

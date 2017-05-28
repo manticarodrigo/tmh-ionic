@@ -35,6 +35,7 @@ export class DetailsPage {
     UPLOADED_INSPIRATION: false,
     UPLOADED_FURNITURE: false
   };
+  loading = true;
   view = 'DRAWING';
   viewMode = 'CLIENT';
   selectedDrawing: any;
@@ -95,6 +96,7 @@ export class DetailsPage {
             self.selectedDrawing = files[0];
             self.drawings = files;
           }
+          self.loading = false;
         });
       }
     });

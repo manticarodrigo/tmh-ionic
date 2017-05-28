@@ -57,14 +57,14 @@
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
-    <div *ngIf="view == 'DRAWING' && viewMode == 'CLIENT' && !status['UPLOADED_DRAWING']" class="collab-alert">
+    <div *ngIf="view == 'DRAWING' && viewMode == 'CLIENT' && !status['UPLOADED_DRAWING'] && !loading" class="collab-alert">
       <h1>WELCOME TO YOUR DESIGN STUDIO!</h1>
       <p>Please upload pictures of your space and a hand drawn floor plan. The floor plan should be from a birds eye view and include height and width of each wall.</p>
       <p> Please also include dimensions for doors, windows, or any additional items that could affect the design.</p>
       <p class="note">( 2 Picture Limit)</p>
       <button (click)="uploadPressed()" ion-button full type="button">UPLOAD</button>
     </div>
-    <div *ngIf="view == 'DRAWING' && viewMode == 'DESIGNER' && !status['UPLOADED_DRAWING']" class="collab-alert">
+    <div *ngIf="view == 'DRAWING' && viewMode == 'DESIGNER' && !status['UPLOADED_DRAWING'] && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STUDIO!</h1>
       <p>Please wait until your client has finished the details phase.</p>
       <p>Feel free to chat with your client to prepare for the design phase and to help them prepare as well.</p>

@@ -43,11 +43,11 @@
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
-    <div *ngIf="view == 'APPROVE' && viewMode == 'CLIENT' && !concepts" class="collab-alert">
+    <div *ngIf="view == 'APPROVE' && viewMode == 'CLIENT' && !concepts && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
     </div>
-    <div *ngIf="view == 'APPROVE' && viewMode == 'DESIGNER' && !concepts" class="collab-alert">
+    <div *ngIf="view == 'APPROVE' && viewMode == 'DESIGNER' && !concepts && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Please upload 2 concept boards based on your client's information and style. Once all boards have been uploaded and confirmed, submit to the client and the 10 business day timeline will begin.</p>
       <button (click)="uploadConcept()" ion-button full type="button">UPLOAD</button>
@@ -64,11 +64,11 @@
       <button *ngIf="view == 'CLIENT'" (click)="approveConcept(thumb)" ion-button full type="button">APPROVE CONCEPT</button>
       <button *ngIf="view == 'DESIGNER'" (click)="submitConcepts()" ion-button full type="button">SUBMIT</button>
     </div>
-    <div *ngIf="view == 'APPROVE' && conceptboard && !floorplan && viewMode == 'CLIENT'" class="collab-alert">
+    <div *ngIf="view == 'APPROVE' && conceptboard && !floorplan && viewMode == 'CLIENT' && !loading" class="collab-alert">
       <h1>HANG TIGHT</h1>
       <p>Your designer is hard at work putting together the Floor Plan of your room! We will send you an email when it's time for your to make a selection.</p>
     </div>
-    <div *ngIf="view == 'APPROVE' && conceptboard && !floorplan && viewMode == 'DESIGNER'" class="collab-alert">
+    <div *ngIf="view == 'APPROVE' && conceptboard && !floorplan && viewMode == 'DESIGNER' && !loading" class="collab-alert">
       <p>Using the floor plan provided by the client, create and upload a floor plan to begin the design process.</p>
       <button (click)="uploadFloorplan()" ion-button full type="button">UPLOAD</button>
     </div>
@@ -90,7 +90,7 @@
     <page-chat [project]="project" [class.wrapper-minimized]="minimized" [class.wrapper-maximized]="maximized" class="chat-wrapper desktop"></page-chat>
   </div>
   <div class="project-items-view-switcher" *ngIf="pendingItems || approvedItems">
-    <ion-segment [(ngModel)]="itemsViewMode" (change)="itemViewSwitched()">
+    <ion-segment [(ngModel)]="itemsViewMode" (ionChange)="itemViewSwitched()">
       <ion-segment-button value="PENDING" *ngIf="project.projectStatus != 'FINAL_DELIVERY' && project.projectStatus != 'SHOPPING_CART' && project.projectStatus != 'ESTIMATE_SHIPPING_AND_TAX' && this.project.projectStatus != 'ARCHIVED'">
         PENDING
       </ion-segment-button>
@@ -139,8 +139,8 @@
   <ion-grid *ngIf="pendingItems || approvedItems" class="project-items">
     <h4 *ngIf="itemsViewMode == 'PENDING' && pendingItems">{{ pendingItems.length }} ITEMS</h4>
     <h4 *ngIf="itemsViewMode == 'APPROVED' && approvedItems">{{ approvedItems.length }} ITEMS</h4>
-    <h5 *ngIf="itemsViewMode == 'PENDING'">Collection Total: ${{ pendingCollectionTotal }}</h5>
-    <h5 *ngIf="itemsViewMode == 'APPROVED'">Collection Total: ${{ approvedCollectionTotal }}</h5>
+    <h5 *ngIf="itemsViewMode == 'PENDING'">Collection Total: ${{ pendingCollectionTotal/100 }}</h5>
+    <h5 *ngIf="itemsViewMode == 'APPROVED'">Collection Total: ${{ approvedCollectionTotal/100 }}</h5>
     <ion-row class="project-items-wrapper">
       <ion-col col-12 col-sm *ngFor="let item of pendingItems; let i = index" class="project-items-box" [class.hidden]="itemsViewMode != 'PENDING'">
         <div class="project-items-label">
