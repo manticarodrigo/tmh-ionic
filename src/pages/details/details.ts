@@ -90,9 +90,11 @@ export class DetailsPage {
         .then(files => {
           console.log("details page received drawings files:");
           console.log(files);
-          self.status.UPLOADED_DRAWING = true;
-          self.selectedDrawing = files[0];
-          self.drawings = files;
+          if (files.length > 0) {
+            self.status.UPLOADED_DRAWING = true;
+            self.selectedDrawing = files[0];
+            self.drawings = files;
+          }
         });
       }
     });
@@ -110,9 +112,11 @@ export class DetailsPage {
         .then(files => {
           console.log("details page received inspirations files");
           console.log(files);
-          self.status.UPLOADED_INSPIRATION = true;
-          self.selectedInspiration = files[0];
-          self.inspirations = files;
+          if (files.length > 0) {
+            self.status.UPLOADED_INSPIRATION = true;
+            self.selectedInspiration = files[0];
+            self.inspirations = files;
+          }
         });
       }
     });
@@ -130,9 +134,11 @@ export class DetailsPage {
         .then(files => {
           console.log("details page received furnitures files:");
           console.log(files);
-          self.status.UPLOADED_FURNITURE = true;
-          self.selectedFurniture = files[0];
-          self.furnitures = files;
+          if (files.length > 0) {
+            self.status.UPLOADED_FURNITURE = true;
+            self.selectedFurniture = files[0];
+            self.furnitures = files;
+          }
         });
       }
     });

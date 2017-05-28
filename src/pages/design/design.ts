@@ -39,10 +39,12 @@ export class DesignPage {
   conceptboard: any;
   floorplan: any;
   floorplanMap: any;
-  loading = false;
-  items: any;
+  loading = true;
+  pendingItems: any;
+  approvedItems: any;
   markers = {};
-  collectionTotal: any;
+  pendingCollectionTotal = 0;
+  approvedCollectionTotal = 0;
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService,
@@ -63,6 +65,9 @@ export class DesignPage {
     }
     this.project = this.navParams.get('project');
     this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
+    if (this.project.projectStatus == 'FINAL_DELIVERY' || this.project.projectStatus == 'SHOPPING_CART' || this.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || this.project.projectStatus == 'ARCHIVED') {
+        this.itemsViewMode = 'APPROVED';
+    }
     if (this.project.userId == this.user.userId) {
       console.log("current user's project");
       this.client = this.user;
@@ -131,24 +136,68 @@ export class DesignPage {
       console.log("design page received item data:");
       console.log(data);
       if (!data['exception']) {
-        self.items = data;
-        var collectionTotal = 0;
+        var pendingItems = [];
+        var approvedItems = [];
+        var pendingCollectionTotal = 0;
+        var approvedCollectionTotal = 0;
         for (var key in data) {
           const item = data[key];
-          self.addItemPhotoUrl(item.fileEntryId, key);
-          collectionTotal += item.itemPrice;
+          if (item.projectItemStatus == 'APPROVED') {
+            approvedItems.push(item);
+            approvedCollectionTotal += item.itemPrice;
+          } else {
+            pendingItems.push(item);
+            pendingCollectionTotal += item.itemPrice;
+          }
         }
-        self.collectionTotal = collectionTotal;
+        if (pendingItems.length > 0) {
+          self.pendingItems = pendingItems;
+        } else {
+          self.pendingItems = null;
+        }
+        if (approvedItems.length > 0) {
+          self.approvedItems = approvedItems;
+        } else {
+          self.approvedItems = null;
+        }
+        self.pendingCollectionTotal = pendingCollectionTotal;
+        self.approvedCollectionTotal = approvedCollectionTotal;
+        self.addItemPhotoUrls();
       }
     });
   }
 
-  isItemVisible(item) {
-    if (this.itemsViewMode == 'PENDING' && item.projectItemStatus != 'APPROVED')
-      return true;
-    if (this.itemsViewMode == 'APPROVED' && item.projectItemStatus == 'APPROVED')
-      return true;
-    return false;
+  addItemPhotoUrls() {
+    const self = this;
+    console.log("adding item photo urls");
+    for (var i in this.approvedItems) {
+      const item = self.approvedItems[i];
+      const fileEntryId = item.fileEntryId;
+      this.projectService.getFileEntry(fileEntryId)
+      .then(data => {
+        console.log("design page received item file");
+        console.log(data);
+        if (!data['exception']) {
+          console.log("adding file url for item:");
+          console.log(self.approvedItems[i]);
+          self.approvedItems[i].url = data['url'];
+        }
+      });
+    }
+    for (var i in this.pendingItems) {
+      const item = self.pendingItems[i];
+      const fileEntryId = item.fileEntryId;
+      this.projectService.getFileEntry(fileEntryId)
+      .then(data => {
+        console.log("design page received item file");
+        console.log(data);
+        if (!data['exception']) {
+          console.log("adding file url for item:");
+          console.log(self.pendingItems[i]);
+          self.pendingItems[i].url = data['url'];
+        }
+      });
+    }
   }
 
   getDaysLeftStringFrom(timestamp) {
@@ -172,6 +221,9 @@ export class DesignPage {
     console.log("drawing floorplan with marker map in 2 seconds");
     const self = this;
     self.loading = true;
+    if (this.floorplanMap) {
+      this.floorplanMap.remove();
+    }
     setTimeout(() => {
       // create the floorplan map
       this.floorplanMap = Leaflet.map('floorplan-map', {
@@ -203,31 +255,57 @@ export class DesignPage {
       this.floorplanMap.fitBounds(bounds);
       
       // tell leaflet that the map is exactly as big as the image
-      this.floorplanMap.setMaxBounds(bounds);
+      // this.floorplanMap.setMaxBounds(bounds);
 
-      // draw a marker
-      for (var key in self.items) {
-        const item = self.items[key];
-        var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
-        console.log("adding marker at coordinates:");
-        console.log(latlng);
-        const itemNum = Number(key) + 1;
-        // The text could also be letters instead of numbers if that's more appropriate
-        var numberIcon = Leaflet.divIcon({
-              className: "number-icon",
-              iconSize: [30, 30],
-              iconAnchor: [15, 30],
-              popupAnchor: [0, -30],
-              html: String(itemNum)       
-        });
-        // Add the each marker to the marker map with projectItemId as key
-        self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
-            draggable: true,
-            icon: numberIcon
-        });
-        // Add popups
-        self.markers[item.projectItemId].addTo(this.floorplanMap)
-          .bindPopup(this.createPopup(item));
+      // draw markers
+      if (self.itemsViewMode == 'PENDING') {
+        for (var key in self.pendingItems) {
+          const item = self.pendingItems[key];
+          var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
+          console.log("adding marker at coordinates:");
+          console.log(latlng);
+          const itemNum = Number(key) + 1;
+          // The text could also be letters instead of numbers if that's more appropriate
+          var numberIcon = Leaflet.divIcon({
+                className: "number-icon",
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                popupAnchor: [0, -30],
+                html: String(itemNum)       
+          });
+          // Add the each marker to the marker map with projectItemId as key
+          self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
+              draggable: true,
+              icon: numberIcon
+          });
+          // Add popups
+          self.markers[item.projectItemId].addTo(this.floorplanMap)
+            .bindPopup(this.createPopup(item));
+        }
+      } else {
+        for (var key in self.approvedItems) {
+          const item = self.approvedItems[key];
+          var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
+          console.log("adding marker at coordinates:");
+          console.log(latlng);
+          const itemNum = Number(key) + 1;
+          // The text could also be letters instead of numbers if that's more appropriate
+          var numberIcon = Leaflet.divIcon({
+                className: "number-icon",
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                popupAnchor: [0, -30],
+                html: String(itemNum)       
+          });
+          // Add the each marker to the marker map with projectItemId as key
+          self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
+              draggable: true,
+              icon: numberIcon
+          });
+          // Add popups
+          self.markers[item.projectItemId].addTo(this.floorplanMap)
+            .bindPopup(this.createPopup(item));
+        }
       }
       self.loading = false;
     }, 2000);
@@ -253,32 +331,33 @@ export class DesignPage {
   editMarkerLocations() {
     console.log("edit marker location activated");
     const self = this;
-    // Keep track of drag events
-    for (var key in this.items) {
-      const item = this.items[key];
-      console.log(key);
-      console.log(item);
-      self.markers[item.projectItemId].on("drag", function(e) {
-        console.log("moving marker");
-        var marker = e.target;
-        var position = marker.getLatLng();
-        console.log(position);
-      });
-    }
-  }
-
-  addItemPhotoUrl(fileEntryId, index) {
-    const self = this;
-    this.projectService.getFileEntry(fileEntryId)
-    .then(data => {
-      console.log("design page received item file");
-      console.log(data);
-      if (!data['exception']) {
-        console.log("adding file url to item map at index:");
-        console.log(index);
-        self.items[index].url = data['url'];
+    if (self.itemsViewMode == 'PENDING') {
+      // Keep track of drag events
+      for (var key in this.pendingItems) {
+        const item = this.pendingItems[key];
+        console.log(key);
+        console.log(item);
+        self.markers[item.projectItemId].on("drag", function(e) {
+          console.log("moving marker");
+          var marker = e.target;
+          var position = marker.getLatLng();
+          console.log(position);
+        });
       }
-    });
+    } else {
+      // Keep track of drag events
+      for (var key in this.approvedItems) {
+        const item = this.approvedItems[key];
+        console.log(key);
+        console.log(item);
+        self.markers[item.projectItemId].on("drag", function(e) {
+          console.log("moving marker");
+          var marker = e.target;
+          var position = marker.getLatLng();
+          console.log(position);
+        });
+      }
+    }
   }
 
   homePressed() {
@@ -334,9 +413,6 @@ export class DesignPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
-    if (this.floorplanMap) {
-      this.floorplanMap.remove();
-    }
     this.drawFloorplan();
   }
 
@@ -355,6 +431,11 @@ export class DesignPage {
 
   uploadConcept() {
     console.log("upload concept pressed");
+  }
+
+  itemViewSwitched() {
+    console.log("item view switched");
+    this.drawFloorplan();
   }
 
 }

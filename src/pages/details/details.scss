@@ -3,12 +3,18 @@ page-details {
     .collab-workzone, .project-details {
       padding-right: 340px !important;
     }
+    ion-spinner {
+      right: 340px !important;
+    }
   }
   // Remove padding for chat space from page when minimized on desktop
   .minimized {
     @media only screen and (min-width: 700px) {
       .collab-workzone, .project-details {
         padding-right: 5px !important;
+      }
+      ion-spinner {
+        right: 5px !important;
       }
     }
   }
@@ -89,6 +95,16 @@ page-details {
     }
   }
   .collab-workzone {
+    ion-spinner {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      margin: auto;
+      width: 50px;
+      height: 50px;
+    }
     position: relative;
     background-image: url('../assets/constructor_bg.png');
     background-repeat: repeat;

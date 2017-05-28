@@ -31,6 +31,7 @@
 
 <ion-content [class.minimized]="minimized">
   <div class="collab-workzone">
+    <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
     <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT

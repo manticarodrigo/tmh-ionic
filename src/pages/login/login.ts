@@ -110,37 +110,49 @@ export class Login {
     }
   }
 
-  facebookLogin(): Promise<any> {
-    let env = this;
-    return new Promise((resolve, reject) => {
-        // Check If Cordova/Mobile
-        if (this.platform.is('cordova')) {
-            console.log("Starting Mobile Facebook login...");
-            // Facebook.login(env.permissions)
-            // .then(response => {
-            //     console.log("Mobile Facebook login returned response.");
+  facebookLogin() {
+    let self = this;
+    // Check If Cordova/Mobile
+    if (this.platform.is('cordova')) {
+        console.log("Starting Mobile Facebook login...");
+        // Facebook.login(env.permissions)
+        // .then(response => {
+        //     console.log("Mobile Facebook login returned response.");
+        //     this.loading = false;
+        //     resolve(response);
+        // })
+        // .catch(error => {
+        //     console.log(error);
+        //     reject(error);
+        // });
+    } else {
+        console.log("Starting Core Facebook login...");
+        self.fb.login()
+        .then(response => {
+            console.log("Core Facebook login returned response:");
+            console.log(response);
+            this.loading = false;
+            // this.userService.register(this.firstName, this.lastName, this.email, this.password, this.password2, (data) => {
+            //   console.log(data);
+            //   if (!data.exception) {
+            //     this.firstName = '';
+            //     this.lastName = '';
+            //     this.email = '';
+            //     this.password = '';
+            //     this.password2 = '';
             //     this.loading = false;
-            //     resolve(response);
-            // })
-            // .catch(error => {
-            //     console.log(error);
-            //     reject(error);
+            //     this.navCtrl.setRoot('Dashboard');
+            //   } else {
+            //     this.presentError('Registration failed. Please try again.');
+            //     this.loading = false;
+            //   }
             // });
-        } else {
-            console.log("Starting Core Facebook login...");
-            env.fb.login(env.permissions)
-            .then(response => {
-                console.log("Core Facebook login returned response.");
-                this.loading = false;
-                resolve(response);
-            })
-            .catch(error => {
-                console.log(error);
-                this.loading = false;
-                reject(error);
-            });
-        }
-    });
+        })
+        .catch(error => {
+            console.log(error);
+            this.loading = false;
+        });
+    }
   }
 
   presentError(message) {

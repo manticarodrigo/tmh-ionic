@@ -34,7 +34,8 @@ import { FacebookService } from 'ngx-facebook';
   imports: [
     BrowserModule,
     IonicModule.forRoot(TheManHome, {
-      mode: 'md'
+      mode: 'md',
+      activator: 'none'
     }),
     IonicStorageModule.forRoot(),
     HttpModule
