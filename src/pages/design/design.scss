@@ -18,6 +18,12 @@ page-design {
       }
     }
   }
+  // Hide header for chat space from page when maximized on mobile
+  .maximized {
+    @media only screen and (max-width: 700px) {
+      z-index: 1 !important;
+    }
+  }
   .toolbar-title {
     @media only screen and (max-width: 700px) {
       font-size: 16px !important;
@@ -147,6 +153,7 @@ page-design {
         margin: 50px auto;
       }
       text-align: center;
+      transform: translateY(50%);
       margin: 20px;
       padding: 20px;
       background-color: #fff;
@@ -266,7 +273,7 @@ page-design {
     /* Chat nested comp styles */
 
     .chat-header {
-      z-index: 11;
+      z-index: 1001;
       position: absolute;
       right: 15px;
       top: 2%;
@@ -307,10 +314,10 @@ page-design {
     }
     .header-maximized {
       @media only screen and (max-width: 700px) {
-        z-index: 101;
+        z-index: 1001;
         display: block;
         position: fixed;
-        top: 0px !important;
+        top: 0px !important; // 20px on mobile for status bar border 
         right: 0px;
         width: 80px;
         overflow: hidden;
@@ -318,7 +325,7 @@ page-design {
       }
     }
     .chat-wrapper {
-      z-index: 2;
+      z-index: 1000;
       box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
       position: absolute;
       right: 15px;
@@ -334,14 +341,14 @@ page-design {
       @media only screen and (max-width: 700px) {
         box-shadow: none;
         display: block;
-        z-index: 100;
+        z-index: 1000;
         position: fixed;
         box-sizing: content-box;
-        border-top: 20px solid #000;
         top: 0px;
         left: 0;
         width: 100%;
-        height: calc(100% - 20px);
+        // border-top: 20px solid #000;
+        height: calc(100%); // - 20px with mobile border
       }
     }
   }

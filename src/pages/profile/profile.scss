@@ -6,6 +6,10 @@ page-profile {
     min-height: 190px;
     padding: 20px;
     background-color: #fff;
+    @media only screen and (min-width: 700px) {
+      padding-left: 20% !important;
+      padding-right: 20% !important;
+    }
     @media only screen and (max-width: 700px) {
       h1 {
         margin-top: 160px !important;
@@ -49,7 +53,10 @@ page-profile {
   }
   .profile-wrapper {
     margin: 20px;
-    
+    @media only screen and (min-width: 700px) {
+      padding-left: 18% !important;
+      padding-right: 18% !important;
+    }
     .profile-details {
       h1, h2, p {
         text-align: left;
@@ -64,6 +71,64 @@ page-profile {
         }
         p {
           font-weight: 700;
+        }
+      }
+      .profile-details-edit {
+        .item-md, .item-inner {
+          padding: 0px 0px !important;
+        }
+        .input-has-focus {
+          // box-sizing: border-box;
+          // outline-offset: none !important;
+          // border-bottom: 0px solid color($colors, primary) !important;
+        }
+        .item {
+          background-color: rgba(255,255,255,0);
+          margin: 10px 0px;
+          .label {
+            color: color($colors, primary);
+            margin: 10px 0px;
+            font-weight: 700;
+          }
+          .input {
+            height: 50px;
+            line-height: 35px;
+            background-color: #fff;
+            margin: 0px 0px !important;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1) !important;
+          }
+          .text-input {
+            margin-left: 8px;
+          }
+        }
+        @media only screen and (min-width: 700px) {
+          .item:nth-of-type(1) {
+            margin-right: 20px !important;
+          }
+          .item:nth-of-type(1), .item:nth-of-type(2) {
+            width: calc(50% - 10px);
+            float: left;
+          }
+          .item:nth-of-type(3) {
+            width: calc(75% - 10px);
+            float: left;
+            margin-right: 20px !important;
+          }
+          .item:nth-of-type(4) {
+            width: calc(25% - 10px);
+            float: left;
+          }
+          .item:nth-of-type(8) {
+            margin-right: 20px !important;
+          }
+          .item:nth-of-type(8), .item:nth-of-type(9) {
+            width: calc(50% - 10px);
+            float: left;
+          }
+        }
+        .button {
+          margin: 20px 0px !important;
+          width: 200px;
         }
       }
     }

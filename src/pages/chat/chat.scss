@@ -93,6 +93,13 @@ page-chat {
     background: #fff;
     height: 80px;
     padding: 10px;
+    input[type="file"] {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 70px;
+      height: 70px;
+    }
     .attach {
       float: left;
       height: 60px !important;

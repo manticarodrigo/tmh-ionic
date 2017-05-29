@@ -106,31 +106,37 @@ export class DesignPage {
             });
           }
         }
-        self.projectService.getFileEntries(conceptIds)
-        .then(files => {
-          console.log("design page received concept files:");
-          console.log(files);
-          self.concepts = data;
-          self.selectedConcept = data[0];
-          self.loading = false;
-        });
+        if (conceptIds.length > 0) {
+          self.projectService.getFileEntries(conceptIds)
+          .then(files => {
+            console.log("design page received concept files:");
+            console.log(files);
+            self.concepts = data;
+            self.selectedConcept = data[0];
+            self.loading = false;
+          });
+        }
         const floorplans = data[1];
         var floorplanIds = [];
         for (var key in floorplans) {
           const file = floorplans[key];
           floorplanIds.push(file.fileEntryId);
         }
-        self.projectService.getFileEntry(floorplanIds[0])
-        .then(data => {
-          console.log("design page received floorplan file:");
-          console.log(data);
-          if (!data['exception']) {
-            self.floorplan = data;
-            self.drawFloorplan();
-          }
-        });
-        if (!concepts['exception'] && !floorplans['exception'] ) {
+        if (floorplanIds.length > 0) {
+          self.projectService.getFileEntry(floorplanIds[0])
+          .then(data => {
+            console.log("design page received floorplan file:");
+            console.log(data);
+            if (!data['exception']) {
+              self.floorplan = data;
+              self.drawFloorplan();
+            }
+          });
+        }
+        if (conceptIds.length > 0 && floorplanIds.length > 0) {
           self.view = 'FLOOR_PLAN';
+        } else {
+          self.loading = false;
         }
       }
     });

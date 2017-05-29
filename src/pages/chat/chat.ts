@@ -179,6 +179,11 @@ export class ChatPage {
     }
   }
 
+  fileChanged(event) {
+    console.log("file changed:");
+    console.log(event.target.files[0]);
+  }
+
   // showImage(url) {
   //   PhotoViewer.show(url);
   // }

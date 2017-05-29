@@ -95,6 +95,8 @@ ion-menu {
     border-bottom: 1px solid color($colors, light);
     img {
       width: 60px;
+      height: 60px;
+      object-fit: cover;
       float: left;
       margin: 5px 10px 10px 0px;
       border-radius: 8px;
@@ -174,6 +176,24 @@ ion-menu {
   padding-right: 10px;
     img {
         width: 30px;
+        height: 30px;
+        object-fit: cover;
         border-radius: 5px;
+    }
+}
+
+/* Admin segment styles */
+.admin-segment {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border-radius: 0px !important;
+    background-color: color($colors, primary) !important;
+    .segment-button {
+        color: #fff !important;
+        border-bottom-color: #fff;
+    }
+    .segment-activated {
+        border-bottom-color: #fff !important;
     }
 }

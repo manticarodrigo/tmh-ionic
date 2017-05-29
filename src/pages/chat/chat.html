@@ -38,14 +38,15 @@
 </ion-content>
 <ion-footer class="chat-footer">
   <form name="chat-form">
-    <button class="attach" type="button" (click)="presentActionSheet()">
-    <img src="assets/attach.png">
+    <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
+    <button class="attach" type="button" (click)="file.click()"> <!-- cordova: (click)="presentActionSheet()" -->
+        <img src="assets/attach.png">
     </button>
     <div class="chat-message">
-    <ion-textarea type="text" name="chat-message" [(ngModel)]="message.text" placeholder="Enter a message" autocorrect="on"></ion-textarea>
+        <ion-textarea type="text" name="chat-message" [(ngModel)]="message.text" placeholder="Enter a message" autocorrect="on"></ion-textarea>
     </div>
     <button ion-button class="send" type="button" (click)="send()">
-    SEND
+        SEND
     </button>
   </form>
 </ion-footer>
