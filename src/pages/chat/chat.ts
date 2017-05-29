@@ -48,11 +48,11 @@ export class ChatPage {
   }
 
   ionViewWillLoad() {
-    this.statusBar.styleDefault();
+    // this.statusBar.styleDefault();
   }
 
   ionViewWillLeave() {
-    this.statusBar.styleLightContent();
+    // this.statusBar.styleLightContent();
     if (this.project) {
       this.chatService.leave(this.project.projectId);
     }

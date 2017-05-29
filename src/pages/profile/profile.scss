@@ -3,6 +3,7 @@ page-profile {
     background-image: none !important;
   }
   .profile-header {
+    position: relative;
     min-height: 190px;
     padding: 20px;
     background-color: #fff;
@@ -20,6 +21,11 @@ page-profile {
       h3 {
         margin-bottom: 20px !important;
       }
+    }
+    .img-input {
+      position: absolute;
+      bottom: 2.5px;
+      left: 20%;
     }
     img {
       width: 148px;

@@ -37,12 +37,12 @@ export class UserService {
               private storage: Storage,
               private platform: Platform,
               private imageService: ImageService) {
-    if (this.platform.is('core')) {
-      this.api = '/api';
-    } else {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
-    }
-    // this.api = 'http://stage.themanhome.com/api/jsonws';
+    // if (this.platform.is('core')) {
+    //   this.api = '/api';
+    // } else {
+    //   this.api = 'http://stage.themanhome.com/api/jsonws';
+    // }
+    this.api = 'http://stage.themanhome.com/api/jsonws';
     // const token = btoa("rorrodev@gmail.com:themanhome2017")
     const token = btoa("manticarodrigo@gmail.com:xlemrotm34711");
     const headers = this.generateHeader(token);
@@ -289,6 +289,18 @@ export class UserService {
         console.log(data);
         resolve(data);
       });
+    });
+  }
+
+  updatePortrait(user, bytes, callback) {
+    const self = this;
+    const endpoint = this.api + "/user/update-portrait/userId/" + user.userId + "/bytes/" + bytes;
+    this.http.get(endpoint, {headers: this.headers})
+    .map(res => res.json())
+    .subscribe(data => {
+      console.log("updated user portrait:");
+      console.log(data);
+      callback(data);
     });
   }
 

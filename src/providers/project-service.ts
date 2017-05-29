@@ -14,12 +14,12 @@ export class ProjectService {
               private platform: Platform,
               private userService: UserService) {
     this.headers = this.userService.headers;
-    if (this.platform.is('core')) {
-      this.api = '/api';
-    } else {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
-    }
-    // this.api = 'http://stage.themanhome.com/api/jsonws';
+    // if (this.platform.is('core')) {
+    //   this.api = '/api';
+    // } else {
+    //   this.api = 'http://stage.themanhome.com/api/jsonws';
+    // }
+    this.api = 'http://stage.themanhome.com/api/jsonws';
   }
 
   findByUserId(id) {
