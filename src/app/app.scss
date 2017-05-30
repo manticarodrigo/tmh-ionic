@@ -186,7 +186,7 @@ ion-menu {
 }
 
 /* Dropdown popover styles */
-.tab-popover, .popover-content {
+.tab-popover .popover-content {
     position: absolute;
     top: 115px !important; // 115 browser builds, 135 mobile builds
     left: 0px !important;

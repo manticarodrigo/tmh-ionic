@@ -71,11 +71,11 @@ export class Profile {
   selectGender() {
     console.log("select gender pressed");
     let popover = this.popoverCtrl.create('Dropdown', {
-      items: ['MALE', 'FEMALE']
+      items: ['Male', 'Female']
     });
     popover.onDidDismiss(data => {
       if (data) {
-        if (data == 'MALE') {
+        if (data == 'Male') {
           this.user.male = true;
         } else {
           this.user.male = false;

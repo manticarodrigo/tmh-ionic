@@ -109,6 +109,28 @@ export class ProjectService {
     });
   }
 
+  uploadFile(file, project) {
+    console.log("uploading file in chat service:");
+    console.log(file);
+    const self = this;
+    return new Promise((resolve, reject) => {
+      var headers = this.userService.headers;
+      headers.append('Content-Type', 'text/plain; charset=utf-8');
+      headers.append("enctype", "multipart/form-data");
+      let now = new Date();
+      const endpoint = this.userService.api + "/dlapp/add-file-entry.9/repositoryId/" + 20484 + "/folderId/" + 0 + "/title/" + now.getTime() + ".jpg";
+      var formData = new FormData();
+      formData.append('file', file);
+      this.http.post(endpoint, formData, {headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("upload returned response:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
   getFileEntry(fileEntryId) {
     const self = this;
     return new Promise((resolve, reject) => {

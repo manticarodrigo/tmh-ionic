@@ -21,17 +21,17 @@
     <ion-list no-lines>
         <ion-item *ngFor="let message of messages">
             <div class="message-header">
-                <img *ngIf="members[message.senderId]" [src]="members[message.senderId].photoURL">
-                <img *ngIf="!members[message.senderId]" src="assets/tmh.png">
-                <h4 *ngIf="members[message.senderId]">{{ members[message.senderId].firstName }}</h4>
-                <h4 *ngIf="!members[message.senderId]">TMH BOT</h4>
+                <img *ngIf="memberMap[message.senderId]" [src]="memberMap[message.senderId].photoURL">
+                <img *ngIf="!memberMap[message.senderId]" src="assets/tmh.png">
+                <h4 *ngIf="memberMap[message.senderId]">{{ memberMap[message.senderId].firstName }}</h4>
+                <h4 *ngIf="!memberMap[message.senderId]">TMH BOT</h4>
                 <p *ngIf="message.createdAtReadable">{{ message.createdAtReadable }}</p>
             </div>
-            <div *ngIf="message.text" class="message-bubble {{ message.position }} ">
+            <div *ngIf="message.text" class="message-bubble">
                 <div class="message">{{ message.text }}</div>
             </div>
-            <div *ngIf="message.url" class="img-bubble {{ message.position }}">
-                <img src="{{ message.url }}" (click)="showImage(message.url)">
+            <div *ngIf="fileMap[message.fileEntryId]" class="img-bubble">
+                <img src="{{ fileMap[message.fileEntryId].url }}" (click)="showImage(fileMap[message.fileEntryId].url)">
             </div>
         </ion-item>
     </ion-list>

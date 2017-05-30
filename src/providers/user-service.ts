@@ -331,22 +331,20 @@ export class UserService {
     return new Promise((resolve, reject) => {
       console.log("updating user:");
       console.log(user);
-      var endpoint = this.api + "/user/update-user.41/userId/" + user.userId;
+      var endpoint = this.api + "/user/update-user.41/userId/" + user.userId + "/firstName/" + encodeURIComponent(user.firstName);
       if (oldPassword != '' && newPassword1 != '' && newPassword2 != '' && newPassword1 == newPassword2) {
         endpoint += "/oldPassword/" + oldPassword + "/newPassword1/" + newPassword1 + "/newPassword2/" + newPassword2;
       }
-      if (user.firstName != this.currentUser.firstName) {
-        endpoint += "/firstName/" + user.firstName;
+      // if (user.male) {
+      //   endpoint += "/male/" + encodeURIComponent(user.male);
+      // }
+      if (user.lastName) {
+        endpoint += "/lastName/" + encodeURIComponent(user.lastName);
       }
-      if (user.lastName != this.currentUser.lastName) {
-        endpoint += "/lastName/" + user.lastName;
+      if (user.emailAddress) {
+        endpoint += "/emailAddress/" + encodeURIComponent(user.emailAddress);
       }
-      if (user.male != this.currentUser.male) {
-        endpoint += "/male/" + user.male;
-      }
-      if (user.emailAddress != this.currentUser.emailAddress) {
-        endpoint += "/emailAddress/" + user.emailAddress;
-      }
+      console.log(endpoint);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
