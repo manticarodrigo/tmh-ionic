@@ -150,8 +150,8 @@ export class FinalDeliveryPage {
   selectTab() {
     const self = this;
     console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('TabDropdown', {
-      tabs: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
+    let popover = this.popoverCtrl.create('Dropdown', {
+      items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     });
     popover.onDidDismiss(data => {
       if (data) {
@@ -187,8 +187,11 @@ export class FinalDeliveryPage {
   selectFooterTab() {
     const self = this;
     console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('TabDropdown', {
-      tabs: ['DESIGNER NOTE', 'FLOOR PLAN', 'CONCEPT BOARD', '3D MODEL', 'SNAPSHOTS', 'FINAL NOTES', 'SHOPPING CART']
+    let popover = this.popoverCtrl.create('Dropdown', {
+      items: ['DESIGNER NOTE', 'FLOOR PLAN', 'CONCEPT BOARD', '3D MODEL', 'SNAPSHOTS', 'FINAL NOTES', 'SHOPPING CART']
+    }, 
+    {
+      cssClass: 'tab-popover'
     });
     popover.onDidDismiss(data => {
       if (data) {

@@ -32,7 +32,7 @@
     <h1 *ngIf="user">{{ user.firstName }} {{ user.lastName }}</h1>
     <h1 *ngIf="!user">Unknown User</h1>
     <h3 *ngIf="user && user.city && user.state">{{ user.city }}, {{ user.state }}</h3>
-    <h3 *ngIf="!user || !user.city || !user.state">City, State</h3>
+    <!--<h3 *ngIf="!user || !user.city || !user.state">City, State</h3>-->
     <h4 *ngIf="user && user.emailAddress">{{ user.emailAddress }}</h4>
     <h4 *ngIf="!user || !user.emailAddress">email@email.com</h4>
     <h4 *ngIf="user && user.createDateReadable">Joined: {{ user.createDateReadable }}</h4>
@@ -54,40 +54,43 @@
       <div *ngIf="editing" class="profile-details-edit">
         <ion-item>
           <ion-label stacked>First Name</ion-label>
-          <ion-input placeholder="FIRST NAME"></ion-input>
+          <ion-input [(ngModel)]="user.firstName" placeholder="FIRST NAME"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>Last Name</ion-label>
-          <ion-input placeholder="LAST NAME"></ion-input>
+          <ion-input [(ngModel)]="user.lastName" placeholder="LAST NAME"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>City</ion-label>
-          <ion-input placeholder="CITY"></ion-input>
+          <ion-input [(ngModel)]="user.city" disabled placeholder="CITY"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>State</ion-label>
-          <ion-input placeholder="STATE"></ion-input>
+          <ion-input [(ngModel)]="user.state" disabled placeholder="STATE"></ion-input>
+        </ion-item>
+        <ion-item class="gender-item">
+          <p>Gender</p>
+          <button full ion-button type="button" (click)="selectGender()">
+            {{ user.male ? 'Male' : 'Female'}}
+            <img src="assets/down-arrow.png">
+          </button>
         </ion-item>
         <ion-item>
-          <ion-label stacked>Gender</ion-label>
-          <ion-input placeholder="GENDER"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label stacked>EMAIL</ion-label>
-          <ion-input placeholder="EMAIL"></ion-input>
+          <ion-label stacked>Email</ion-label>
+          <ion-input [(ngModel)]="user.emailAddress" placeholder="EMAIL"></ion-input>
         </ion-item>
         <h1>Change Password</h1>
         <ion-item>
           <ion-label stacked>Old Password</ion-label>
-          <ion-input placeholder="OLD PASSWORD"></ion-input>
+          <ion-input [(ngModel)]="oldPassword" placeholder="OLD PASSWORD"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>New Password</ion-label>
-          <ion-input placeholder="NEW PASSWORD"></ion-input>
+          <ion-input [(ngModel)]="newPassword1" placeholder="NEW PASSWORD"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>Enter Again</ion-label>
-          <ion-input placeholder="VERIFY NEW PASSWORD"></ion-input>
+          <ion-input [(ngModel)]="newPassword2" placeholder="VERIFY NEW PASSWORD"></ion-input>
         </ion-item>
         <button ion-button type="button" (click)="savePressed()">SAVE</button>
       </div>

@@ -326,4 +326,35 @@ export class UserService {
     });
   }
 
+  updateUser(user, oldPassword, newPassword1, newPassword2) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("updating user:");
+      console.log(user);
+      var endpoint = this.api + "/user/update-user.41/userId/" + user.userId;
+      if (oldPassword != '' && newPassword1 != '' && newPassword2 != '' && newPassword1 == newPassword2) {
+        endpoint += "/oldPassword/" + oldPassword + "/newPassword1/" + newPassword1 + "/newPassword2/" + newPassword2;
+      }
+      if (user.firstName != this.currentUser.firstName) {
+        endpoint += "/firstName/" + user.firstName;
+      }
+      if (user.lastName != this.currentUser.lastName) {
+        endpoint += "/lastName/" + user.lastName;
+      }
+      if (user.male != this.currentUser.male) {
+        endpoint += "/male/" + user.male;
+      }
+      if (user.emailAddress != this.currentUser.emailAddress) {
+        endpoint += "/emailAddress/" + user.emailAddress;
+      }
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("updated user data:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+  
 }

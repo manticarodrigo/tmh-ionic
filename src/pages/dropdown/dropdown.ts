@@ -3,22 +3,22 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
 
 @IonicPage()
 @Component({
-  selector: 'page-tab-dropdown',
-  templateUrl: 'tab-dropdown.html',
+  selector: 'page-dropdown',
+  templateUrl: 'dropdown.html',
 })
-export class TabDropdown {
+export class Dropdown {
   
-  tabs: any;
+  items: any;
   
 
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private viewCtrl: ViewController) {
-    this.tabs = this.navParams.get('tabs');
+    this.items = this.navParams.get('items');
   }
 
-  selectTab(tab) {
-    this.viewCtrl.dismiss(tab);
+  selectItem(item) {
+    this.viewCtrl.dismiss(item);
   }
 
 }

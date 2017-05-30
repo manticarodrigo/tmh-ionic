@@ -108,8 +108,11 @@ export class Dashboard {
       console.log(tab);
       tabs.push(tab);
     }
-    let popover = this.popoverCtrl.create('TabDropdown', {
-      tabs: tabs
+    let popover = this.popoverCtrl.create('Dropdown', {
+      items: tabs
+    }, 
+    {
+      cssClass: 'tab-popover'
     });
     popover.onDidDismiss(data => {
       if (data) {

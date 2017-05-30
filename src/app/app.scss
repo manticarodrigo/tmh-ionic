@@ -117,16 +117,6 @@ ion-menu {
   }
 }
 
-/* Dropdown popover styles */
-.popover-content {
-    position: absolute;
-    top: 135px !important; // 115 browser builds, 135 mobile builds
-    left: 0px !important;
-    width: 100% !important;
-    height: 100%;
-    border-radius: 0 !important;
-}
-
 /* Alert styles */
 
 .alert-head {
@@ -193,4 +183,14 @@ ion-menu {
     .segment-activated {
         border-bottom-color: #fff !important;
     }
+}
+
+/* Dropdown popover styles */
+.tab-popover, .popover-content {
+    position: absolute;
+    top: 115px !important; // 115 browser builds, 135 mobile builds
+    left: 0px !important;
+    width: 100% !important;
+    height: 100%;
+    border-radius: 0 !important;
 }

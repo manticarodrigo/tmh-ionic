@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { TabDropdown } from './tab-dropdown';
+import { Dropdown } from './dropdown';
 
 @NgModule({
   declarations: [
-    TabDropdown,
+    Dropdown,
   ],
   imports: [
-    IonicPageModule.forChild(TabDropdown),
+    IonicPageModule.forChild(Dropdown),
   ],
   exports: [
-    TabDropdown
+    Dropdown
   ]
 })
-export class TabDropdownModule {}
+export class DropdownModule {}

@@ -1,9 +1,12 @@
-page-tab-dropdown {
+page-dropdown {
   .button {
     background-color: #fff;
     color: color($colors, primary);
   }
   .button:hover {
     color: #fff;
+  }
+  hr {
+    margin: 0px 0px;
   }
 }

@@ -11,6 +11,9 @@ import { UserService } from '../../providers/user-service';
 export class Profile {
   user: any;
   editing = false;
+  oldPassword = '';
+  newPassword1 = '';
+  newPassword2 = '';
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private alertCtrl: AlertController,
@@ -28,7 +31,11 @@ export class Profile {
 
   editToggled() {
     console.log("edit toggled");
-    this.editing = !this.editing;
+    if (this.editing) {
+      this.savePressed();
+    } else {
+      this.editing = !this.editing;
+    }
   }
 
   getDateStringFrom(timestamp) {
@@ -61,9 +68,32 @@ export class Profile {
     reader.readAsArrayBuffer(file);
   }
 
-  updatePortrait(file) {
-    console.log("update portrait pressed:");
-    console.log(file);
+  selectGender() {
+    console.log("select gender pressed");
+    let popover = this.popoverCtrl.create('Dropdown', {
+      items: ['MALE', 'FEMALE']
+    });
+    popover.onDidDismiss(data => {
+      if (data) {
+        if (data == 'MALE') {
+          this.user.male = true;
+        } else {
+          this.user.male = false;
+        }
+      }
+    });
+    popover.present();
+  }
+
+  savePressed() {
+    const self = this;
+    console.log("save pressed");
+    this.userService.updateUser(this.user, this.oldPassword, this.newPassword1 ,this.newPassword2)
+    .then(data => {
+      console.log("profile component received data:");
+      console.log(data);
+      self.editing = false;
+    });
   }
 
 }
