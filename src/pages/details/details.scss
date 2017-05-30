@@ -197,11 +197,11 @@ page-details {
     }
     .collab-alert {
       @media only screen and (min-width: 700px) {
+        transform: translateY(50%);
         max-width: 500px;
         margin: 50px auto;
       }
       text-align: center;
-      transform: translateY(50%);
       margin: 20px;
       padding: 20px;
       background-color: #fff;

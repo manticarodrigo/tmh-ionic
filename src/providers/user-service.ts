@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Storage } from '@ionic/storage';
 import { Platform } from 'ionic-angular';
@@ -37,12 +37,12 @@ export class UserService {
               private storage: Storage,
               private platform: Platform,
               private imageService: ImageService) {
-    // if (this.platform.is('core')) {
-    //   this.api = '/api';
-    // } else {
-    //   this.api = 'http://stage.themanhome.com/api/jsonws';
-    // }
-    this.api = 'http://stage.themanhome.com/api/jsonws';
+    if (this.platform.is('core')) {
+      this.api = '/api';
+    } else {
+      this.api = 'http://stage.themanhome.com/api/jsonws';
+    }
+    // this.api = 'http://stage.themanhome.com/api/jsonws';
     // const token = btoa("rorrodev@gmail.com:themanhome2017")
     const token = btoa("manticarodrigo@gmail.com:xlemrotm34711");
     const headers = this.generateHeader(token);
@@ -61,7 +61,7 @@ export class UserService {
     const self = this;
     const token = btoa(email + ':' + password);
     const headers = this.generateHeader(token);
-    const endpoint = this.api + "/user/get-user-by-email-address/companyId/20155/emailAddress/" + email + "?p_auth=[PwkVOXCB]";
+    const endpoint = this.api + "/user/get-user-by-email-address/companyId/20155/emailAddress/" + email;
     this.http.get(endpoint, {headers: headers})
     .map(res => res.json())
     .subscribe(data => {
@@ -85,7 +85,7 @@ export class UserService {
     const self = this;
     const endpoint = this.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/group-ids/" + [self.groups.client.groupId] + "/-organization-ids/-role-ids/-user-group-ids/send-email/true";
     console.log(endpoint);
-    this.http.get(endpoint, {headers: this.adminHeaders})
+    this.http.post(endpoint, null, {headers: this.adminHeaders})
     .map(res => res.json())
     .subscribe(data => {
       console.log("register returned data");
@@ -203,7 +203,7 @@ export class UserService {
 
   fetchUser(uid, callback) {
     const self = this;
-    const endpoint = this.api + "/user/get-user-by-id/userId/" + uid + "?p_auth=[kgKg7erN]";
+    const endpoint = this.api + "/user/get-user-by-id/userId/" + uid;
     this.http.get(endpoint, {headers: this.headers})
     .map(res => res.json())
     .subscribe(data => {
@@ -294,8 +294,14 @@ export class UserService {
 
   updatePortrait(user, bytes, callback) {
     const self = this;
-    const endpoint = this.api + "/user/update-portrait/userId/" + user.userId + "/bytes/" + bytes;
-    this.http.get(endpoint, {headers: this.headers})
+    var headers = this.headers;
+    headers.append('Content-Type', 'text/plain; charset=utf-8');
+    headers.append("enctype", "multipart/form-data");
+    const endpoint = this.api + "/user/update-portrait.2/userId/" + user.userId;
+    var formData = new FormData();
+    // formData.append('userId', user.userId);
+    formData.append('bytes', bytes);
+    this.http.post(endpoint, formData, {headers})
     .map(res => res.json())
     .subscribe(data => {
       console.log("updated user portrait:");

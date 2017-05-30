@@ -47,19 +47,23 @@ export class Profile {
   fileChanged(event) {
     const self = this;
     console.log("file changed:");
-    console.log(event.target.files[0]);
+    const file = event.target.files[0];
+    console.log(file);
     var reader = new FileReader();
     reader.onload = function() {
       var arrayBuffer = this.result,
-      array = new Uint8Array(arrayBuffer),
-      binaryString = String.fromCharCode.apply(null, array);
-      console.log(array);
+      array = new Uint8Array(arrayBuffer);
       self.userService.updatePortrait(self.user, array, (data) => {
         console.log("profile component received portrait data:");
         console.log(data);
       });
     }
-    reader.readAsArrayBuffer(event.target.files[0]);
+    reader.readAsArrayBuffer(file);
+  }
+
+  updatePortrait(file) {
+    console.log("update portrait pressed:");
+    console.log(file);
   }
 
 }

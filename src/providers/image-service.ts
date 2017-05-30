@@ -9,12 +9,12 @@ export class ImageService {
 
   constructor(private http: Http,
               private platform: Platform) {
-    // if (this.platform.is('core')) {
-    //   this.api = '/api';
-    // } else {
-    //   this.api = 'http://stage.themanhome.com/api/jsonws';
-    // }
-    this.api = 'http://stage.themanhome.com/api/jsonws';
+    if (this.platform.is('core')) {
+      this.api = '/api';
+    } else {
+      this.api = 'http://stage.themanhome.com/api/jsonws';
+    }
+    // this.api = 'http://stage.themanhome.com/api/jsonws';
   }
 
   getImage(id, headers, callback) {
@@ -23,7 +23,7 @@ export class ImageService {
     if (!id || id == 0) {
      callback(null);
     } else {
-      const endpoint = this.api + "/image/get-image/imageId/" + id + "?p_auth=[rt4Vaior]";
+      const endpoint = this.api + "/image/get-image/imageId/" + id;
       this.http.get(endpoint, {headers: headers})
       .map(res => res.json())
       .subscribe(img => {
