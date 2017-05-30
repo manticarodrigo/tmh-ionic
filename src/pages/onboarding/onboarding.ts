@@ -61,6 +61,9 @@ export class Onboarding {
     expDate: null,
     code: ''
   }
+  saveCard = true;
+  savedCard: any;
+  payWithSaved = false;
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private modalCtrl: ModalController,
@@ -69,6 +72,14 @@ export class Onboarding {
               private popoverCtrl: PopoverController,
               private platform: Platform) {
     this.user = this.userService.currentUser;
+    this.userService.fetchCreditCard(this.user)
+    .then(data => {
+      console.log("onboarding component received credit card data:");
+      console.log(data);
+      if (!data['exception']) {
+        this.savedCard = data;
+      }
+    });
   }
 
   backPressed() {

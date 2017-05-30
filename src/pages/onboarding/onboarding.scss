@@ -421,10 +421,25 @@ page-onboarding {
         text-align: left;
         font-weight: 700;
       }
+      .item-md, .item-inner {
+        padding: 0px 0px !important;
+        border-bottom: none !important;
+      }
+      .item {
+        background-color: rgba(255,255,255,0);
+      }
+      .label {
+        font-weight: 700;
+        color: color($colors, primary);
+      }
       .input {
         border: 1px solid #C3C3C3;
         background-color: #F8F5F5;
         margin: 10px 0;
+      }
+      .text-input {
+        margin: 8px 8px;
+        height: 30px;
       }
       .datetime {
         text-align: left;
@@ -463,19 +478,43 @@ page-onboarding {
         }
         width: 63%;
       }
-      .card {
-        ion-datetime button{width: auto !important;}
-        .datetime {
-          padding-left: 8px;
-        }
+      .saved-card {
+        width: 63%;
         @media only screen and (max-width: 700px) {
           width: 100% !important;
         }
-        width: 63%;
       }
-      @media only screen and (max-width: 700px) {
-        .payment-button {
-          margin: 30px 0px !important;
+      .card {
+        width: 63%;
+        @media only screen and (max-width: 700px) {
+          width: 100% !important;
+        }
+        @media only screen and (min-width: 700px) {
+          .item:nth-of-type(3) {
+            float: left;
+            width: calc(75% - 10px);
+            margin-right: 20px;
+          }
+          .item:nth-of-type(4) {
+            float: left;
+            width: calc(25% - 10px);
+          }
+        }
+        ion-datetime button {
+          width: auto !important;
+        }
+        .datetime {
+          padding-left: 8px;
+        }
+      }
+      .payment-button {
+        @media only screen and (max-width: 700px) {
+            margin: 30px 0px !important;
+        }
+      }
+      .checkbox-container {
+        ion-checkbox {
+          margin-right: 8px;
         }
       }
     }

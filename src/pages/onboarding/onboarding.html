@@ -262,11 +262,11 @@
           <p>Cost: <span class="right">${{ costs[rooms] }}.00</span></p>
           <p><b>Total: <span class="right">${{ costs[rooms] }}.00</span></b></p>
         </div>
-        <button class="paypal-button" ion-button full (click)="paypalPresed()" type="button">PAY WITH PAYPAL</button>
-        <button class="payment-button desktop" ion-button full (click)="payPresed()" type="button">PAY WITH CARD</button>
+        <button class="paypal-button" ion-button full (click)="paypalPressed()" type="button">PAY WITH PAYPAL</button>
+        <button class="payment-button desktop" ion-button full (click)="payPressed()" type="button">PAY WITH CARD</button>
       </div>
       <br>
-      <div class="billing">
+      <!--<div class="billing">
         <p>Billing Information</p>
         <ion-input [(ngModel)]="billing.firstName" type="text" placeholder="FIRST NAME"></ion-input>
         <ion-input [(ngModel)]="billing.lastName" type="text" placeholder="LAST NAME"></ion-input>
@@ -274,20 +274,40 @@
         <ion-input [(ngModel)]="billing.city" type="text" placeholder="CITY"></ion-input>
         <ion-input [(ngModel)]="billing.country" type="text" placeholder="COUNTRY"></ion-input>
         <ion-input [(ngModel)]="billing.zip" type="text" placeholder="ZIP"></ion-input>
+      </div>-->
+      <div *ngIf="savedCard" class="saved-card">
+        <ion-item>
+          <ion-label stacked>Saved Card Information</ion-label>
+          <ion-input disabled value="****-****-****-{{ savedCard.last4 }}"></ion-input>
+        </ion-item>
+        <ion-input disabled value="{{ savedCard.name }}"></ion-input>
+        <ion-item class="checkbox-container">
+          <ion-checkbox [(ngModel)]="payWithSaved"></ion-checkbox>
+          <ion-label>Use Card</ion-label>
+        </ion-item>
       </div>
-      <br>
       <div class="card">
-        <p>Credit Card Information</p>
-        <ion-input [(ngModel)]="card.number" (input)="validateCardNumber()" maxlength="19" type="text" placeholder="0000-0000-0000-0000"></ion-input>
-        <ion-input [(ngModel)]="card.name" type="text" placeholder="NAME ON CARD"></ion-input>
-        <br>
-        <p>Expiration Date</p>
-        <ion-datetime [(ngModel)]="card.expDate" type="text" displayFormat="MM/YYYY" pickerFormat="MM/YYYY" placeholder="MM/YYYY"></ion-datetime>
-        <br>
-        <p>Security Code</p>
-        <ion-input [(ngModel)]="card.code" maxlength="3" type="text" placeholder="***"></ion-input>
+        <ion-item>
+          <ion-label stacked>Credit Card Information</ion-label>
+          <ion-input [(ngModel)]="card.number" (input)="validateCardNumber()" maxlength="19" type="text" placeholder="0000-0000-0000-0000"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input [(ngModel)]="card.name" type="text" placeholder="NAME ON CARD"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked>Expiration Date</ion-label>
+          <ion-datetime [(ngModel)]="card.expDate" type="text" displayFormat="MM/YYYY" pickerFormat="MM/YYYY" placeholder="MM/YYYY"></ion-datetime>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked>Security Code</ion-label>
+          <ion-input [(ngModel)]="card.code" maxlength="3" type="text" placeholder="***"></ion-input>
+        </ion-item>
+        <ion-item class="checkbox-container">
+          <ion-checkbox [(ngModel)]="saveCard"></ion-checkbox>
+          <ion-label>Save payment information</ion-label>
+        </ion-item>
       </div>
-      <button class="payment-button mobile" ion-button full (click)="payPresed()" type="button">PAY WITH CARD</button>
+      <button class="payment-button mobile" ion-button full (click)="payPressed()" type="button">PAY WITH CARD</button>
     </div>
   </ion-grid>
 

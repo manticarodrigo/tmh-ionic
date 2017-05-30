@@ -310,4 +310,20 @@ export class UserService {
     });
   }
 
+  fetchCreditCard(user) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("fetching credit card for user:");
+      console.log(user);
+      const endpoint = this.api + "/tmh-project-portlet.usercreditcard/fetch-by-user-id/userId/" + user.userId;
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("found user credit card:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
 }
