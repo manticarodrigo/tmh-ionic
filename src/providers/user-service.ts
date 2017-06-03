@@ -41,12 +41,12 @@ export class UserService {
     }
     // const token = btoa("rorrodev@gmail.com:themanhome2017")
     const token = btoa("manticarodrigo@gmail.com:xlemrotm34711");
-    const headers = this.generateHeader(token);
+    const headers = this.generateHeaders(token);
     this.adminHeaders = headers;
     this.fetchGroups();
   }
 
-  generateHeader(token) {
+  generateHeaders(token) {
     const headers = new Headers();
     var authHeader = `Basic ${token}`;
     headers.append('Authorization', authHeader);
@@ -56,7 +56,7 @@ export class UserService {
   login(email, password, callback) {
     const self = this;
     const token = btoa(email + ':' + password);
-    const headers = this.generateHeader(token);
+    const headers = this.generateHeaders(token);
     const endpoint = this.api + "/user/get-user-by-email-address/companyId/20155/emailAddress/" + email;
     this.http.get(endpoint, {headers: headers})
     .map(res => res.json())
@@ -91,13 +91,12 @@ export class UserService {
     console.log("setting current user and token:");
     console.log(user);
     console.log(token);
-    const headers = this.generateHeader(token);
+    const headers = this.generateHeaders(token);
     return new Promise((resolve, reject) => {
       if (user && token) {
         self.headers = headers;
         self.currentUser = user;
         self.setCurrentUserGroups();
-        self.checkIfAdmin();
         self.storage.set('user', user);
         self.storage.set('token', token);
         resolve(user);
@@ -124,25 +123,6 @@ export class UserService {
         }
       });
     }
-  }
-
-  checkIfAdmin() {
-    const self = this;
-    console.log("checking admin role for current user");
-    self.getUserRoles(this.currentUser)
-    .then(data => {
-      if (!data['exception']) {
-        for (var key in data) {
-          const role = data[key];
-          if (role.name == "Administrator") {
-            console.log("welcome back " + this.currentUser.firstName + ".");
-            console.log("you're an admin, and always remember what liferay says about at admins:");
-            console.log(role.descriptionCurrentValue);
-            self.currentUser.admin = true;
-          }
-        }
-      }
-    });
   }
 
   logout() {
