@@ -3,10 +3,10 @@ import { NavController, NavParams, AlertController, PopoverController, ModalCont
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
+import { ImageService } from '../../providers/image-service';
 
 import { DetailsPage } from '../details/details';
 import { DesignPage } from '../design/design';
-import { ChatPage } from '../chat/chat';
 
 @Component({
   selector: 'page-final-delivery',
@@ -43,6 +43,7 @@ export class FinalDeliveryPage {
               private navParams: NavParams,
               private userService: UserService,
               private projectService: ProjectService,
+              private imageService: ImageService,
               private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
               private modalCtrl: ModalController,
@@ -86,7 +87,7 @@ export class FinalDeliveryPage {
             self.conceptboard = {};
             console.log("concept was approved:");
             console.log(detail);
-            self.projectService.getFileEntry(detail.fileEntryId)
+            self.imageService.getFileEntry(detail.fileEntryId)
             .then(data => {
               console.log("design page received approved concept file:");
               console.log(data);
@@ -108,7 +109,7 @@ export class FinalDeliveryPage {
           const file = data[key];
           floorplanIds.push(file.fileEntryId);
         }
-        self.projectService.getFileEntry(floorplanIds[0])
+        self.imageService.getFileEntry(floorplanIds[0])
         .then(data => {
           console.log("design page received floorplan file:");
           console.log(data);
@@ -128,7 +129,7 @@ export class FinalDeliveryPage {
           const file = data[key];
           ids.push(file.fileEntryId);
         }
-        self.projectService.getFileEntries(ids)
+        self.imageService.getFileEntries(ids)
         .then(files => {
           console.log("details page received final snapshot files:");
           console.log(files);
@@ -210,6 +211,7 @@ export class FinalDeliveryPage {
     console.log(link);
     if (link == 'SHOPPING_CART') {
       console.log("selected footer tab shopping cart");
+      this.navCtrl.setRoot('ShoppingCartPage');
     } else {
       this.view = link;
     }

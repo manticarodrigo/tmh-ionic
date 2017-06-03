@@ -4,8 +4,6 @@ import 'rxjs/add/operator/map';
 import { Storage } from '@ionic/storage';
 import { Platform } from 'ionic-angular';
 
-import { ImageService } from './image-service';
-
 @Injectable()
 export class UserService {
   currentUser: any;
@@ -35,14 +33,12 @@ export class UserService {
   
   constructor(private http: Http,
               private storage: Storage,
-              private platform: Platform,
-              private imageService: ImageService) {
-    if (this.platform.is('core')) {
-      this.api = '/api';
-    } else {
+              private platform: Platform) {
+    if (this.platform.is('cordova')) {
       this.api = 'http://stage.themanhome.com/api/jsonws';
+    } else {
+      this.api = '/api';
     }
-    // this.api = 'http://stage.themanhome.com/api/jsonws';
     // const token = btoa("rorrodev@gmail.com:themanhome2017")
     const token = btoa("manticarodrigo@gmail.com:xlemrotm34711");
     const headers = this.generateHeader(token);
@@ -67,17 +63,7 @@ export class UserService {
     .subscribe(data => {
       console.log("login returned data");
       console.log(data);
-      if (!data.exception) {
-        self.setCurrentUser(data, token)
-        .then(user => {
-          callback(user);
-        })
-        .catch(error => {
-          callback(error);
-        });
-      } else {
-        callback(data);
-      }
+      callback(data);
     });
   }
 
@@ -112,26 +98,9 @@ export class UserService {
         self.currentUser = user;
         self.setCurrentUserGroups();
         self.checkIfAdmin();
-        self.imageForUser(user)
-        .then(url => {
-          console.log("found user image url:");
-          console.log(url);
-          if (url) {
-            self.currentUser.photoURL = url;
-          } else {
-            self.currentUser.photoURL = 'assets/user-placeholder.png';
-          }
-          self.storage.set('user', self.currentUser);
-          self.storage.set('token', token);
-          resolve(user);
-          
-        })
-        .catch(error => {
-          console.log(error);
-          self.storage.set('user', user);
-          self.storage.set('token', token);
-          resolve(user);
-        });
+        self.storage.set('user', user);
+        self.storage.set('token', token);
+        resolve(user);
       } else {
         self.currentUser = null;
         self.headers = null;
@@ -173,27 +142,6 @@ export class UserService {
           }
         }
       }
-    });
-  }
-
-  imageForUser(user) {
-    const self = this;
-    const headers = this.headers;
-    return new Promise((resolve, reject) => {
-      self.imageService.getImage(user.portraitId, headers, (data) => {
-        if (data) {
-          console.log("adding data to dropdown image");
-          console.log(data);
-          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (data.modifiedDate) {
-            photoURL = photoURL + '&t=' + data.modifiedDate;
-          }
-          resolve(photoURL);
-        } else {
-          console.log("no image found");
-          resolve(null);
-        }
-      });
     });
   }
 

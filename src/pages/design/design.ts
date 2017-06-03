@@ -4,6 +4,7 @@ import * as Leaflet from 'leaflet';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
+import { ImageService } from '../../providers/image-service';
 
 import { DetailsPage } from '../details/details';
 import { FinalDeliveryPage } from '../final-delivery/final-delivery';
@@ -51,6 +52,7 @@ export class DesignPage {
               private navParams: NavParams,
               private userService: UserService,
               private projectService: ProjectService,
+              private imageService: ImageService,
               private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
               private modalCtrl: ModalController,
@@ -96,7 +98,7 @@ export class DesignPage {
             self.conceptboard = {};
             console.log("concept was approved:");
             console.log(detail);
-            self.projectService.getFileEntry(detail.fileEntryId)
+            self.imageService.getFileEntry(detail.fileEntryId)
             .then(data => {
               console.log("design page received approved concept file:");
               console.log(data);
@@ -107,7 +109,7 @@ export class DesignPage {
           }
         }
         if (conceptIds.length > 0) {
-          self.projectService.getFileEntries(conceptIds)
+          self.imageService.getFileEntries(conceptIds)
           .then(files => {
             console.log("design page received concept files:");
             console.log(files);
@@ -123,7 +125,7 @@ export class DesignPage {
           floorplanIds.push(file.fileEntryId);
         }
         if (floorplanIds.length > 0) {
-          self.projectService.getFileEntry(floorplanIds[0])
+          self.imageService.getFileEntry(floorplanIds[0])
           .then(data => {
             console.log("design page received floorplan file:");
             console.log(data);
@@ -154,7 +156,7 @@ export class DesignPage {
           if (item.projectItemStatus == 'APPROVED') {
             approvedItems.push(item);
             approvedCollectionTotal += item.itemPrice;
-            this.projectService.getFileEntry(item.fileEntryId)
+            this.imageService.getFileEntry(item.fileEntryId)
             .then(data => {
               console.log("design page received item file");
               console.log(data);
@@ -165,7 +167,7 @@ export class DesignPage {
           } else {
             pendingItems.push(item);
             pendingCollectionTotal += item.itemPrice;
-            this.projectService.getFileEntry(item.fileEntryId)
+            this.imageService.getFileEntry(item.fileEntryId)
             .then(data => {
               console.log("design page received item file");
               console.log(data);

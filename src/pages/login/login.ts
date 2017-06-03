@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams, AlertController, Platform } from '
 import { FacebookService } from 'ngx-facebook';
 
 import { UserService } from '../../providers/user-service';
+import { ImageService } from '../../providers/image-service';
 
 @IonicPage()
 @Component({
@@ -27,7 +28,8 @@ export class Login {
               private alertCtrl: AlertController,
               private platform: Platform,
               private fb: FacebookService,
-              private userService: UserService) {
+              private userService: UserService,
+              private imageService: ImageService) {
     this.platform.ready().then(() => {
       // Check If Cordova/Mobile
       if (this.platform.is('cordova')) {
@@ -63,6 +65,7 @@ export class Login {
   }
 
   login() {
+    const self = this;
     console.log("login pressed");
     if (this.email == '' || this.password == '') {
       this.presentError('Please provide a valid email and password.');
@@ -71,10 +74,20 @@ export class Login {
       this.userService.login(this.email, this.password, (data) => {
         console.log(data);
         if (!data.exception) {
-          this.email = '';
-          this.password = '';
-          this.loading = false;
-          this.navCtrl.setRoot('Dashboard');
+          self.imageService.imageForUser(data)
+          .then(url => {
+            if (url) {
+              data.photoURL = url;
+            }
+            const token = btoa(this.email + ':' + this.password);
+            self.userService.setCurrentUser(data, token)
+            .then(user => {
+              this.navCtrl.setRoot('Dashboard');
+              this.email = '';
+              this.password = '';
+              this.loading = false;
+            })
+          });
         } else {
           this.presentError('No user found with the provided credentials.');
           this.loading = false;

@@ -3,6 +3,7 @@ import { NavController, NavParams, AlertController, PopoverController, ModalCont
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
+import { ImageService } from '../../providers/image-service';
 
 import { DesignPage } from '../design/design';
 import { FinalDeliveryPage } from '../final-delivery/final-delivery';
@@ -49,6 +50,7 @@ export class DetailsPage {
               private navParams: NavParams,
               private userService: UserService,
               private projectService: ProjectService,
+              private imageService: ImageService,
               private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
               private modalCtrl: ModalController,
@@ -87,7 +89,7 @@ export class DetailsPage {
           const file = data[key];
           ids.push(file.fileEntryId);
         }
-        self.projectService.getFileEntries(ids)
+        self.imageService.getFileEntries(ids)
         .then(files => {
           console.log("details page received drawings files:");
           console.log(files);
@@ -110,7 +112,7 @@ export class DetailsPage {
           const file = data[key];
           ids.push(file.fileEntryId);
         }
-        self.projectService.getFileEntries(ids)
+        self.imageService.getFileEntries(ids)
         .then(files => {
           console.log("details page received inspirations files");
           console.log(files);
@@ -132,7 +134,7 @@ export class DetailsPage {
           const file = data[key];
           ids.push(file.fileEntryId);
         }
-        self.projectService.getFileEntries(ids)
+        self.imageService.getFileEntries(ids)
         .then(files => {
           console.log("details page received furnitures files:");
           console.log(files);

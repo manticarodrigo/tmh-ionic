@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
-import 'rxjs/add/operator/map';
 
 import { SocketService } from './socket-service';
 
 @Injectable()
 export class ChatService {
 
-  constructor(private http: Http,
-              private socketService: SocketService) {
+  constructor(private socketService: SocketService) {
     this.socketService.addCollection('messages');
   }
 

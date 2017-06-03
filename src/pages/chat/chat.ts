@@ -6,7 +6,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { ChatService } from '../../providers/chat-service';
 import { UserService } from '../../providers/user-service';
 import { ImageService } from '../../providers/image-service';
-import { ProjectService } from '../../providers/project-service';
 
 @Component({
   selector: 'page-chat',
@@ -33,8 +32,7 @@ export class ChatPage {
               private statusBar: StatusBar,
               private chatService: ChatService,
               private userService: UserService,
-              private imageService: ImageService,
-              private projectService: ProjectService) {
+              private imageService: ImageService) {
     this.memberMap[this.userService.currentUser.userId] = {
       firstName: this.userService.currentUser.firstName,
       photoURL: this.userService.currentUser.photoURL,
@@ -97,7 +95,7 @@ export class ChatPage {
 
   fetchImage(fileEntryId) {
     const self = this;
-    this.projectService.getFileEntry(fileEntryId)
+    this.imageService.getFileEntry(fileEntryId)
     .then(data => {
       console.log("chat component received file:");
       console.log(data);
@@ -133,24 +131,19 @@ export class ChatPage {
       }
       self.userService.fetchUser(uid, (user) => {
         if (!user.exception && user.portraitId) {
-          self.imageService.getImage(user.portraitId, headers, (data) => {
-              if (data) {
-                console.log("Adding photoURL data to chat member map");
-                console.log(data);
-                var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-                if (data.modifiedDate) {
-                  photoURL = photoURL + '&t=' + data.modifiedDate;
-                }
-                self.memberMap[uid] = {
-                  firstName: user.firstName,
-                  photoURL: photoURL,
-                  loading: false
-                }
-              } else {
-                console.log("No image found");
-                self.memberMap[uid] = null;
+          self.imageService.imageForUser(user)
+          .then(url => {
+            if (url) {
+              self.memberMap[uid] = {
+                firstName: user.firstName,
+                photoURL: url,
+                loading: false
               }
-            });
+            } else {
+              console.log("No image found");
+              self.memberMap[uid] = null;
+            }
+          });
         } else {
           console.log("Got back object instead of valid user:");
           console.log(user);
@@ -204,7 +197,7 @@ export class ChatPage {
     const self = this;
     console.log("file changed:");
     console.log(event.target.files[0]);
-    this.projectService.uploadFile(event.target.files[0], this.project)
+    this.imageService.uploadFile(event.target.files[0], this.project)
     .then(data => {
       console.log("chat component received data:");
       console.log(data);
