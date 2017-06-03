@@ -173,7 +173,7 @@ export class DetailsPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('Dashboard');
+    this.navCtrl.setRoot('DashboardPage');
   }
 
   selectTab() {

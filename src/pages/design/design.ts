@@ -361,7 +361,7 @@ export class DesignPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('Dashboard');
+    this.navCtrl.setRoot('DashboardPage');
   }
 
   selectTab() {
@@ -381,7 +381,7 @@ export class DesignPage {
         if (data == 'FINAL DELIVERY')
           page = FinalDeliveryPage;
         if (page)
-          this.navCtrl.setRoot(page, {
+          this.navCtrl.setRoot(page + 'Page', {
             project: self.project
           });
       }
@@ -399,7 +399,7 @@ export class DesignPage {
     if (link == 'FINAL_DELIVERY')
       page = FinalDeliveryPage;
     if (page)
-      this.navCtrl.setRoot(page, {
+      this.navCtrl.setRoot(page + 'Page', {
         project: self.project
       });
   }

@@ -8,7 +8,7 @@ import { UserService } from '../../providers/user-service';
   selector: 'page-onboarding',
   templateUrl: 'onboarding.html',
 })
-export class Onboarding {
+export class OnboardingPage {
   user: any;
   step = 0;
   type = '';

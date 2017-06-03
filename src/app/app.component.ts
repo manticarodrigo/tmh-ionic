@@ -13,7 +13,7 @@ import { SocketService } from '../providers/socket-service';
 })
 export class TheManHome {
   @ViewChild(Nav) nav: Nav;
-  rootPage:any = 'Login';
+  rootPage:any = 'LoadingPage';
   constructor(private platform: Platform,
               private menuCtrl: MenuController,
               private statusBar: StatusBar,
@@ -46,11 +46,12 @@ export class TheManHome {
           console.log('No stored user found');
           console.log(user);
           console.log(token);
+          self.nav.setRoot('LoginPage');
         } else {
           console.log('Stored user found');
           self.userService.setCurrentUser(user, token)
           .then(user => {
-            self.nav.setRoot('Dashboard');
+            self.nav.setRoot('DashboardPage');
           })
           .catch(error => {
             console.log(error);
@@ -64,25 +65,25 @@ export class TheManHome {
     profilePressed() {
       console.log("view profile pressed");
       this.menuCtrl.close();
-      this.nav.setRoot('Profile');
+      this.nav.setRoot('ProfilePage');
     }
 
     allPressed() {
       console.log("all projects pressed");
       this.menuCtrl.close();
-      this.nav.setRoot('Dashboard');
+      this.nav.setRoot('DashboardPage');
     }
 
     newPressed() {
       console.log("new project pressed");
       this.menuCtrl.close();
-      this.nav.setRoot('Onboarding');
+      this.nav.setRoot('OnboardingPage');
     }
 
     logout() {
       console.log("logout pressed");
       this.menuCtrl.close();
-      this.nav.setRoot('Login');
+      this.nav.setRoot('LoginPage');
       this.userService.logout();
     }
 }

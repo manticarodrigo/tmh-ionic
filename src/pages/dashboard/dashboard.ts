@@ -14,7 +14,7 @@ import { ChatPage } from '../chat/chat';
   selector: 'page-dashboard',
   templateUrl: 'dashboard.html'
 })
-export class Dashboard {
+export class DashboardPage {
   user: any;
   viewMode = 'CLIENT';
   projects: Array<any>;
@@ -87,7 +87,7 @@ export class Dashboard {
       {
           text: 'Start',
           handler: data => {
-              this.navCtrl.setRoot('Onboarding')
+              this.navCtrl.setRoot('OnboardingPage')
           }
       }]
     });
@@ -251,7 +251,7 @@ export class Dashboard {
 
   startProject() {
     console.log("Start proj pressed");
-    this.navCtrl.setRoot('Onboarding');
+    this.navCtrl.setRoot('OnboardingPage');
   }
 
   // chatFor(project) {

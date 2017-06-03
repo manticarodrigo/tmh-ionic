@@ -145,7 +145,7 @@ export class FinalDeliveryPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('Dashboard');
+    this.navCtrl.setRoot('DashboardPage');
   }
 
   selectTab() {

@@ -9,7 +9,7 @@
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.photoURL" [src]="user.photoURL">
-        <img *ngIf="!user || !user.photoURL" src="assets/tmh.png">
+        <img *ngIf="!user || !user.photoURL" src="assets/user-placeholder.png">
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -18,14 +18,6 @@
 <ion-content text-center>
   <div class="profile-header">
     <input class="img-input" *ngIf="editing" type="file" accept="image/*" #file (change)="fileChanged($event)" />
-    <!--<form
-    action="http://stage.themanhome.com/api/jsonws/user/update-portrait"
-    method="POST"
-    enctype="multipart/form-data">
-        <input type="hidden" name="userId" value="{{ user.userId }}"/>
-        <input type="file" name="bytes"/>
-        <input type="submit" value="updatePortrait(bytes)"/>
-    </form>-->
     <img *ngIf="user" [src]="user.photoURL">
     <img *ngIf="!user" src="assets/tmh.png">
     <button ion-button type="button" (click)="editToggled()">{{ editing ? 'SAVE' : 'EDIT' }}</button>

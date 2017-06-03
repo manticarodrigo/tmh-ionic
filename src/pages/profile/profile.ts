@@ -8,7 +8,7 @@ import { UserService } from '../../providers/user-service';
   selector: 'page-profile',
   templateUrl: 'profile.html',
 })
-export class Profile {
+export class ProfilePage {
   user: any;
   editing = false;
   oldPassword = '';

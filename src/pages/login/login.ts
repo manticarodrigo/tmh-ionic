@@ -11,7 +11,7 @@ import { ImageService } from '../../providers/image-service';
   selector: 'page-login',
   templateUrl: 'login.html',
 })
-export class Login {
+export class LoginPage {
   loading = false;
   signup = false;
   firstName = '';
@@ -94,7 +94,7 @@ export class Login {
             }
             self.userService.setCurrentUser(user, token)
             .then(user => {
-              this.navCtrl.setRoot('Dashboard');
+              this.navCtrl.setRoot('DashboardPage');
               this.email = '';
               this.password = '';
               this.loading = false;
@@ -126,7 +126,7 @@ export class Login {
           this.password = '';
           this.password2 = '';
           this.loading = false;
-          this.navCtrl.setRoot('Dashboard');
+          this.navCtrl.setRoot('DashboardPage');
         } else {
           this.presentError('Registration failed. Please try again.');
           this.loading = false;
@@ -166,7 +166,7 @@ export class Login {
             //     this.password = '';
             //     this.password2 = '';
             //     this.loading = false;
-            //     this.navCtrl.setRoot('Dashboard');
+            //     this.navCtrl.setRoot('DashboardPage');
             //   } else {
             //     this.presentError('Registration failed. Please try again.');
             //     this.loading = false;

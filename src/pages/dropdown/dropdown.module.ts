@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { Dropdown } from './dropdown';
+import { DropdownPage } from './dropdown';
 
 @NgModule({
   declarations: [
-    Dropdown,
+    DropdownPage,
   ],
   imports: [
-    IonicPageModule.forChild(Dropdown),
+    IonicPageModule.forChild(DropdownPage),
   ],
   exports: [
-    Dropdown
+    DropdownPage
   ]
 })
-export class DropdownModule {}
+export class DropdownPageModule {}

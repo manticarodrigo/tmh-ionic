@@ -6,7 +6,7 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
   selector: 'page-intl-address',
   templateUrl: 'intl-address.html',
 })
-export class IntlAddress {
+export class IntlAddressPage {
 
   constructor(private navCtrl: NavController,
               private navParams: NavParams,

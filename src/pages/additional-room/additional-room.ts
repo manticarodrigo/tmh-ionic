@@ -6,7 +6,7 @@ import { IonicPage, NavController, NavParams, ViewController, AlertController } 
   selector: 'page-additional-room',
   templateUrl: 'additional-room.html',
 })
-export class AdditionalRoom {
+export class AdditionalRoomPage {
   rooms = 1;
   room1: any;
   room2: any;

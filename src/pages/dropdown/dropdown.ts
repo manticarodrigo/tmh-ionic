@@ -6,7 +6,7 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
   selector: 'page-dropdown',
   templateUrl: 'dropdown.html',
 })
-export class Dropdown {
+export class DropdownPage {
   
   items: any;
   
