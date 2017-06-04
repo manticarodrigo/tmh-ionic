@@ -76,7 +76,7 @@ export class OnboardingPage {
     .then(data => {
       console.log("onboarding component received credit card data:");
       console.log(data);
-      if (!data['exception']) {
+      if (!data['exception'] && Object.keys(data).length != 0) {
         this.savedCard = data;
       }
     });
@@ -188,6 +188,9 @@ export class OnboardingPage {
   requestInternational() {
     console.log("international address pressed");
     let modal = this.modalCtrl.create('IntlAddress');
+    modal.onDidDismiss(data => {
+      console.log(data);
+    });
     modal.present();
   }
 

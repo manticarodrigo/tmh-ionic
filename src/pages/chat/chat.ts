@@ -63,6 +63,8 @@ export class ChatPage {
     const self = this;
     this.chatService.fetchMessages()
     .then(data => {
+      console.log("chat component received messages:");
+      console.log(data);
       if (data) {
         var messageArr = [];
         for (var key in data[0]) {
@@ -108,6 +110,8 @@ export class ChatPage {
   observeMessages() {
     const self = this;
     this.chatService.observeMessages(data => {
+      console.log("chat component received message:");
+      console.log(data);
       if (!self.memberMap[data['senderId']]) {
        self.addMemberData(data['senderId']);
       }

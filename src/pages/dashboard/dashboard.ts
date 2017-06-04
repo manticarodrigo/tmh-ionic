@@ -77,17 +77,17 @@ export class DashboardPage {
       message: 'Press start to begin a new project.',
       buttons: 
       [{
-          text: 'Cancel',
-          role: 'cancel',
-          handler: data => {
-              console.log('Cancel pressed');
-          }
+        text: 'CANCEL',
+        role: 'cancel',
+        handler: data => {
+          console.log('Cancel pressed');
+        }
       },
       {
-          text: 'Start',
-          handler: data => {
-              this.navCtrl.setRoot('OnboardingPage')
-          }
+        text: 'START',
+        handler: data => {
+          this.navCtrl.setRoot('OnboardingPage')
+        }
       }]
     });
     alert.present();
@@ -202,10 +202,12 @@ export class DashboardPage {
         project.projectStatusReadable = self.phases[project.projectStatus]
         project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
         project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
-        project.client.shortName = project.client.firstName;
+        if (project.client) {
+          project.client.shortName = project.client.firstName;
           if (project.client.lastName) {
             project.client.shortName += ' ' + project.client.lastName.split('')[0] + '.';
           }
+        }
         projects.push(project);
       }
     } else {
@@ -247,15 +249,6 @@ export class DashboardPage {
     this.navCtrl.setRoot('OnboardingPage');
   }
 
-  // chatFor(project) {
-  //   console.log("Chat pressed for project:");
-  //   console.log(project);
-  //   let modal = this.modalCtrl.create(ChatPage, {
-  //     project: project
-  //   });
-  //   modal.present();
-  // }
-
   selectedProject(project) {
     console.log("selected project with status:");
     console.log(project.projectStatus);
@@ -263,7 +256,7 @@ export class DashboardPage {
     if (project.projectStatus == 'DETAILS')
       page = DetailsPage;
     if (project.projectStatus == 'DESIGN')
-      page = DetailsPage;
+      page = DesignPage;
     if (project.projectStatus == 'CONCEPTS')
       page = DesignPage;
     if (project.projectStatus == 'FLOOR_PLAN')

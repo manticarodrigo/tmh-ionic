@@ -1,0 +1,40 @@
+page-confirm {
+  position: relative;
+  .header-md:after {
+    background-image: none !important;
+  }
+  .toolbar-background {
+    background-color: #fff !important;
+  }
+  .scroll-content {
+    background-color: #fff;
+  }
+  .close {
+    img {
+      filter: brightness(0.1);
+      width: 15px;
+    }
+  }
+  .center {
+    max-width: 724px;
+    position: relative;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: 20px auto;
+    padding: 20px;
+    @media only screen and (max-width: 724px) {
+      .close {
+        top: -45px !important;
+        right: -20px !important;
+      }
+    }
+    img {
+      width: 59px;
+    }
+    .button {
+      width: 200px;
+    }
+  }
+}

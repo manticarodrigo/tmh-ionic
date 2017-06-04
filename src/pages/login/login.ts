@@ -81,7 +81,7 @@ export class LoginPage {
             this.email = '';
             this.password = '';
             this.loading = false;
-          })
+          });
         } else {
           this.presentError('No user found with the provided credentials.');
           this.loading = false;
@@ -91,6 +91,7 @@ export class LoginPage {
   }
 
   register() {
+    const self = this;
     console.log("signup pressed");
     if (this.firstName == '' || this.email == '' || this.password == '' || this.password2 == '') {
       this.presentError('Please provide a first name, email, and matching passwords.');
@@ -99,16 +100,21 @@ export class LoginPage {
       this.presentError('The provided password do not match.')
       this.loading = false;
     } else {
-      this.userService.register(this.firstName, this.lastName, this.email, this.password, this.password2, (data) => {
-        console.log(data);
-        if (!data.exception) {
-          this.firstName = '';
-          this.lastName = '';
-          this.email = '';
-          this.password = '';
-          this.password2 = '';
-          this.loading = false;
-          this.navCtrl.setRoot('DashboardPage');
+      this.userService.register(this.firstName, this.lastName, this.email, this.password, this.password2)
+      .then(user => {
+        console.log(user);
+        if (!user['exception']) {
+          const token = btoa(this.email + ':' + this.password);
+          self.userService.setCurrentUser(user, token)
+          .then(user => {
+            this.firstName = '';
+            this.lastName = '';
+            this.email = '';
+            this.password = '';
+            this.password2 = '';
+            this.loading = false;
+            this.navCtrl.setRoot('DashboardPage');
+          });
         } else {
           this.presentError('Registration failed. Please try again.');
           this.loading = false;

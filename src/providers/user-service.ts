@@ -20,8 +20,8 @@ export class UserService {
       this.api = '/api';
     }
     const token = btoa("manticarodrigo@gmail.com:tmh2017!");
-    const headers = this.generateHeaders(token);
-    this.adminHeaders = headers;
+    const adminHeaders = this.generateHeaders(token);
+    this.adminHeaders = adminHeaders;
   }
 
   generateHeaders(token) {
@@ -90,22 +90,23 @@ export class UserService {
     this.setCurrentUser(null, null);
   }
 
-  register(firstName, lastName, email, password, password2, callback) {
+  register(firstName, lastName, email, password, password2) {
     const self = this;
-    const endpoint = this.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/group-ids/" + [20484] + "/-organization-ids/-role-ids/-user-group-ids/send-email/true";
-    console.log(endpoint);
-    this.http.post(endpoint, null, {headers: this.adminHeaders})
-    .map(res => res.json())
-    .subscribe(data => {
-      console.log("register returned data");
-      console.log(data);
-      if (!data.exception) {
-        self.login(email, password, (user) => {
-          callback(user);
-        });
-      } else {
-        callback(data);
-      }
+    return new Promise((resolve, reject) => {
+      const endpoint = this.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/group-ids/" + [20484] + "/-organization-ids/-role-ids/-user-group-ids/send-email/true";
+      this.http.post(endpoint, null, {headers: this.adminHeaders})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("register returned data");
+        console.log(data);
+        if (!data.exception) {
+          self.login(email, password, (user) => {
+            resolve(user);
+          });
+        } else {
+          resolve(data);
+        }
+      });
     });
   }
 
@@ -114,10 +115,9 @@ export class UserService {
     console.log("setting current user and token:");
     console.log(user);
     console.log(token);
-    const headers = this.generateHeaders(token);
     return new Promise((resolve, reject) => {
       if (user && token) {
-        self.headers = headers;
+        self.headers = self.generateHeaders(token);
         self.currentUser = user;
         self.storage.set('user', user);
         self.storage.set('token', token);

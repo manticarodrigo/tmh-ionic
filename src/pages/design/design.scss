@@ -12,6 +12,9 @@ page-design {
     @media only screen and (min-width: 700px) {
       .collab-workzone {
         padding-right: 5px !important;
+        .collab-alert {
+          right: 0px;
+        }
       }
       ion-spinner {
         right: 5px !important;
@@ -150,7 +153,11 @@ page-design {
     }
     .collab-alert {
       @media only screen and (min-width: 700px) {
-        transform: translateY(50%);
+        position: absolute;
+        top: 50%;
+        right: 240px;
+        left: 0;
+        transform: translateY(-65%);
         max-width: 500px;
         margin: 50px auto;
       }

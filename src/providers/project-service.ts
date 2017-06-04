@@ -21,11 +21,30 @@ export class ProjectService {
     }
   }
 
+  updateStatus(project, status) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("updating project status:");
+      console.log(status);
+      var endpoint = this.api + "/tmh-project-portlet.project/update-project-status/projectId/" + project.projectId + "/userId/" + project.userId + "/projectStatus/" + status;
+      if (status == 'FLOOR_PLAN') {
+        endpoint += "/daysLeft/" + 15;
+      }
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("found question answer:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
   findByUserId(uid) {
     const self = this;
     return new Promise((resolve, reject) => {
       const map = {
-        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-user-id": {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-user-id": {
           "userId": uid,
           "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
             "@userId": "$project.userId"
@@ -47,7 +66,7 @@ export class ProjectService {
     const self = this;
     return new Promise((resolve, reject) => {
       const map = {
-        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-in-progress": {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-in-progress": {
           "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
             "@userId": "$project.userId"
           }
@@ -68,7 +87,7 @@ export class ProjectService {
     const self = this;
     return new Promise((resolve, reject) => {
       const map = {
-        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-complete": {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-complete": {
           "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
             "@userId": "$project.userId"
           }
@@ -89,10 +108,10 @@ export class ProjectService {
     const self = this;
     return new Promise((resolve, reject) => {
       const map = {
-        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-archived": {
-          "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
-            "@userId": "$project.userId"
-          }
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-archived": {
+          // "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
+          //   "@userId": "$project.userId"
+          // }
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
@@ -110,7 +129,7 @@ export class ProjectService {
     const self = this;
     return new Promise((resolve, reject) => {
       const map = {
-        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-up-next": {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-up-next": {
           "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
             "@userId": "$project.userId"
           }
@@ -131,7 +150,7 @@ export class ProjectService {
     const self = this;
     return new Promise((resolve, reject) => {
       const map = {
-        "$detail[fileEntryId] = /tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type": {
+        "$detail[fileEntryId,projectDetailId] = /tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type": {
           "projectId": projectId,
           "projectDetailTypeStr": type,
           "$file[repositoryId,folderId,title,uuid,version,createDate] = /dlfileentry/get-file-entry": {
@@ -202,6 +221,42 @@ export class ProjectService {
       .map(res => res.json())
       .subscribe(data => {
         console.log("found project items:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  addDetail(project, file, type) {
+    console.log("adding detail of type:");
+    console.log(type);
+    const self = this;
+    return new Promise((resolve, reject) => {
+      var headers = self.headers;
+      headers.append("enctype", "multipart/form-data");
+      const endpoint = this.userService.api + "/tmh-project-portlet.projectdetail/add-project-detail.9/globalGroupId/" + 20484 + "/projectId/" + project.projectId + "/projectDetailType/" + type + "/projectDetailStatus/PENDING/fileName/" + file.name + "/contentType/" + file.type.split("/")[1] + "/fileSize/" + file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
+      var formData = new FormData();
+      formData.append('file', file);
+      this.http.post(endpoint, formData, {headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("add detail returned response:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  deleteDetail(project, detail) {
+    console.log("deleting detail:");
+    console.log(detail);
+    const self = this;
+    return new Promise((resolve, reject) => {
+      const endpoint = this.userService.api + "/tmh-project-portlet.projectdetail/delete-project-detail/projectId/" + project.projectId + "/projectDetailId/" + detail.projectDetailId;
+      this.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("delete returned response:");
         console.log(data);
         resolve(data);
       });

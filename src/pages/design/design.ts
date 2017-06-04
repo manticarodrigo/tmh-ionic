@@ -69,6 +69,12 @@ export class DesignPage {
     if (this.project.projectStatus == 'FINAL_DELIVERY' || this.project.projectStatus == 'SHOPPING_CART' || this.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || this.project.projectStatus == 'ARCHIVED') {
         this.itemsViewMode = 'APPROVED';
     }
+    this.fetchDetails();
+    this.fetchItems();
+  }
+
+  fetchDetails() {
+    const self = this;
     Promise.all([this.projectService.fetchProjectDetail(this.project.projectId, "CONCEPT"), this.projectService.fetchProjectDetail(this.project.projectId, "FLOOR_PLAN")])
     .then(data => {
       console.log("design page received concepts and floorplan:");
@@ -77,7 +83,7 @@ export class DesignPage {
         var concepts = [];
         for (var key in data[0]) {
           var detail = data[0][key];
-          detail.url = self.createFileUrl(detail.file);
+          detail.url = self.imageService.createFileUrl(detail.file);
           if (detail && detail.projectDetailStatus == 'APPROVED') {
             self.conceptboard = {};
             console.log("concept was approved:");
@@ -89,12 +95,11 @@ export class DesignPage {
         if (concepts.length > 0) {
           self.concepts = data;
           self.selectedConcept = data[0];
-          self.loading = false;
         }
         var floorplans = [];
         for (var key in data[1]) {
           var detail = data[1][key];
-          detail.url = self.createFileUrl(detail.file);
+          detail.url = self.imageService.createFileUrl(detail.file);
           floorplans.push(detail);
         }
         if (floorplans.length > 0) {
@@ -102,23 +107,26 @@ export class DesignPage {
         }
         if (concepts.length > 0 && floorplans.length > 0) {
           self.view = 'FLOOR_PLAN';
-        } else {
-          self.loading = false;
         }
       }
+      self.loading = false;
     });
+  }
+
+  fetchItems() {
+    const self = this;
     this.projectService.fetchItems(this.project)
     .then(data => {
       console.log("design page received item data:");
       console.log(data);
-      if (!data['exception']) {
+      if (!data['exception'] && Array(data).length > 0) {
         var pendingItems = [];
         var approvedItems = [];
         var pendingCollectionTotal = 0;
         var approvedCollectionTotal = 0;
         for (var key in data) {
           var item = data[key];
-          item.url = self.createFileUrl(item.file);
+          item.url = self.imageService.createFileUrl(item.file);
           if (item.projectItemStatus == 'APPROVED') {
             approvedItems.push(item);
             approvedCollectionTotal += item.itemPrice;
@@ -139,19 +147,11 @@ export class DesignPage {
         }
         self.pendingCollectionTotal = pendingCollectionTotal;
         self.approvedCollectionTotal = approvedCollectionTotal;
-        self.drawFloorplan();
+        if (approvedItems.length > 0 || pendingItems.length > 0) {
+          self.drawFloorplan();
+        }
       }
     });
-  }
-
-  createFileUrl(data) {
-    const repositoryId = data.repositoryId;
-    const folderId = data.folderId;
-    const title = data.title;
-    const uuid = data.uuid;
-    const version = data.version;
-    const createDate = data.createDate;
-    return "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
   }
   
   getDaysLeftStringFrom(timestamp) {
@@ -393,6 +393,31 @@ export class DesignPage {
   itemViewSwitched() {
     console.log("item view switched");
     this.drawFloorplan();
+  }
+
+  fileChanged(event) {
+    const self = this;
+    console.log("file changed:");
+    console.log(event.target.files[0]);
+    const file = event.target.files[0];
+    if (this.view == 'CONCEPT_BOARD') {
+      this.projectService.addDetail(this.project, file, 'CONCEPT')
+      .then(data => {
+        console.log(data);
+        if (!data['exception']) {
+          self.fetchDetails();
+        }
+      });
+    }
+    if (this.view == 'FLOOR_PLAN') {
+      this.projectService.addDetail(this.project, file, 'FLOOR_PLAN')
+      .then(data => {
+        console.log(data);
+        if (!data['exception']) {
+          self.fetchDetails();
+        }
+      });
+    }
   }
 
 }

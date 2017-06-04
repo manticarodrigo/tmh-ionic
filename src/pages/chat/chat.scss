@@ -54,7 +54,7 @@ page-chat {
     margin: auto;
   }
   .message-header {
-    padding: 20px 5px 10px;
+    padding: 20px 10px 10px;
     img {
       object-fit: cover;
       float: left;
@@ -77,6 +77,18 @@ page-chat {
     position: relative;
     padding: 0px 12px;
     max-width: 80%;
+  }
+  .img-bubble {
+    height: 100%;
+    display: inline-block;
+    position: relative;
+    padding: 0px 12px;
+    img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
   }
   .message {
     font-size: medium;

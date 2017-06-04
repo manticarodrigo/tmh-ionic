@@ -67,6 +67,23 @@ export class DetailsPage {
     }
     this.project = this.navParams.get('project');
     this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
+    
+    this.projectService.fetchQuestionAnswers(this.project)
+    .then(answers => {
+      console.log("details page received answers:");
+      console.log(answers);
+      self.answers = answers;
+    });
+
+    this.fetchDrawings();
+    this.fetchInspirations();
+    this.fetchFurnitures();
+  }
+
+  
+
+  fetchDrawings() {
+    const self = this;
     this.projectService.fetchProjectDetail(this.project.projectId, "DRAWING")
     .then(data => {
       console.log("details page received drawings:");
@@ -75,17 +92,27 @@ export class DetailsPage {
         var drawings = [];
         for (var key in data) {
           var drawing = data[key];
-          drawing.url = self.createFileUrl(drawing.file);
+          drawing.url = self.imageService.createFileUrl(drawing.file);
           drawings.push(drawing);
         }
         if (drawings.length > 0) {
           self.status.UPLOADED_DRAWING = true;
           self.selectedDrawing = drawings[0];
           self.drawings = drawings;
+        } else {
+          self.status.UPLOADED_DRAWING = false;
+          self.selectedDrawing = null;
+          self.drawings = null;
         }
-        self.loading = false;
+        if (self.loading) {
+          self.loading = false;
+        }
       }
     });
+  }
+
+  fetchInspirations() {
+    const self = this;
     this.projectService.fetchProjectDetail(this.project.projectId, "INSPIRATION")
     .then(data => {
       console.log("details page received inspirations:");
@@ -94,16 +121,24 @@ export class DetailsPage {
         var inspirations = [];
         for (var key in data) {
           var inspiration = data[key];
-          inspiration.url = self.createFileUrl(inspiration.file);
+          inspiration.url = self.imageService.createFileUrl(inspiration.file);
           inspirations.push(inspiration);
         }
         if (inspirations.length > 0) {
           self.status.UPLOADED_INSPIRATION = true;
           self.selectedInspiration = inspirations[0];
           self.inspirations = inspirations;
+        } else {
+          self.status.UPLOADED_INSPIRATION = false;
+          self.selectedInspiration = null;
+          self.inspirations = null;
         }
       }
     });
+  }
+
+  fetchFurnitures() {
+    const self = this;
     this.projectService.fetchProjectDetail(this.project.projectId, "FURNITURE")
     .then(data => {
       console.log("details page received furnitures:");
@@ -112,32 +147,20 @@ export class DetailsPage {
         var furnitures = [];
         for (var key in data) {
           var furniture = data[key];
-          furniture.url = self.createFileUrl(furniture.file);
+          furniture.url = self.imageService.createFileUrl(furniture.file);
           furnitures.push(furniture);
         }
         if (furnitures.length > 0) {
           self.status.UPLOADED_FURNITURE = true;
           self.selectedFurniture = furnitures[0];
           self.furnitures = furnitures;
+        } else {
+          self.status.UPLOADED_FURNITURE = false;
+          self.selectedFurniture = null;
+          self.furnitures = null;
         }
       }
     });
-    this.projectService.fetchQuestionAnswers(this.project)
-    .then(answers => {
-      console.log("details page received answers:");
-      console.log(answers);
-      self.answers = answers;
-    });
-  }
-
-  createFileUrl(data) {
-    const repositoryId = data.repositoryId;
-    const folderId = data.folderId;
-    const title = data.title;
-    const uuid = data.uuid;
-    const version = data.version;
-    const createDate = data.createDate;
-    return "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
   }
 
   getDaysLeftStringFrom(timestamp) {
@@ -237,6 +260,81 @@ export class DetailsPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
+  }
+
+  submitToDesigner() {
+    const self = this;
+    console.log("submit to designer pressed");
+    let modal = this.modalCtrl.create('ConfirmPage', {
+      message: 'Ready to connect with your designer? By selecting the confimation below, your details will be submitted so your designer can begin on your concept boards.'
+    });
+    modal.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        self.projectService.updateStatus(self.project, 'DESIGN')
+        .then(data => {
+          self.navCtrl.setRoot(DesignPage, {
+            project: self.project
+          });
+        });
+      }
+    });
+    modal.present();
+  }
+
+  fileChanged(event) {
+    const self = this;
+    console.log("file changed:");
+    console.log(event.target.files[0]);
+    const file = event.target.files[0];
+    if (this.view == 'DRAWING') {
+      this.projectService.addDetail(this.project, file, 'DRAWING')
+      .then(data => {
+        console.log(data);
+        if (!data['exception']) {
+          self.fetchDrawings();
+        }
+      });
+    }
+    if (this.view == 'INSPIRATION') {
+      this.projectService.addDetail(this.project, file, 'INSPIRATION')
+      .then(data => {
+        console.log(data);
+        if (!data['exception']) {
+          self.fetchInspirations();
+        }
+      });
+    }
+    if (this.view == 'FURNITURE') {
+      this.projectService.addDetail(this.project, file, 'FURNITURE')
+      .then(data => {
+        console.log(data);
+        if (!data['exception']) {
+          self.fetchFurnitures();
+        }
+      });
+    }
+  }
+
+  deleteDetail(detail) {
+    const self = this;
+    console.log("delete detail pressed:");
+    console.log(detail);
+    this.projectService.deleteDetail(this.project, detail)
+    .then(data => {
+      console.log(data);
+      if (!data['exception']) {
+        if (this.view == 'DRAWING') {
+          self.fetchDrawings();
+        }
+        if (this.view == 'INSPIRATION') {
+          self.fetchInspirations();
+        }
+        if (this.view == 'FURNITURE') {
+          self.fetchFurnitures();
+        }
+      }
+    });
   }
 
 }

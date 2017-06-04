@@ -70,7 +70,7 @@ export class FinalDeliveryPage {
         for (var key in data) {
           var detail = data[key];
           if (detail && detail.projectDetailStatus == 'APPROVED') {
-            detail.url = self.createFileUrl(detail.file);
+            detail.url = self.imageService.createFileUrl(detail.file);
             self.conceptboard = detail;
           }
         }
@@ -84,7 +84,7 @@ export class FinalDeliveryPage {
         for (var key in data) {
           var detail = data[key];
           if (detail && detail.projectDetailStatus == 'APPROVED') {
-            detail.url = self.createFileUrl(detail.file);
+            detail.url = self.imageService.createFileUrl(detail.file);
             self.floorplan = detail;
           }
         }
@@ -98,7 +98,7 @@ export class FinalDeliveryPage {
         var snapshots = [];
         for (var key in data) {
           var detail = data[key];
-          detail.url = self.createFileUrl(detail.file);
+          detail.url = self.imageService.createFileUrl(detail.file);
           snapshots.push(detail);
         }
         if (snapshots.length > 0) {
@@ -106,16 +106,6 @@ export class FinalDeliveryPage {
         }
       }
     });
-  }
-
-  createFileUrl(data) {
-    const repositoryId = data.repositoryId;
-    const folderId = data.folderId;
-    const title = data.title;
-    const uuid = data.uuid;
-    const version = data.version;
-    const createDate = data.createDate;
-    return "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
   }
 
   stringForView(view) {

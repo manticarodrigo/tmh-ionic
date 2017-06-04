@@ -29,7 +29,7 @@ export class ChatService {
     return new Promise((resolve, reject) => {
       this.socketService.addSubscription('messages', 'messages')
       .subscribe(data => {
-        console.log("Chat service received messages : ");
+        console.log("chat service received messages:");
         console.log(data);
         resolve(data);
       });
@@ -39,7 +39,7 @@ export class ChatService {
   observeMessages(callback) {
     this.socketService.addSubscription('messages', 'new message')
     .subscribe(data => {
-      console.log("Chat service received message : ");
+      console.log("chat service received message:");
       console.log(data);
       callback(data);
     });

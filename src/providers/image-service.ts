@@ -8,12 +8,10 @@ import { UserService } from './user-service';
 @Injectable()
 export class ImageService {
   api: any;
-  headers: any;
 
   constructor(private http: Http,
               private platform: Platform,
               private userService: UserService) {
-    this.headers = this.userService.headers;
     if (this.platform.is('cordova')) {
       this.api = 'http://stage.themanhome.com/api/jsonws';
     } else {
@@ -21,9 +19,19 @@ export class ImageService {
     }
   }
 
+  createFileUrl(data) {
+    const repositoryId = data.repositoryId;
+    const folderId = data.folderId;
+    const title = data.title;
+    const uuid = data.uuid;
+    const version = data.version;
+    const createDate = data.createDate;
+    return "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
+  }
+
   imageForUser(user) {
     const self = this;
-    const headers = this.headers;
+    const headers = this.userService.headers;
     return new Promise((resolve, reject) => {
       self.getImage(user.portraitId, headers, (data) => {
         if (data) {
@@ -60,11 +68,11 @@ export class ImageService {
   }
 
   uploadFile(file, project) {
-    console.log("uploading file in chat service:");
+    console.log("uploading file in general folder:");
     console.log(file);
     const self = this;
+    const headers = this.userService.headers;
     return new Promise((resolve, reject) => {
-      var headers = self.headers;
       headers.append("enctype", "multipart/form-data");
       let now = new Date();
       const endpoint = this.userService.api + "/dlapp/add-file-entry.9/repositoryId/" + 20484 + "/folderId/" + 0 + "/title/" + now.getTime() + ".jpg";
@@ -82,24 +90,19 @@ export class ImageService {
 
   getFileEntry(fileEntryId) {
     const self = this;
+    const headers = this.userService.headers;
+    console.log(headers);
     return new Promise((resolve, reject) => {
       console.log("fetching file with entry id:");
       console.log(fileEntryId);
       const endpoint = this.api + "/dlfileentry/get-file-entry/fileEntryId/" + fileEntryId;
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("found file data:");
         console.log(data);
         if (!data.exception) {
-          const repositoryId = data.repositoryId;
-          const folderId = data.folderId;
-          const title = data.title;
-          const uuid = data.uuid;
-          const version = data.version;
-          const createDate = data.createDate;
-          const url = "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
-          data.url = url;
+          data.url = self.createFileUrl(data);
           resolve(data);
         } else {
           resolve(data);
