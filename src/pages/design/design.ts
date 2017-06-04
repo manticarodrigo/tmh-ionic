@@ -32,7 +32,7 @@ export class DesignPage {
     HOME_OFFICE: 'Office'
   }
   loading = true;
-  view = 'APPROVE';
+  view = 'APPROVE_CONCEPT';
   viewMode = 'CLIENT';
   itemsViewMode = 'PENDING';
   concepts: any;
@@ -85,16 +85,16 @@ export class DesignPage {
           var detail = data[0][key];
           detail.url = self.imageService.createFileUrl(detail.file);
           if (detail && detail.projectDetailStatus == 'APPROVED') {
-            self.conceptboard = {};
             console.log("concept was approved:");
             console.log(detail);
-            self.conceptboard = data;
+            self.conceptboard = detail;
+            self.view = 'APPROVE_FLOOR_PLAN';
           }
           concepts.push(detail);
         }
         if (concepts.length > 0) {
-          self.concepts = data;
-          self.selectedConcept = data[0];
+          self.concepts = concepts;
+          self.selectedConcept = concepts[0];
         }
         var floorplans = [];
         for (var key in data[1]) {
@@ -147,9 +147,7 @@ export class DesignPage {
         }
         self.pendingCollectionTotal = pendingCollectionTotal;
         self.approvedCollectionTotal = approvedCollectionTotal;
-        if (approvedItems.length > 0 || pendingItems.length > 0) {
-          self.drawFloorplan();
-        }
+        self.drawFloorplan();
       }
     });
   }
@@ -207,62 +205,77 @@ export class DesignPage {
       Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
       
       this.floorplanMap.fitBounds(bounds);
-      
-      // tell leaflet that the map is exactly as big as the image
-      // this.floorplanMap.setMaxBounds(bounds);
 
       // draw markers
-      if (self.itemsViewMode == 'PENDING') {
-        for (var key in self.pendingItems) {
-          const item = self.pendingItems[key];
-          var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
-          console.log("adding marker at coordinates:");
-          console.log(latlng);
-          const itemNum = Number(key) + 1;
-          // The text could also be letters instead of numbers if that's more appropriate
-          var numberIcon = Leaflet.divIcon({
-                className: "number-icon",
-                iconSize: [30, 30],
-                iconAnchor: [15, 30],
-                popupAnchor: [0, -30],
-                html: String(itemNum)       
-          });
-          // Add the each marker to the marker map with projectItemId as key
-          self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
-              draggable: true,
-              icon: numberIcon
-          });
-          // Add popups
-          self.markers[item.projectItemId].addTo(this.floorplanMap)
-            .bindPopup(this.createPopup(item));
-        }
-      } else {
-        for (var key in self.approvedItems) {
-          const item = self.approvedItems[key];
-          var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
-          console.log("adding marker at coordinates:");
-          console.log(latlng);
-          const itemNum = Number(key) + 1;
-          // The text could also be letters instead of numbers if that's more appropriate
-          var numberIcon = Leaflet.divIcon({
-                className: "number-icon",
-                iconSize: [30, 30],
-                iconAnchor: [15, 30],
-                popupAnchor: [0, -30],
-                html: String(itemNum)       
-          });
-          // Add the each marker to the marker map with projectItemId as key
-          self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
-              draggable: true,
-              icon: numberIcon
-          });
-          // Add popups
-          self.markers[item.projectItemId].addTo(this.floorplanMap)
-            .bindPopup(this.createPopup(item));
-        }
+      if (self.itemsViewMode == 'PENDING' && self.pendingItems) {
+        self.createMarkers(self.pendingItems, w, h);
+      } else if (self.approvedItems) {
+        self.createMarkers(self.approvedItems, w, h);
       }
+      // listen for new marker event
+      this.floorplanMap.on('dblclick', function(e) {
+        console.log(e);
+        if (self.viewMode == 'DESIGNER') {
+          var numberIcon = Leaflet.divIcon({
+            className: "number-icon",
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30],
+            html: "*"       
+          });
+          const marker = new Leaflet.Marker(e.latlng, {
+              icon: numberIcon
+          });
+          marker.addTo(self.floorplanMap);
+          let popover = self.popoverCtrl.create('EditItemPage');
+          popover.onDidDismiss(data => {
+            console.log(data);
+            if (data) {
+              data.YCoordinate = e.latlng.lat / -h * 8 ;
+              data.XCoordinate = e.latlng.lng / w * 8;
+              self.projectService.addItem(self.project, data)
+              .then(itemData => {
+                if (!itemData['exception']) {
+                  self.fetchItems();
+                }
+              });
+            } else {
+              marker.remove();
+            }
+          });
+          popover.present();
+        }
+      });
+
       self.loading = false;
     }, 2000);
+  }
+
+  createMarkers(items, w, h) {
+    const self = this;
+    for (var key in items) {
+      const item = items[key];
+      var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
+      console.log("adding marker at coordinates:");
+      console.log(latlng);
+      const itemNum = Number(key) + 1;
+      // The text could also be letters instead of numbers if that's more appropriate
+      var numberIcon = Leaflet.divIcon({
+        className: "number-icon",
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30],
+        html: String(itemNum)       
+      });
+      // Add the each marker to the marker map with projectItemId as key
+      self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
+          draggable: true,
+          icon: numberIcon
+      });
+      // Add popups
+      self.markers[item.projectItemId].addTo(this.floorplanMap)
+        .bindPopup(this.createPopup(item));
+    }
   }
 
   createPopup(item) {
@@ -386,8 +399,30 @@ export class DesignPage {
     this.view = 'CONCEPT_BOARD';
   }
 
-  uploadConcept() {
-    console.log("upload concept pressed");
+  submitConcepts() {
+    const self = this;
+    console.log("submit concepts pressed");
+    for (var key in this.concepts) {
+      const concept = this.concepts[key];
+      this.projectService.updateDetailStatus(concept, 'SUBMITTED')
+      .then(data => {
+        console.log(data);
+        if (!data['exception']) {
+          self.fetchDetails();
+        }
+      });
+    }
+  }
+
+  approveConcept() {
+    const self = this;
+    console.log("approve concepts pressed");
+    this.projectService.updateDetailStatus(this.selectedConcept, 'APPROVED')
+    .then(data => {
+      if (!data['exception']) {
+        self.fetchDetails();
+      }
+    });
   }
 
   itemViewSwitched() {
@@ -400,7 +435,7 @@ export class DesignPage {
     console.log("file changed:");
     console.log(event.target.files[0]);
     const file = event.target.files[0];
-    if (this.view == 'CONCEPT_BOARD') {
+    if (this.view == 'APPROVE_CONCEPT') {
       this.projectService.addDetail(this.project, file, 'CONCEPT')
       .then(data => {
         console.log(data);
@@ -409,7 +444,7 @@ export class DesignPage {
         }
       });
     }
-    if (this.view == 'FLOOR_PLAN') {
+    if (this.view == 'APPROVE_FLOOR_PLAN') {
       this.projectService.addDetail(this.project, file, 'FLOOR_PLAN')
       .then(data => {
         console.log(data);

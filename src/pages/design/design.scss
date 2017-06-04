@@ -155,7 +155,7 @@ page-design {
       @media only screen and (min-width: 700px) {
         position: absolute;
         top: 50%;
-        right: 240px;
+        right: 340px;
         left: 0;
         transform: translateY(-65%);
         max-width: 500px;
@@ -174,7 +174,6 @@ page-design {
     .collab-image {
       @media only screen and (min-width: 700px) {
         margin: 10px 10px 60px !important;
-
       }
       position: relative;
       margin: 10px 10px 20px;
@@ -243,6 +242,10 @@ page-design {
             position: absolute;
             top: 10px;
             right: 10px;
+          }
+          .add {
+            border: 5px solid color($colors, primary);
+            padding: 20px;
           }
         }
       }

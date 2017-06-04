@@ -33,7 +33,24 @@ export class ProjectService {
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log("found question answer:");
+        console.log("status update returned response:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  updateDetailStatus(detail, status) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("updating detail status:");
+      console.log(status);
+      var endpoint = this.api + "/tmh-project-portlet.projectdetail/update-project-detail/projectDetailId/" + detail.projectDetailId + "/projectDetailStatus/" + status;
+      console.log(endpoint);
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("detail update returned response:");
         console.log(data);
         resolve(data);
       });
@@ -150,7 +167,7 @@ export class ProjectService {
     const self = this;
     return new Promise((resolve, reject) => {
       const map = {
-        "$detail[fileEntryId,projectDetailId] = /tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type": {
+        "$detail[fileEntryId,projectDetailId,projectDetailStatus,projectDetailType] = /tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type": {
           "projectId": projectId,
           "projectDetailTypeStr": type,
           "$file[repositoryId,folderId,title,uuid,version,createDate] = /dlfileentry/get-file-entry": {
@@ -195,7 +212,7 @@ export class ProjectService {
 
   fetchQuestionAnswers(project) {
     console.log("fetching question answers for project:");
-      console.log(project.projectId);
+    console.log(project.projectId);
     var promises = [];
     for (var i=1;i<6;i++) {
       promises.push(this.fetchQuestionAnswer(project, i));
@@ -234,7 +251,9 @@ export class ProjectService {
     return new Promise((resolve, reject) => {
       var headers = self.headers;
       headers.append("enctype", "multipart/form-data");
-      const endpoint = this.userService.api + "/tmh-project-portlet.projectdetail/add-project-detail.9/globalGroupId/" + 20484 + "/projectId/" + project.projectId + "/projectDetailType/" + type + "/projectDetailStatus/PENDING/fileName/" + file.name + "/contentType/" + file.type.split("/")[1] + "/fileSize/" + file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
+      const now = new Date().getTime();
+      const endpoint = this.api + "/tmh-project-portlet.projectdetail/add-project-detail.9/globalGroupId/" + 20484 + "/projectId/" + project.projectId + "/projectDetailType/" + type + "/projectDetailStatus/PENDING/fileName/" + now + "-" + file.name + "/contentType/" + file.type.split("/")[1] + "/fileSize/" + file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
+      console.log(endpoint);
       var formData = new FormData();
       formData.append('file', file);
       this.http.post(endpoint, formData, {headers})
@@ -252,11 +271,47 @@ export class ProjectService {
     console.log(detail);
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = this.userService.api + "/tmh-project-portlet.projectdetail/delete-project-detail/projectId/" + project.projectId + "/projectDetailId/" + detail.projectDetailId;
+      const endpoint = this.api + "/tmh-project-portlet.projectdetail/delete-project-detail/projectId/" + project.projectId + "/projectDetailId/" + detail.projectDetailId;
       this.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("delete returned response:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  addItem(project, item) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("adding project item:");
+      console.log(item);
+      var headers = self.headers;
+      headers.append("enctype", "multipart/form-data");
+      const now = new Date().getTime();
+      var endpoint = this.api + "/tmh-project-portlet.projectitem/add-project-item.14/projectId/" + project.projectId + "/parentProjectItemId/0/projectItemStatus/PENDING/fileName/" + now + "-" + item.file.name + "/contentType/" + item.file.type.split("/")[1] + "/fileSize/" + item.file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
+      console.log(endpoint);
+      var formData = new FormData();
+      formData.append('file', item.file);
+      formData.append('yCoordinate', item.YCoordinate);
+      formData.append('xCoordinate', item.XCoordinate);
+      if (item.itemMake) {
+        formData.append('itemMake', item.itemMake);
+      }
+      if (item.itemType) {
+        formData.append('itemType', item.itemType);
+      }
+      if (item.itemPrice) {
+        formData.append('itemMake', item.itemPrice);
+      }
+      if (item.itemInspiration) {
+        formData.append('itemInspiration', item.itemInspiration);
+      }
+      self.http.post(endpoint, formData, {headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("add item returned response:");
         console.log(data);
         resolve(data);
       });

@@ -44,35 +44,48 @@
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
-    <div *ngIf="view == 'APPROVE' && viewMode == 'CLIENT' && !concepts && !loading" class="collab-alert">
+    <div *ngIf="view == 'APPROVE_CONCEPT' && viewMode == 'CLIENT' && !concepts && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
     </div>
-    <div *ngIf="view == 'APPROVE' && viewMode == 'DESIGNER' && !concepts && !loading" class="collab-alert">
+    <div *ngIf="view == 'APPROVE_CONCEPT' && viewMode == 'CLIENT' && concepts[0].projectDetailStatus == 'PENDING'" class="collab-alert">
+      <h1>WELCOME TO THE DESIGN STAGE!</h1>
+      <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
+    </div>
+    <div *ngIf="view == 'APPROVE_CONCEPT' && viewMode == 'DESIGNER' && !concepts && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Please upload 2 concept boards based on your client's information and style. Once all boards have been uploaded and confirmed, submit to the client and the 10 business day timeline will begin.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
-    <div *ngIf="view == 'APPROVE' && concepts" class="collab-image">
-      <p *ngIf="view == 'DESIGNER'">Your client has received your submission. Feel free to edit and resubmit before their approval.</p>
-      <img class="selected-img" [src]="selectedConcept.url">
-      <div class="collab-thumb-wrapper">
-        <div class="collab-thumb" *ngFor="let thumb of concepts">
-          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
-          <img *ngIf="view == 'DESIGNER'" class="delete" src="assets/delete.png" (click)="deleteConcept(thumb)">
+    <div *ngIf="view == 'APPROVE_CONCEPT' && concepts && !conceptboard" class="collab-image">
+      <div *ngIf="viewMode == 'CLIENT' && concepts[0].projectDetailStatus == 'SUBMITTED'">
+        <img class="selected-img" [src]="selectedConcept.url">
+        <div class="collab-thumb-wrapper">
+          <div class="collab-thumb" *ngFor="let thumb of concepts">
+            <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
+          </div>
         </div>
-        <div *ngIf="viewMode == 'DESIGNER'" class="collab-thumb">
-          <img class="thumb-img add" src="assets/add.png" (click)="file.click()">
-        </div>
+        <button (click)="approveConcept()" ion-button full type="button">APPROVE CONCEPT {{ concepts[0].id == selectedConcept.id ? 1 : 2 }}</button>
       </div>
-      <button *ngIf="view == 'CLIENT'" (click)="approveConcept(thumb)" ion-button full type="button">APPROVE CONCEPT</button>
-      <button *ngIf="view == 'DESIGNER'" (click)="submitConcepts()" ion-button full type="button">SUBMIT</button>
+      <div *ngIf="viewMode == 'DESIGNER'">
+        <img class="selected-img" [src]="selectedConcept.url">
+        <div class="collab-thumb-wrapper">
+          <div class="collab-thumb" *ngFor="let thumb of concepts">
+            <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
+            <img class="delete" src="assets/delete.png" (click)="deleteConcept(thumb)">
+          </div>
+          <div class="collab-thumb">
+            <img class="thumb-img add" src="assets/add.png" (click)="file.click()">
+          </div>
+        </div>
+        <button (click)="submitConcepts()" ion-button full type="button">{{ concepts[0].projectDetailStatus == 'SUBMITTED' ? 'RESUBMIT CONCEPTS' : 'SUBMIT CONCEPTS'}}</button>
+      </div>
     </div>
-    <div *ngIf="view == 'APPROVE' && conceptboard && !floorplan && viewMode == 'CLIENT' && !loading" class="collab-alert">
+    <div *ngIf="view == 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && viewMode == 'CLIENT' && !loading" class="collab-alert">
       <h1>HANG TIGHT</h1>
       <p>Your designer is hard at work putting together the Floor Plan of your room! We will send you an email when it's time for your to make a selection.</p>
     </div>
-    <div *ngIf="view == 'APPROVE' && conceptboard && !floorplan && viewMode == 'DESIGNER' && !loading" class="collab-alert">
+    <div *ngIf="view == 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && viewMode == 'DESIGNER' && !loading" class="collab-alert">
       <p>Using the floor plan provided by the client, create and upload a floor plan to begin the design process.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
@@ -82,7 +95,7 @@
     <div *ngIf="view == 'CONCEPT_BOARD' && conceptboard" class="collab-image">
       <img [src]="conceptboard.url" class="selected-img">
     </div>
-    <div *ngIf="view != 'APPROVE'" class="collab-design-switcher">
+    <div *ngIf="view != 'APPROVE_CONCEPT' && view != 'APPROVE_FLOOR_PLAN'" class="collab-design-switcher">
       <a (click)="selectFloorplan()">FLOOR PLAN</a>
       <a (click)="selectConceptboard()">CONCEPT BOARD</a>
     </div>
@@ -117,13 +130,13 @@
     <h1>APPROVED ITEMS</h1>
     <p>Below are the items approved from the previous stage. These items can be further discussed with your designer if needed.</p>
   </div>
-  <div *ngIf="viewMode == 'CLIENT' && !pendingItems && !approvedItems && itemsViewMode == 'PENDING'" class="collection-box">
+  <div *ngIf="viewMode == 'CLIENT' && !pendingItems && !approvedItems && concepts && floorplan && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>YOUR COLLECTION</h1>
     <p>Please wait for your designer to add furniture items to the floorplan before you approve or request alternatives.</p>
   </div>
-  <div *ngIf="viewMode == 'DESIGNER' && !pendingItems && !approvedItems && itemsViewMode == 'PENDING'" class="collection-box">
+  <div *ngIf="viewMode == 'DESIGNER' && !pendingItems && !approvedItems && concepts && floorplan && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>{{ types[project.projectType] }} COLLECTION</h1>
-    <p>Add furniture to fill the space. Press and hold at a location on the floorplan to add a new item.</p>
+    <p>Add furniture to fill the space. Double tap at a location on the floorplan to add a new item.</p>
   </div>
   <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.projectStatus != 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>{{ types[project.projectType] }} COLLECTION</h1>

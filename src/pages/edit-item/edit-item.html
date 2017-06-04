@@ -1,0 +1,13 @@
+<ion-content padding>
+  <h1 *ngIf="!item.number">NEW ITEM</h1>
+  <h1 *ngIf="item.number">ITEM {{ item.number }}</h1>
+  <p>Please enter the required details.</p>
+  <ion-input [(ngModel)]="item.itemMake" type="text" placeholder="ITEM MAKE"></ion-input>
+  <ion-input [(ngModel)]="item.itemType" type="text" placeholder="ITEM TYPE"></ion-input>
+  <ion-input [(ngModel)]="item.itemPrice" (input)="validatePrice()" type="text" placeholder="PRICE"></ion-input>
+  <ion-input [(ngModel)]="item.itemInspiration" type="text" placeholder="INSPIRATION FOR ITEM?"></ion-input>
+  <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
+  <button ion-button full type="button" (click)="file.click()">UPLOAD IMAGE</button>
+  <p>{{ selectedFile ? selectedFile.name : 'No image selected' }}</p>
+  <button ion-button full type="button" (click)="savePressed()">{{ item ? 'SAVE' : 'ADD'}}</button>
+</ion-content>
