@@ -22,7 +22,6 @@ export class DesignPage {
   // User & project vars
   user: any;
   project: any;
-  client: any;
   // Step flow
   types = {
     BEDROOM: 'Bedroom',
@@ -44,8 +43,6 @@ export class DesignPage {
   floorplanMap: any;
   pendingItems: any;
   approvedItems: any;
-  pendingItemsUrlMap = {};
-  approvedItemsUrlMap = {};
   pendingCollectionTotal = 0;
   approvedCollectionTotal = 0;
   constructor(private navCtrl: NavController,
@@ -59,7 +56,7 @@ export class DesignPage {
               private platform: Platform) {
     const self = this;
     this.user = this.userService.currentUser;
-    if (this.userService.currentUserGroups.designer) {
+    if (this.userService.currentUser.designer) {
       console.log("current user is a designer");
       this.viewMode = "DESIGNER";
     }
@@ -72,70 +69,38 @@ export class DesignPage {
     if (this.project.projectStatus == 'FINAL_DELIVERY' || this.project.projectStatus == 'SHOPPING_CART' || this.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || this.project.projectStatus == 'ARCHIVED') {
         this.itemsViewMode = 'APPROVED';
     }
-    if (this.project.userId == this.user.userId) {
-      console.log("current user's project");
-      this.client = this.user;
-    } else {
-      this.userService.fetchUser(this.project.userId, (data) => {
-        console.log("design page received project client data:");
-        console.log(data);
-        if (!data.exception) {
-          self.client = data;
-        }
-      });
-    }
-    Promise.all([this.projectService.getProjectDetailType(this.project.projectId, "CONCEPT"), this.projectService.getProjectDetailType(this.project.projectId, "FLOOR_PLAN")])
+    Promise.all([this.projectService.fetchProjectDetail(this.project.projectId, "CONCEPT"), this.projectService.fetchProjectDetail(this.project.projectId, "FLOOR_PLAN")])
     .then(data => {
       console.log("design page received concepts and floorplan:");
       console.log(data);
       if (!data['exception']) {
-        const concepts = data[0];
-        var conceptIds = [];
-        for (var key in concepts) {
-          const detail = concepts[key];
-          conceptIds.push(detail.fileEntryId);
+        var concepts = [];
+        for (var key in data[0]) {
+          var detail = data[0][key];
+          detail.url = self.createFileUrl(detail.file);
           if (detail && detail.projectDetailStatus == 'APPROVED') {
             self.conceptboard = {};
             console.log("concept was approved:");
             console.log(detail);
-            self.imageService.getFileEntry(detail.fileEntryId)
-            .then(data => {
-              console.log("design page received approved concept file:");
-              console.log(data);
-              if (!data['exception']) {
-                self.conceptboard = data;
-              }
-            });
+            self.conceptboard = data;
           }
+          concepts.push(detail);
         }
-        if (conceptIds.length > 0) {
-          self.imageService.getFileEntries(conceptIds)
-          .then(files => {
-            console.log("design page received concept files:");
-            console.log(files);
-            self.concepts = data;
-            self.selectedConcept = data[0];
-            self.loading = false;
-          });
+        if (concepts.length > 0) {
+          self.concepts = data;
+          self.selectedConcept = data[0];
+          self.loading = false;
         }
-        const floorplans = data[1];
-        var floorplanIds = [];
-        for (var key in floorplans) {
-          const file = floorplans[key];
-          floorplanIds.push(file.fileEntryId);
+        var floorplans = [];
+        for (var key in data[1]) {
+          var detail = data[1][key];
+          detail.url = self.createFileUrl(detail.file);
+          floorplans.push(detail);
         }
-        if (floorplanIds.length > 0) {
-          self.imageService.getFileEntry(floorplanIds[0])
-          .then(data => {
-            console.log("design page received floorplan file:");
-            console.log(data);
-            if (!data['exception']) {
-              self.floorplan = data;
-              self.drawFloorplan();
-            }
-          });
+        if (floorplans.length > 0) {
+          self.floorplan = floorplans[0];
         }
-        if (conceptIds.length > 0 && floorplanIds.length > 0) {
+        if (concepts.length > 0 && floorplans.length > 0) {
           self.view = 'FLOOR_PLAN';
         } else {
           self.loading = false;
@@ -152,29 +117,14 @@ export class DesignPage {
         var pendingCollectionTotal = 0;
         var approvedCollectionTotal = 0;
         for (var key in data) {
-          const item = data[key];
+          var item = data[key];
+          item.url = self.createFileUrl(item.file);
           if (item.projectItemStatus == 'APPROVED') {
             approvedItems.push(item);
             approvedCollectionTotal += item.itemPrice;
-            this.imageService.getFileEntry(item.fileEntryId)
-            .then(data => {
-              console.log("design page received item file");
-              console.log(data);
-              if (!data['exception']) {
-                self.approvedItemsUrlMap[item.fileEntryId] = data['url'];
-              }
-            });
           } else {
             pendingItems.push(item);
             pendingCollectionTotal += item.itemPrice;
-            this.imageService.getFileEntry(item.fileEntryId)
-            .then(data => {
-              console.log("design page received item file");
-              console.log(data);
-              if (!data['exception']) {
-                self.pendingItemsUrlMap[item.fileEntryId] = data['url'];
-              }
-            });
           }
         }
         if (pendingItems.length > 0) {
@@ -189,8 +139,19 @@ export class DesignPage {
         }
         self.pendingCollectionTotal = pendingCollectionTotal;
         self.approvedCollectionTotal = approvedCollectionTotal;
+        self.drawFloorplan();
       }
     });
+  }
+
+  createFileUrl(data) {
+    const repositoryId = data.repositoryId;
+    const folderId = data.folderId;
+    const title = data.title;
+    const uuid = data.uuid;
+    const version = data.version;
+    const createDate = data.createDate;
+    return "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
   }
   
   getDaysLeftStringFrom(timestamp) {
@@ -306,14 +267,8 @@ export class DesignPage {
 
   createPopup(item) {
     var popup = "";
-    if (this.itemsViewMode == 'PENDING') {
-      if (this.pendingItemsUrlMap[item.fileEntryId]) {
-        popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.pendingItemsUrlMap[item.fileEntryId] + "'>";
-      }
-    } else {
-      if (this.approvedItemsUrlMap[item.fileEntryId]) {
-        popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.approvedItemsUrlMap[item.fileEntryId] + "'>";
-      }
+    if (item.url) {
+      popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + item.url + "'>";
     }
     if (item.itemMake) {
       popup += "<h3>" + item.itemMake + "</h3>";
@@ -381,7 +336,7 @@ export class DesignPage {
         if (data == 'FINAL DELIVERY')
           page = FinalDeliveryPage;
         if (page)
-          this.navCtrl.setRoot(page + 'Page', {
+          this.navCtrl.setRoot(page, {
             project: self.project
           });
       }
@@ -399,7 +354,7 @@ export class DesignPage {
     if (link == 'FINAL_DELIVERY')
       page = FinalDeliveryPage;
     if (page)
-      this.navCtrl.setRoot(page + 'Page', {
+      this.navCtrl.setRoot(page, {
         project: self.project
       });
   }

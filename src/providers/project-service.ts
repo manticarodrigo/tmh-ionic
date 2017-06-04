@@ -21,16 +21,24 @@ export class ProjectService {
     }
   }
 
-  findByUserId(id) {
+  findByUserId(uid) {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = this.api + "/tmh-project-portlet.project/find-by-user-id/userId/" + id;
+      const map = {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-user-id": {
+          "userId": uid,
+          "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
+            "@userId": "$project.userId"
+          }
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
-      .subscribe(data => {
+      .subscribe(projects => {
         console.log("found projects:");
-        console.log(data);
-        resolve(data);
+        console.log(projects);
+        resolve(projects);
       });
     });
   }
@@ -38,13 +46,20 @@ export class ProjectService {
   findByInProgress() {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = this.api + "/tmh-project-portlet.project/find-by-in-progress";
+      const map = {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-in-progress": {
+          "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
+            "@userId": "$project.userId"
+          }
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
-      .subscribe(data => {
+      .subscribe(projects => {
         console.log("found projects:");
-        console.log(data);
-        resolve(data);
+        console.log(projects);
+        resolve(projects);
       });
     });
   }
@@ -52,13 +67,20 @@ export class ProjectService {
   findByComplete() {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = this.api + "/tmh-project-portlet.project/find-by-complete";
+      const map = {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-complete": {
+          "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
+            "@userId": "$project.userId"
+          }
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
-      .subscribe(data => {
+      .subscribe(projects => {
         console.log("found projects:");
-        console.log(data);
-        resolve(data);
+        console.log(projects);
+        resolve(projects);
       });
     });
   }
@@ -66,13 +88,20 @@ export class ProjectService {
   findByArchived() {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = this.api + "/tmh-project-portlet.project/find-by-archived";
+      const map = {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-archived": {
+          "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
+            "@userId": "$project.userId"
+          }
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
-      .subscribe(data => {
+      .subscribe(projects => {
         console.log("found projects:");
-        console.log(data);
-        resolve(data);
+        console.log(projects);
+        resolve(projects);
       });
     });
   }
@@ -80,24 +109,37 @@ export class ProjectService {
   findByUpNext() {
     const self = this;
     return new Promise((resolve, reject) => {
-      const endpoint = this.api + "/tmh-project-portlet.project/find-by-up-next";
+      const map = {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,initChat,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-up-next": {
+          "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
+            "@userId": "$project.userId"
+          }
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
-      .subscribe(data => {
+      .subscribe(projects => {
         console.log("found projects:");
-        console.log(data);
-        resolve(data);
+        console.log(projects);
+        resolve(projects);
       });
     });
   }
 
-  getProjectDetailType(projectId, type) {
+  fetchProjectDetail(projectId, type) {
     const self = this;
     return new Promise((resolve, reject) => {
-      console.log("fetching project details for type:");
-      console.log(projectId);
-      console.log(type);
-      const endpoint = this.api + "/tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type/project-id/" + projectId + "/project-detail-type-str/" + type;
+      const map = {
+        "$detail[fileEntryId] = /tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type": {
+          "projectId": projectId,
+          "projectDetailTypeStr": type,
+          "$file[repositoryId,folderId,title,uuid,version,createDate] = /dlfileentry/get-file-entry": {
+            "@fileEntryId": "$detail.fileEntryId"
+          }
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -147,7 +189,15 @@ export class ProjectService {
     return new Promise((resolve, reject) => {
       console.log("fetching items for project:");
       console.log(project.projectId);
-      const endpoint = this.api + "/tmh-project-portlet.projectitem/find-by-project-id/projectId/" + project.projectId;
+      const map = {
+        "$item[itemMake,itemPrice,itemType,fileEntryId,projectItemStatus,XCoordinate,YCoordinate] = /tmh-project-portlet.projectitem/find-by-project-id": {
+          "projectId": project.projectId,
+          "$file[repositoryId,folderId,title,uuid,version,createDate] = /dlfileentry/get-file-entry": {
+            "@fileEntryId": "$item.fileEntryId"
+          }
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {

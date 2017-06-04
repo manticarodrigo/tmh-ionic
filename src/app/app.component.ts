@@ -35,8 +35,6 @@ export class TheManHome {
   }
 
   fetchCurrentUser() {
-    // console.log('erasing storage for login debugging');
-    // this.storage.clear().then(() => { // clear cache for login debugging
       let self = this;
       Promise.all([this.storage.get('user'), this.storage.get('token')])
       .then(data => {
@@ -58,8 +56,6 @@ export class TheManHome {
           });
         }
       });
-
-      // }); // clear cache for login debug
     }
 
     profilePressed() {
@@ -83,7 +79,10 @@ export class TheManHome {
     logout() {
       console.log("logout pressed");
       this.menuCtrl.close();
-      this.nav.setRoot('LoginPage');
-      this.userService.logout();
+      console.log('erasing storage for logout');
+      this.storage.clear().then(() => {
+        this.nav.setRoot('LoginPage');
+        this.userService.logout();
+      });
     }
 }

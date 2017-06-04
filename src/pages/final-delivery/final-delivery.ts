@@ -50,7 +50,7 @@ export class FinalDeliveryPage {
               private platform: Platform) {
     const self = this;
     this.user = this.userService.currentUser;
-    if (this.userService.currentUserGroups.designer) {
+    if (this.userService.currentUser.designer) {
       console.log("current user is a designer");
       this.viewMode = "DESIGNER";
     }
@@ -62,81 +62,60 @@ export class FinalDeliveryPage {
     if (this.project.designerNote != '') {
       this.designerNote = this.project.designerNote;
     }
-    if (this.project.userId == this.user.userId) {
-      console.log("current user's project");
-      this.client = this.user;
-    } else {
-      this.userService.fetchUser(this.project.userId, (data) => {
-        console.log("details page received project client data:");
-        console.log(data);
-        if (!data.exception) {
-          self.client = data;
-        }
-      });
-    }
-    this.projectService.getProjectDetailType(this.project.projectId, "CONCEPT")
+    this.projectService.fetchProjectDetail(this.project.projectId, "CONCEPT")
     .then(data => {
       console.log("design page received concepts and floorplan:");
       console.log(data);
       if (!data['exception']) {
-        var conceptIds = [];
         for (var key in data) {
-          const detail = data[key];
-          conceptIds.push(detail.fileEntryId);
+          var detail = data[key];
           if (detail && detail.projectDetailStatus == 'APPROVED') {
-            self.conceptboard = {};
-            console.log("concept was approved:");
-            console.log(detail);
-            self.imageService.getFileEntry(detail.fileEntryId)
-            .then(data => {
-              console.log("design page received approved concept file:");
-              console.log(data);
-              if (!data['exception']) {
-                self.conceptboard = data;
-              }
-            });
+            detail.url = self.createFileUrl(detail.file);
+            self.conceptboard = detail;
           }
         }
       }
     });
-    this.projectService.getProjectDetailType(this.project.projectId, "FLOOR_PLAN")
+    this.projectService.fetchProjectDetail(this.project.projectId, "FLOOR_PLAN")
     .then(data => {
       console.log("design page received concepts and floorplan:");
       console.log(data);
       if (!data['exception']) {
-        var floorplanIds = [];
         for (var key in data) {
-          const file = data[key];
-          floorplanIds.push(file.fileEntryId);
-        }
-        self.imageService.getFileEntry(floorplanIds[0])
-        .then(data => {
-          console.log("design page received floorplan file:");
-          console.log(data);
-          if (!data['exception']) {
-            self.floorplan = data;
+          var detail = data[key];
+          if (detail && detail.projectDetailStatus == 'APPROVED') {
+            detail.url = self.createFileUrl(detail.file);
+            self.floorplan = detail;
           }
-        });
+        }
       }
     });
-    this.projectService.getProjectDetailType(this.project.projectId, "FINAL_SNAPSHOTS")
+    this.projectService.fetchProjectDetail(this.project.projectId, "FINAL_SNAPSHOTS")
     .then(data => {
       console.log("details page received final snapshots:");
       console.log(data);
       if (!data['exception']) {
-        var ids = [];
+        var snapshots = [];
         for (var key in data) {
-          const file = data[key];
-          ids.push(file.fileEntryId);
+          var detail = data[key];
+          detail.url = self.createFileUrl(detail.file);
+          snapshots.push(detail);
         }
-        self.imageService.getFileEntries(ids)
-        .then(files => {
-          console.log("details page received final snapshot files:");
-          console.log(files);
-          self.snapshots = files;
-        });
+        if (snapshots.length > 0) {
+          self.snapshots = detail;
+        }
       }
     });
+  }
+
+  createFileUrl(data) {
+    const repositoryId = data.repositoryId;
+    const folderId = data.folderId;
+    const title = data.title;
+    const uuid = data.uuid;
+    const version = data.version;
+    const createDate = data.createDate;
+    return "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
   }
 
   stringForView(view) {

@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="client">{{ client.firstName }}'s </span><span *ngIf="project">{{ types[project.projectType] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="projectclient">{{ project.client.firstName }}'s </span><span *ngIf="project">{{ types[project.projectType] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.photoURL" [src]="user.photoURL">
@@ -147,7 +147,7 @@
           ITEM {{ i + 1 }}
         </div>
         <div class="project-items-img">
-          <img *ngIf="pendingItemsUrlMap[item.fileEntryId]" [src]="pendingItemsUrlMap[item.fileEntryId]">
+          <img *ngIf="item.url" [src]="item.url">
         </div>
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>
@@ -163,7 +163,7 @@
           ITEM {{ i + 1 }}
         </div>
         <div class="project-items-img">
-          <img *ngIf="approvedItemsUrlMap[item.fileEntryId]" [src]="approvedItemsUrlMap[item.fileEntryId]">
+          <img *ngIf="item.url" [src]="item.url">
         </div>
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>

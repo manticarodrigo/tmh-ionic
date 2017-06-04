@@ -57,7 +57,7 @@ export class DetailsPage {
               private platform: Platform) {
     const self = this;
     this.user = this.userService.currentUser;
-    if (this.userService.currentUserGroups.designer) {
+    if (this.userService.currentUser.designer) {
       console.log("current user is a designer");
       this.viewMode = "DESIGNER";
     }
@@ -67,83 +67,59 @@ export class DetailsPage {
     }
     this.project = this.navParams.get('project');
     this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
-    if (this.project.userId == this.user.userId) {
-      console.log("current user's project");
-      this.client = this.user;
-    } else {
-      this.userService.fetchUser(this.project.userId, (data) => {
-        console.log("details page received project client data:");
-        console.log(data);
-        if (!data.exception) {
-          self.client = data;
-        }
-      });
-    }
-    this.projectService.getProjectDetailType(this.project.projectId, "DRAWING")
+    this.projectService.fetchProjectDetail(this.project.projectId, "DRAWING")
     .then(data => {
       console.log("details page received drawings:");
       console.log(data);
       if (!data['exception']) {
-        var ids = [];
+        var drawings = [];
         for (var key in data) {
-          const file = data[key];
-          ids.push(file.fileEntryId);
+          var drawing = data[key];
+          drawing.url = self.createFileUrl(drawing.file);
+          drawings.push(drawing);
         }
-        self.imageService.getFileEntries(ids)
-        .then(files => {
-          console.log("details page received drawings files:");
-          console.log(files);
-          if (files.length > 0) {
-            self.status.UPLOADED_DRAWING = true;
-            self.selectedDrawing = files[0];
-            self.drawings = files;
-          }
-          self.loading = false;
-        });
+        if (drawings.length > 0) {
+          self.status.UPLOADED_DRAWING = true;
+          self.selectedDrawing = drawings[0];
+          self.drawings = drawings;
+        }
+        self.loading = false;
       }
     });
-    this.projectService.getProjectDetailType(this.project.projectId, "INSPIRATION")
+    this.projectService.fetchProjectDetail(this.project.projectId, "INSPIRATION")
     .then(data => {
       console.log("details page received inspirations:");
       console.log(data);
       if (!data['exception']) {
-        var ids = [];
+        var inspirations = [];
         for (var key in data) {
-          const file = data[key];
-          ids.push(file.fileEntryId);
+          var inspiration = data[key];
+          inspiration.url = self.createFileUrl(inspiration.file);
+          inspirations.push(inspiration);
         }
-        self.imageService.getFileEntries(ids)
-        .then(files => {
-          console.log("details page received inspirations files");
-          console.log(files);
-          if (files.length > 0) {
-            self.status.UPLOADED_INSPIRATION = true;
-            self.selectedInspiration = files[0];
-            self.inspirations = files;
-          }
-        });
+        if (inspirations.length > 0) {
+          self.status.UPLOADED_INSPIRATION = true;
+          self.selectedInspiration = inspirations[0];
+          self.inspirations = inspirations;
+        }
       }
     });
-    this.projectService.getProjectDetailType(this.project.projectId, "FURNITURE")
+    this.projectService.fetchProjectDetail(this.project.projectId, "FURNITURE")
     .then(data => {
       console.log("details page received furnitures:");
       console.log(data);
       if (!data['exception']) {
-        var ids = [];
+        var furnitures = [];
         for (var key in data) {
-          const file = data[key];
-          ids.push(file.fileEntryId);
+          var furniture = data[key];
+          furniture.url = self.createFileUrl(furniture.file);
+          furnitures.push(furniture);
         }
-        self.imageService.getFileEntries(ids)
-        .then(files => {
-          console.log("details page received furnitures files:");
-          console.log(files);
-          if (files.length > 0) {
-            self.status.UPLOADED_FURNITURE = true;
-            self.selectedFurniture = files[0];
-            self.furnitures = files;
-          }
-        });
+        if (furnitures.length > 0) {
+          self.status.UPLOADED_FURNITURE = true;
+          self.selectedFurniture = furnitures[0];
+          self.furnitures = furnitures;
+        }
       }
     });
     this.projectService.fetchQuestionAnswers(this.project)
@@ -152,6 +128,16 @@ export class DetailsPage {
       console.log(answers);
       self.answers = answers;
     });
+  }
+
+  createFileUrl(data) {
+    const repositoryId = data.repositoryId;
+    const folderId = data.folderId;
+    const title = data.title;
+    const uuid = data.uuid;
+    const version = data.version;
+    const createDate = data.createDate;
+    return "http://stage.themanhome.com/documents/" + repositoryId + "/" + folderId + "/" + title + "/" + uuid + "?version=" + version + "&t=" + createDate;
   }
 
   getDaysLeftStringFrom(timestamp) {

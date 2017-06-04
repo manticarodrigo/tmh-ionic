@@ -129,13 +129,14 @@ export class ChatPage {
       self.memberMap[uid] = {
         loading: true
       }
-      self.userService.fetchUser(uid, (user) => {
-        if (!user.exception && user.portraitId) {
+      self.userService.fetchUser(uid)
+      .then(user => {
+        if (!user['exception'] && user['portraitId']) {
           self.imageService.imageForUser(user)
           .then(url => {
             if (url) {
               self.memberMap[uid] = {
-                firstName: user.firstName,
+                firstName: user['firstName'],
                 photoURL: url,
                 loading: false
               }

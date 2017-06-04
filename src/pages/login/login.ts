@@ -75,31 +75,13 @@ export class LoginPage {
         console.log(user);
         if (!user.exception) {
           const token = btoa(this.email + ':' + this.password);
-          self.userService.headers = self.userService.generateHeaders(token);
-          Promise.all([self.imageService.imageForUser(user), self.userService.getUserRoles(user)])
-          .then(data => {
-            const url = data[0];
-            const roles = data[1];
-            if (url) {
-              user.photoURL = url;
-            }
-            for (var key in roles) {
-              const role = roles[key];
-              if (role.name == "Administrator") {
-                console.log("welcome back " + user.firstName + ".");
-                console.log("you're an admin, and always remember what liferay says about at admins:");
-                console.log(role.descriptionCurrentValue);
-                user.admin = true;
-              }
-            }
-            self.userService.setCurrentUser(user, token)
-            .then(user => {
-              this.navCtrl.setRoot('DashboardPage');
-              this.email = '';
-              this.password = '';
-              this.loading = false;
-            })
-          });
+          self.userService.setCurrentUser(user, token)
+          .then(user => {
+            this.navCtrl.setRoot('DashboardPage');
+            this.email = '';
+            this.password = '';
+            this.loading = false;
+          })
         } else {
           this.presentError('No user found with the provided credentials.');
           this.loading = false;

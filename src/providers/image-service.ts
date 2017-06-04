@@ -27,7 +27,7 @@ export class ImageService {
     return new Promise((resolve, reject) => {
       self.getImage(user.portraitId, headers, (data) => {
         if (data) {
-          console.log("adding data to dropdown image");
+          console.log("fetched user portrait data:");
           console.log(data);
           var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
           if (data.modifiedDate) {

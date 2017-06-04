@@ -18,7 +18,6 @@ export class DashboardPage {
   user: any;
   viewMode = 'CLIENT';
   projects: Array<any>;
-  projectUsers = {};
   tab = 'IN_PROGRESS';
   tabs: any;
   types = {
@@ -53,7 +52,7 @@ export class DashboardPage {
       IN_PROGRESS: 'IN PROGRESS',
       COMPLETED: 'COMPLETED',
     };
-    if (this.userService.currentUserGroups.designer) {
+    if (this.userService.currentUser.designer) {
       console.log("current user is a designer");
       this.viewMode = "DESIGNER";
     }
@@ -203,8 +202,11 @@ export class DashboardPage {
         project.projectStatusReadable = self.phases[project.projectStatus]
         project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
         project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
+        project.client.shortName = project.client.firstName;
+          if (project.client.lastName) {
+            project.client.shortName += ' ' + project.client.lastName.split('')[0] + '.';
+          }
         projects.push(project);
-        self.fetchUser(project.userId);
       }
     } else {
       console.log(data.exception);
@@ -215,15 +217,6 @@ export class DashboardPage {
     } else {
       self.projects = null;
     }
-  }
-
-  fetchUser(uid) {
-    const self = this;
-    self.userService.fetchUser(uid, user => {
-      if (user) {
-        self.projectUsers[user.userId] = user;
-      }
-    });
   }
 
   getDateStringFrom(timestamp) {

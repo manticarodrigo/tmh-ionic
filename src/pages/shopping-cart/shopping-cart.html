@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons left>
+      <button ion-button (click)="homePressed()">
+        <img style="width:54px;margin:5px;" src="assets/logo.png">
+      </button>
+    </ion-buttons>
+    <ion-title>Shopping Cart</ion-title>
+    <ion-buttons end>
+      <button class="avatar" ion-button  menuToggle>
+        <img *ngIf="user && user.photoURL" [src]="user.photoURL">
+        <img *ngIf="!user || !user.photoURL" src="assets/tmh.png">
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+  <div class="sub-nav">
+    <button ion-button type="button" (click)="backPressed()">
+      <img src="assets/left-arrow.png">
+      BACK TO DESIGN STUDIO
+    </button>
+  </div>
+</ion-header>
+
+<ion-content padding>
+
+  <div class="summary">
+    <button class="paypal-button" ion-button full (click)="paypalPressed()" type="button">{{ selectedItems.length > 0 ? 'ESTIMATE SHIPPING AND TAX' : 'NO ITEMS SELECTED' }}</button>
+    <div class="box">
+      <h1 *ngIf="selectedItems.length > 0">{{ selectedItems.length }} ITEMS</h1>
+      <h1 *ngIf="!selectedItems.length > 0">NO ITEMS</h1>
+      <p>Item(s): <span class="right">${{ cartTotal/100 }}</span></p>
+      <p>Estimated Tax: <span class="right">-</span></p>
+      <p>Delivery: <span class="right">-</span></p>
+      <h2>Order Total: <span class="right">${{ cartTotal/100 }}</span></h2>
+    </div>
+  </div>
+
+  <div class="dashboard-header desktop">
+    <div class="section type">
+      <img src="assets/BEDROOM.png">
+    </div>
+    <div class="section">
+      <p class="info">Item</p>
+    </div>
+    <div class="section">
+      <p class="info">Price</p>
+    </div>
+    <div class="section">
+      <p class="info">Quantity</p>
+    </div>
+    <div class="section">
+      <p class="info">Shipping</p>
+    </div>
+    <div class="section">
+      <p class="info">Total</p>
+    </div>
+  </div>
+
+  <ion-list>
+
+    <ion-item class="item-container" *ngFor="let item of items">
+      <div class="item-wrapper">
+        <div class="section main">
+          <ion-checkbox [(ngModel)]="itemMap[item.projectItemId].selected" (ionChange)="selectedItem(item)"></ion-checkbox>
+          <img src="{{ itemMap[item.projectItemId].url }}">
+        </div>
+        <div class="section">
+          <p class="info">{{ item.itemMake }}</p>
+          <br>
+          <p class="info opaque">{{ item.itemType }}</p>
+        </div>
+        <div class="section">
+          <p class="info">{{ item.itemPrice }}</p>
+        </div>
+        <div class="section">
+          <button class="quantity" ion-button type="button" (click)="selectQuantity(item)" full>
+            {{ itemMap[item.projectItemId].quantity }}
+            <img src="assets/down.png">
+          </button>
+        </div>
+        <div class="section">
+          <p class="info">-</p>
+        </div>
+        <div class="section">
+          <p class="info">-</p>
+        </div>
+      </div>
+    </ion-item>
+  
+  </ion-list>
+</ion-content>
