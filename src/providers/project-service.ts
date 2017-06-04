@@ -290,24 +290,26 @@ export class ProjectService {
       var headers = self.headers;
       headers.append("enctype", "multipart/form-data");
       const now = new Date().getTime();
-      var endpoint = this.api + "/tmh-project-portlet.projectitem/add-project-item.14/projectId/" + project.projectId + "/parentProjectItemId/0/projectItemStatus/PENDING/fileName/" + now + "-" + item.file.name + "/contentType/" + item.file.type.split("/")[1] + "/fileSize/" + item.file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
-      console.log(endpoint);
+      const map = {
+        "/tmh-project-portlet.projectitem/add-project-item": {
+          "projectId": project.projectId,
+          "parentProjectItemId": 0,
+          "projectItemStatus": "PENDING",
+          "fileName": now + "-" + item.file.name,
+          "contentType": item.file.type.split("/")[1],
+          "fileSize": item.file.size,
+          "itemMake": item.itemMake ? item.itemMake : "",
+          "itemType": item.itemType ? item.itemType : "",
+          "itemPrice": item.itemPrice ? item.itemPrice : "",
+          "itemInspiration": item.itemInspiration ? item.itemInspiration : "",
+          "yCoordinate": item.YCoordinate,
+          "xCoordinate": item.XCoordinate,
+          "serviceContext": JSON.stringify({"userId":self.userService.currentUser.userId})
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       var formData = new FormData();
       formData.append('file', item.file);
-      formData.append('yCoordinate', item.YCoordinate);
-      formData.append('xCoordinate', item.XCoordinate);
-      if (item.itemMake) {
-        formData.append('itemMake', item.itemMake);
-      }
-      if (item.itemType) {
-        formData.append('itemType', item.itemType);
-      }
-      if (item.itemPrice) {
-        formData.append('itemMake', item.itemPrice);
-      }
-      if (item.itemInspiration) {
-        formData.append('itemInspiration', item.itemInspiration);
-      }
       self.http.post(endpoint, formData, {headers})
       .map(res => res.json())
       .subscribe(data => {

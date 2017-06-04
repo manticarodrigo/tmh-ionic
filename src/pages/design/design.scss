@@ -210,6 +210,7 @@ page-design {
       }
       .leaflet-popup-content {
         text-align: center;
+        min-width: 200px;
         h1, h2, p {
           margin: 0px 0px;
         }
