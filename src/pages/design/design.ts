@@ -590,28 +590,6 @@ export class DesignPage {
     popover.present();
   }
 
-  offerAlternative(item, i) {
-    const self = this;
-    console.log("offer alt item pressed:");
-    console.log(item);
-    item.number = i + 1;
-    let popover = self.popoverCtrl.create('EditItemPage', {
-      item: item
-    });
-    popover.onDidDismiss(data => {
-      console.log(data);
-      if (data) {
-        self.projectService.updateItem(self.project, data, 'ALTERNATE')
-        .then(itemData => {
-          if (!itemData['exception']) {
-            self.fetchItems();
-          }
-        });
-      }
-    });
-    popover.present();
-  }
-
   submitCollection() {
     const self = this;
     console.log("submit collection pressed");
@@ -638,7 +616,7 @@ export class DesignPage {
         .then(data => {
           console.log(data);
           if (!data['exception']) {
-            self.fetchDetails();
+            self.fetchItems();
           }
         });
       }
@@ -659,9 +637,69 @@ export class DesignPage {
         .then(data => {
           console.log(data);
           if (!data['exception']) {
-            self.fetchDetails();
+            self.fetchItems();
           }
         });
+      }
+    });
+    modal.present();
+  }
+
+  offerAlternative(item, i) {
+    const self = this;
+    console.log("offer alt item pressed:");
+    console.log(item);
+    item.number = i + 1;
+    let modal = self.modalCtrl.create('AlternativesPage', {
+      item: item,
+      alts: self.alternateItemsMap[item.projectItemId]
+    });
+    modal.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        const alts = data[0];
+        const files = data[1];
+        var altCount = 0;
+        for (var key in alts) {
+          var alt = alts[key];
+          const file = files[key];
+          if (alt.projectItemId) {
+            alt.file = file;
+            self.projectService.updateItem(self.project, alt, "ALTERNATE")
+            .then(itemData => {
+              altCount++;
+              if (altCount == alts.length) {
+                self.fetchItems();
+              }
+            });
+          } else {
+            self.projectService.addAlternative(self.project, alt, file, item)
+            .then(itemData => {
+              altCount++;
+              if (altCount == alts.length) {
+                self.fetchItems();
+              }
+            });
+          }
+        }
+      }
+    });
+    modal.present();
+  }
+
+  viewAlternatives(item, i) {
+    const self = this;
+    console.log("view alternatives pressed:");
+    console.log(item);
+    item.number = i + 1;
+    let modal = self.modalCtrl.create('AlternativesPage', {
+      item: item,
+      alts: self.alternateItemsMap[item.projectItemId]
+    });
+    modal.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        
       }
     });
     modal.present();
@@ -673,8 +711,8 @@ export class DesignPage {
     this.projectService.updateItemStatus(item, 'REQUEST_ALTERNATIVE')
     .then(data => {
       if (!data['exception']) {
-          self.fetchDetails();
-        }
+        self.fetchItems();
+      }
     });
   }
 
@@ -684,27 +722,9 @@ export class DesignPage {
     this.projectService.updateItemStatus(item, 'SUBMITTED')
     .then(data => {
       if (!data['exception']) {
-          self.fetchDetails();
-        }
+        self.fetchItems();
+      }
     });
-  }
-
-  viewAlternatives(item, i) {
-    const self = this;
-    console.log("view alternatives pressed:");
-    console.log(item);
-    item.number = i + 1;
-    let popover = self.popoverCtrl.create('AlternativesPage', {
-      item: item,
-      alts: self.alternateItemsMap[item.projectItemId]
-    });
-      popover.onDidDismiss(data => {
-        console.log(data);
-        if (data) {
-          
-        }
-      });
-      popover.present();
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, Renderer } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
 @IonicPage()
@@ -7,32 +7,52 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
   templateUrl: 'alternatives.html',
 })
 export class AlternativesPage {
+  @ViewChild('file') file:ElementRef;
   item: any;
-  alts: any;
-  selectedFile: any;
-  constructor(private navCtrl: NavController,
+  alts = [];
+  files = [];
+  clicking = 0;
+  constructor(private renderer:Renderer,
+              private navCtrl: NavController,
               private navParams: NavParams,
               private viewCtrl: ViewController) {
     this.item = this.navParams.get('item');
-    this.alts = this.navParams.get('alts');
+    const alt = {
+      itemMake: '',
+      itemType: '',
+      itemPrice: '',
+      itemInspiration: ''
+    }
+    this.alts.push(alt);
+    if (this.navParams.get('alts')) {
+      this.alts = this.navParams.get('alts');
+      if (this.alts.length < 4) {
+        this.alts.push(alt);
+      }
+    }
     for (var key in this.alts) {
       this.alts[key].number = Number(key) + 1;
     }
   }
 
-  savePressed() {
-    console.log("save pressed");
-    if (this.selectedFile) {
-      this.item['file'] = this.selectedFile;
-    }
-    this.viewCtrl.dismiss(this.item);
+  addAlts() {
+    console.log("add alts pressed");
+    this.viewCtrl.dismiss([this.alts, this.files]);
+  }
+
+  clickFile(i) {
+    console.log("clicking file at index:");
+    console.log(i);
+    this.clicking = i;
+    this.file.nativeElement.click();
   }
 
   fileChanged(event) {
     console.log("input file changed:");
+    console.log(event);
     const file = event.target.files[0];
     console.log(file);
-    this.selectedFile = file;
+    this.files[this.clicking] = file;
   }
 
   validatePrice() {

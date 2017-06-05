@@ -383,4 +383,45 @@ export class ProjectService {
     });
   }
 
+  addAlternative(project, item, file, parentItem) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("adding item alt:");
+      console.log(project);
+      console.log(item);
+      console.log(file);
+      console.log(parentItem);
+      var headers = self.headers;
+      headers.append("enctype", "multipart/form-data");
+      const now = new Date().getTime();
+      const map = {
+        "/tmh-project-portlet.projectitem/add-project-item": {
+          "projectId": project.projectId,
+          "parentProjectItemId": parentItem.projectItemId,
+          "projectItemStatus": "ALTERNATE",
+          "itemMake": item.itemMake ? item.itemMake : "",
+          "itemType": item.itemType ? item.itemType : "",
+          "itemPrice": item.itemPrice ? item.itemPrice : "",
+          "itemInspiration": item.itemInspiration ? item.itemInspiration : "",
+          "fileName": file ? now + "-" + file.name : "",
+          "contentType": file ? file.type.split("/")[1] : "",
+          "fileSize": file ? file.size : "",
+          "serviceContext": JSON.stringify({"userId":self.userService.currentUser.userId})
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      var formData = new FormData();
+      if (file) {
+        formData.append('file', item.file);
+      }
+      self.http.post(endpoint, formData, {headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("add item alt returned response:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
 }

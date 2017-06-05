@@ -153,7 +153,7 @@
   <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.projectStatus == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>ALTERNATES REQUESTED:</h1>
     <p>Review the items below. Your client wants to see alternatives furniture for them. When you're satisfied with the collection, go ahead and submit it to your client.</p>
-    <button ion-button type="button" (click)="submitAlternatives()">SUBMIT ALTERNATIVES</button>
+    <button ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
   </div>
   <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.projectStatus == 'ALTERNATIVES_READY' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>ALTERNATES READY</h1>
@@ -173,7 +173,7 @@
   <div *ngIf="viewMode == 'DESIGNER' && approvedItems && itemsViewMode == 'APPROVED'" class="collection-box">
     <h1>APPROVED ITEMS</h1>
     <p>The client has already approved the following items:</p>
-    <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="submitAlternatives()">SUBMIT ALTERNATIVES</button>
+    <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
   </div>
   <ion-grid *ngIf="pendingItems || approvedItems" class="project-items">
     <h4 *ngIf="itemsViewMode == 'PENDING' && pendingItems">{{ pendingItems.length }} ITEMS</h4>
@@ -193,15 +193,26 @@
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>
         <h2>${{ item.itemPrice/100 }}</h2>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'SUBMITTED' && project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'SUBMITTED' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'ALTERNATE_READY' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'ALTERNATE_READY' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus != 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES' && project.projectStatus != 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+        <div *ngIf="viewMode == 'CLIENT'">
+          <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
+            <button *ngIf="project.projectStatus == 'FLOOR_PLAN' || project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
+          </div>
+          <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
+            <button *ngIf="project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+          </div>
+        </div>
+        <div *ngIf="viewMode == 'DESIGNER'">
+          <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+          </div>
+          <div *ngIf="item.projectItemStatus == 'ALTERNATE_READY'">
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+          </div>
+        </div>
       </ion-col>
       <ion-col col-12 col-sm *ngFor="let item of modifiedItems; let i = index" class="project-items-box" [class.hidden]="itemsViewMode != 'MODIFIED'">
         <div class="project-items-label" (click)="editItem(item, i)">
@@ -213,15 +224,26 @@
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>
         <h2>${{ item.itemPrice/100 }}</h2>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'SUBMITTED' && project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'SUBMITTED' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'ALTERNATE_READY' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'ALTERNATE_READY' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus != 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES' && project.projectStatus != 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+        <div *ngIf="viewMode == 'CLIENT'">
+          <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
+            <button *ngIf="project.projectStatus == 'FLOOR_PLAN' || project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
+          </div>
+          <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
+            <button *ngIf="project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+          </div>
+        </div>
+        <div *ngIf="viewMode == 'DESIGNER'">
+          <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+          </div>
+          <div *ngIf="item.projectItemStatus == 'ALTERNATE_READY'">
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+          </div>
+        </div>
       </ion-col>
       <ion-col col-12 col-sm *ngFor="let item of approvedItems; let i = index" class="project-items-box" [class.hidden]="itemsViewMode != 'APPROVED'">
         <div class="project-items-label" (click)="editItem(item, i)">
@@ -233,15 +255,26 @@
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>
         <h2>${{ item.itemPrice/100 }}</h2>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'SUBMITTED' && project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'SUBMITTED' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
-        <button *ngIf="viewMode == 'CLIENT' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'ALTERNATE_READY' && project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'REQUEST_ALTERNATIVE' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus == 'ALTERNATE_READY' && project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-        <button *ngIf="viewMode == 'DESIGNER' && item.projectItemStatus != 'REQUEST_ALTERNATIVE' && project.projectStatus == 'REQUEST_ALTERNATIVES' && project.projectStatus != 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+        <div *ngIf="viewMode == 'CLIENT'">
+          <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
+            <button *ngIf="project.projectStatus == 'FLOOR_PLAN' || project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
+          </div>
+          <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
+            <button *ngIf="project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+          </div>
+        </div>
+        <div *ngIf="viewMode == 'DESIGNER'">
+          <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+          </div>
+          <div *ngIf="item.projectItemStatus == 'ALTERNATE_READY'">
+            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+          </div>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>
