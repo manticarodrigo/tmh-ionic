@@ -95,7 +95,12 @@ export class ImageService {
     return new Promise((resolve, reject) => {
       console.log("fetching file with entry id:");
       console.log(fileEntryId);
-      const endpoint = this.api + "/dlfileentry/get-file-entry/fileEntryId/" + fileEntryId;
+      const map = {
+        "$file[repositoryId,folderId,title,uuid,version,createDate,fileEntryId] = /dlfileentry/get-file-entry": {
+          "fileEntryId": fileEntryId
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
       self.http.get(endpoint, {headers: headers})
       .map(res => res.json())
       .subscribe(data => {

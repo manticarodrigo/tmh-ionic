@@ -208,6 +208,9 @@ page-design {
         line-height: 30px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.3);
       }
+      .leaflet-popup-content-wrapper {
+        border-radius: 2px !important;
+      }
       .leaflet-popup-content {
         text-align: center;
         min-width: 200px;

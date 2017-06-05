@@ -170,11 +170,12 @@ export class DetailsPage {
       let now = new Date();
       var seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
       var interval = Math.floor(seconds / 86400); // days
-      if (interval == 1)
+      var abs = Math.abs(interval);
+      if (interval < 0 && abs == 1)
         return '1 day left';
-      if (interval > 0 && interval < 15)
-        return interval + ' days left';
-      return '0 days left';
+      if (interval <=0 && abs >= 0 && abs < 15)
+        return abs + ' days left';
+      return '';
     } else {
       return '';
     }
@@ -188,7 +189,7 @@ export class DetailsPage {
   selectTab() {
     const self = this;
     console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('Dropdown', {
+    let popover = this.popoverCtrl.create('DropdownPage', {
       items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     }, 
     {
@@ -288,7 +289,7 @@ export class DetailsPage {
     console.log(event.target.files[0]);
     const file = event.target.files[0];
     if (this.view == 'DRAWING') {
-      this.projectService.addDetail(this.project, file, 'DRAWING')
+      this.projectService.addDetail(this.project, file, 'DRAWING', 'APPROVED')
       .then(data => {
         console.log(data);
         if (!data['exception']) {
@@ -297,7 +298,7 @@ export class DetailsPage {
       });
     }
     if (this.view == 'INSPIRATION') {
-      this.projectService.addDetail(this.project, file, 'INSPIRATION')
+      this.projectService.addDetail(this.project, file, 'INSPIRATION', 'APPROVED')
       .then(data => {
         console.log(data);
         if (!data['exception']) {
@@ -306,7 +307,7 @@ export class DetailsPage {
       });
     }
     if (this.view == 'FURNITURE') {
-      this.projectService.addDetail(this.project, file, 'FURNITURE')
+      this.projectService.addDetail(this.project, file, 'FURNITURE', 'APPROVED')
       .then(data => {
         console.log(data);
         if (!data['exception']) {

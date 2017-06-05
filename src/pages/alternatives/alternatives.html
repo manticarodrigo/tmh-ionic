@@ -1,0 +1,16 @@
+<ion-content padding>
+  <h1>ITEM {{ item.number }} ALTERNATIVES</h1>
+  <hr>
+  <div class="alt-container" *ngFor="let alt of alts">
+    <h3 *ngIf="alt">ALTERNATIVE {{ alt.number }}</h3>
+    <p>Please enter the required details.</p>
+    <ion-input [(ngModel)]="alt.itemMake" type="text" placeholder="ITEM MAKE"></ion-input>
+    <ion-input [(ngModel)]="alt.itemType" type="text" placeholder="ITEM TYPE"></ion-input>
+    <ion-input [(ngModel)]="alt.itemPrice" (input)="validatePrice()" type="text" placeholder="PRICE"></ion-input>
+    <ion-input [(ngModel)]="alt.itemInspiration" type="text" placeholder="INSPIRATION FOR ITEM?"></ion-input>
+    <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
+    <button ion-button full type="button" (click)="file.click()">UPLOAD IMAGE</button>
+    <p>{{ selectedFile ? selectedFile.name : 'No image selected' }}</p>
+    <button ion-button full type="button" (click)="saveAlt(alt)">{{ alt ? 'SAVE' : 'ADD'}}</button>
+  </div>
+</ion-content>

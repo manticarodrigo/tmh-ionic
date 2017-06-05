@@ -38,6 +38,7 @@ export class DashboardPage {
     FINAL_DELIVERY: 'Final Delivery',
     SHOPPING_CART: 'Shopping Cart',
     ESTIMATE_SHIPPING_AND_TAX: 'Estimate Shipping & Tax',
+    CHECKOUT: 'Checkout',
     ARCHIVED: 'Archived'
   };
   constructor(private navCtrl: NavController,
@@ -107,7 +108,7 @@ export class DashboardPage {
       console.log(tab);
       tabs.push(tab);
     }
-    let popover = this.popoverCtrl.create('Dropdown', {
+    let popover = this.popoverCtrl.create('DropdownPage', {
       items: tabs
     }, 
     {
@@ -236,9 +237,10 @@ export class DashboardPage {
       let now = new Date();
       var seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
       var interval = Math.floor(seconds / 86400); // days
-      if (interval > 0 && interval < 15)
-        return interval;
-      return 0;
+      var abs = Math.abs(interval);
+      if (interval <= 0 && abs >= 0 && abs < 15)
+        return abs;
+      return 'N/A';
     } else {
       return 'N/A';
     }

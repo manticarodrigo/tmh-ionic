@@ -41,9 +41,15 @@ export class DesignPage {
   markers = {};
   floorplan: any;
   floorplanMap: any;
+  alternateItemsMap = {};
   pendingItems: any;
+  modifiedItems: any;
   approvedItems: any;
+  pendingItemsMap = {};
+  modifiedItemsMap = {};
+  approvedItemsMap = {};
   pendingCollectionTotal = 0;
+  modifiedCollectionTotal = 0;
   approvedCollectionTotal = 0;
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
@@ -121,18 +127,71 @@ export class DesignPage {
       console.log(data);
       if (!data['exception'] && Array(data).length > 0) {
         var pendingItems = [];
+        var modifiedItems = [];
         var approvedItems = [];
+
         var pendingCollectionTotal = 0;
+        var modifiedCollectionTotal = 0;
         var approvedCollectionTotal = 0;
+
         for (var key in data) {
           var item = data[key];
-          item.url = self.imageService.createFileUrl(item.file);
-          if (item.projectItemStatus == 'APPROVED') {
-            approvedItems.push(item);
-            approvedCollectionTotal += item.itemPrice;
+          if (item.parentProjectItemId != 0) {
+            if (!self.alternateItemsMap[item.parentProjectItemId]) {
+              self.alternateItemsMap[item.parentProjectItemId] = [];
+            }
+            self.alternateItemsMap[item.parentProjectItemId].push(item);
           } else {
-            pendingItems.push(item);
-            pendingCollectionTotal += item.itemPrice;
+            if (self.project.projectStatus == 'REQUEST_ALTERNATIVES' || self.project.projectStatus == 'ALTERNATIVES_READY') {
+              if (item.projectItemStatus == 'PENDING' || item.projectItemStatus == 'SUBMITTED') {
+                modifiedItems.push(item);
+                modifiedCollectionTotal += item.itemPrice;
+                self.imageService.getFileEntry(item.fileEntryId)
+                .then(data => {
+                  if (!data['exception']) {
+                    self.modifiedItemsMap[data['fileEntryId']] = data;
+                  }
+                });
+              } else if (item.projectItemStatus == 'APPROVED') {
+                approvedItems.push(item);
+                approvedCollectionTotal += item.itemPrice;
+                self.imageService.getFileEntry(item.fileEntryId)
+                .then(data => {
+                  if (!data['exception']) {
+                    self.approvedItemsMap[data['fileEntryId']] = data;
+                  }
+                });
+              } else {
+                pendingItems.push(item);
+                pendingCollectionTotal += item.itemPrice;
+                self.imageService.getFileEntry(item.fileEntryId)
+                .then(data => {
+                  if (!data['exception']) {
+                    self.pendingItemsMap[data['fileEntryId']] = data;
+                  }
+                });
+              }
+            } else {
+              if (item.projectItemStatus == 'APPROVED') {
+                approvedItems.push(item);
+                approvedCollectionTotal += item.itemPrice;
+                self.imageService.getFileEntry(item.fileEntryId)
+                .then(data => {
+                  if (!data['exception']) {
+                    self.pendingItemsMap[data['fileEntryId']] = data;
+                  }
+                });
+              } else {
+                pendingItems.push(item);
+                pendingCollectionTotal += item.itemPrice;
+                self.imageService.getFileEntry(item.fileEntryId)
+                .then(data => {
+                  if (!data['exception']) {
+                    self.pendingItemsMap[data['fileEntryId']] = data;
+                  }
+                });
+              }
+            }
           }
         }
         if (pendingItems.length > 0) {
@@ -140,18 +199,24 @@ export class DesignPage {
         } else {
           self.pendingItems = null;
         }
+        if (modifiedItems.length > 0) {
+          self.modifiedItems = modifiedItems;
+        } else {
+          self.modifiedItems = null;
+        }
         if (approvedItems.length > 0) {
           self.approvedItems = approvedItems;
         } else {
           self.approvedItems = null;
         }
         self.pendingCollectionTotal = pendingCollectionTotal;
+        self.modifiedCollectionTotal = modifiedCollectionTotal;
         self.approvedCollectionTotal = approvedCollectionTotal;
         self.drawFloorplan();
       }
     });
   }
-  
+
   getDaysLeftStringFrom(timestamp) {
     if (timestamp) {
       let date = new Date(timestamp);
@@ -159,11 +224,12 @@ export class DesignPage {
       let now = new Date();
       var seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
       var interval = Math.floor(seconds / 86400); // days
-      if (interval == 1)
+      var abs = Math.abs(interval);
+      if (interval < 0 && abs == 1)
         return '1 day left';
-      if (interval > 0 && interval < 15)
-        return interval + ' days left';
-      return '0 days left';
+      if (interval <=0 && abs >= 0 && abs < 15)
+        return abs + ' days left';
+      return '';
     } else {
       return '';
     }
@@ -209,6 +275,8 @@ export class DesignPage {
       // draw markers
       if (self.itemsViewMode == 'PENDING' && self.pendingItems) {
         self.createMarkers(self.pendingItems, w, h);
+      } else if (self.itemsViewMode == 'MODIFIED' && self.modifiedItems) {
+        self.createMarkers(self.modifiedItems, w, h);
       } else if (self.approvedItems) {
         self.createMarkers(self.approvedItems, w, h);
       }
@@ -253,35 +321,44 @@ export class DesignPage {
 
   createMarkers(items, w, h) {
     const self = this;
+    var validItemCount = 0;
     for (var key in items) {
       const item = items[key];
-      var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
-      console.log("adding marker at coordinates:");
-      console.log(latlng);
-      const itemNum = Number(key) + 1;
-      // The text could also be letters instead of numbers if that's more appropriate
-      var numberIcon = Leaflet.divIcon({
-        className: "number-icon",
-        iconSize: [30, 30],
-        iconAnchor: [15, 30],
-        popupAnchor: [0, -30],
-        html: String(itemNum)       
-      });
-      // Add the each marker to the marker map with projectItemId as key
-      self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
-          draggable: true,
-          icon: numberIcon
-      });
-      // Add popups
-      self.markers[item.projectItemId].addTo(this.floorplanMap)
-        .bindPopup(this.createPopup(item));
+      if (item.YCoordinate && item.XCoordinate) {
+        validItemCount += 1;
+        var latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
+        console.log("adding marker at coordinates:");
+        console.log(latlng);
+        // The text could also be letters instead of numbers if that's more appropriate
+        var numberIcon = Leaflet.divIcon({
+          className: "number-icon",
+          iconSize: [30, 30],
+          iconAnchor: [15, 30],
+          popupAnchor: [0, -30],
+          html: String(validItemCount)       
+        });
+        // Add the each marker to the marker map with projectItemId as key
+        self.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
+            draggable: true,
+            icon: numberIcon
+        });
+        // Add popups
+        self.markers[item.projectItemId].addTo(this.floorplanMap)
+          .bindPopup(this.createPopup(item));
+      }
     }
   }
 
   createPopup(item) {
     var popup = "";
-    if (item.url) {
-      popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + item.url + "'>";
+    if (this.itemsViewMode == 'PENDING' && this.pendingItemsMap[item.fileEntryId]) {
+      popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.pendingItemsMap[item.fileEntryId] + "'>";
+    }
+    if (this.itemsViewMode == 'MODIFIED' && this.modifiedItemsMap[item.fileEntryId]) {
+      popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.modifiedItemsMap[item.fileEntryId] + "'>";
+    }
+    if (this.itemsViewMode == 'APPROVED' && this.approvedItemsMap[item.fileEntryId]) {
+      popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.approvedItemsMap[item.fileEntryId] + "'>";
     }
     if (item.itemMake) {
       popup += "<h3>" + item.itemMake + "</h3>";
@@ -291,6 +368,9 @@ export class DesignPage {
     }
     if (item.itemPrice) {
       popup += "<h4>$" + item.itemPrice/100 + "</h4>";
+    }
+    if (popup == "") {
+      popup += "<h3>No item info.</h3>"
     }
     return popup;
   }
@@ -335,7 +415,7 @@ export class DesignPage {
   selectTab() {
     const self = this;
     console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('Dropdown', {
+    let popover = this.popoverCtrl.create('DropdownPage', {
       items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     }, 
     {
@@ -402,27 +482,60 @@ export class DesignPage {
   submitConcepts() {
     const self = this;
     console.log("submit concepts pressed");
-    for (var key in this.concepts) {
-      const concept = this.concepts[key];
-      this.projectService.updateDetailStatus(concept, 'SUBMITTED')
-      .then(data => {
-        console.log(data);
-        if (!data['exception']) {
-          self.fetchDetails();
+    let modal = this.modalCtrl.create('ConfirmPage', {
+      message: 'By selecting the confimation below, the concept boards will be submitted to your client.'
+    });
+    modal.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        var conceptCount = 0;
+        for (var key in this.concepts) {
+          const concept = this.concepts[key];
+          this.projectService.updateDetailStatus(concept, 'SUBMITTED')
+          .then(data => {
+            console.log(data);
+            conceptCount += 1;
+            if (conceptCount == self.concepts.length) {
+              this.projectService.updateStatus(self.project, 'CONCEPT')
+              .then(data => {
+                if (!data['exception']) {
+                  self.fetchDetails();
+                }
+              });
+            }
+          });
         }
-      });
-    }
+      }
+    });
+    modal.present();
   }
 
   approveConcept() {
     const self = this;
     console.log("approve concepts pressed");
-    this.projectService.updateDetailStatus(this.selectedConcept, 'APPROVED')
-    .then(data => {
-      if (!data['exception']) {
-        self.fetchDetails();
+    let modal = this.modalCtrl.create('ConfirmPage', {
+      message: 'By selecting the confirmation below, you are approving a concept board.'
+    });
+    modal.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        var conceptCount = 0;
+        for (var key in this.concepts) {
+          const concept = this.concepts[key];
+          this.projectService.updateDetailStatus(concept, 'APPROVED')
+          .then(data => {
+            console.log(data);
+            conceptCount += 1;
+            if (conceptCount == self.concepts.length) {
+              if (!data['exception']) {
+                self.fetchDetails();
+              }
+            }
+          });
+        }
       }
     });
+    modal.present();
   }
 
   itemViewSwitched() {
@@ -436,7 +549,7 @@ export class DesignPage {
     console.log(event.target.files[0]);
     const file = event.target.files[0];
     if (this.view == 'APPROVE_CONCEPT') {
-      this.projectService.addDetail(this.project, file, 'CONCEPT')
+      this.projectService.addDetail(this.project, file, 'CONCEPT', 'PENDING')
       .then(data => {
         console.log(data);
         if (!data['exception']) {
@@ -445,7 +558,7 @@ export class DesignPage {
       });
     }
     if (this.view == 'APPROVE_FLOOR_PLAN') {
-      this.projectService.addDetail(this.project, file, 'FLOOR_PLAN')
+      this.projectService.addDetail(this.project, file, 'FLOOR_PLAN', 'PENDING')
       .then(data => {
         console.log(data);
         if (!data['exception']) {
@@ -453,6 +566,145 @@ export class DesignPage {
         }
       });
     }
+  }
+
+  editItem(item, i) {
+    const self = this;
+    console.log("edit item pressed:");
+    console.log(item);
+    item.number = i + 1;
+    let popover = self.popoverCtrl.create('EditItemPage', {
+      item: item
+    });
+    popover.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        self.projectService.updateItem(self.project, data, 'PENDING')
+        .then(itemData => {
+          if (!itemData['exception']) {
+            self.fetchItems();
+          }
+        });
+      }
+    });
+    popover.present();
+  }
+
+  offerAlternative(item, i) {
+    const self = this;
+    console.log("offer alt item pressed:");
+    console.log(item);
+    item.number = i + 1;
+    let popover = self.popoverCtrl.create('EditItemPage', {
+      item: item
+    });
+    popover.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        self.projectService.updateItem(self.project, data, 'ALTERNATE')
+        .then(itemData => {
+          if (!itemData['exception']) {
+            self.fetchItems();
+          }
+        });
+      }
+    });
+    popover.present();
+  }
+
+  submitCollection() {
+    const self = this;
+    console.log("submit collection pressed");
+    let modal = this.modalCtrl.create('ConfirmPage', {
+      message: 'By selecting the confimation below, the collection, floor plan and concept board will be submitted to your client.'
+    });
+    modal.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        var status = '';
+        if (self.project.projectStatus == 'CONCEPTS') {
+          status = 'FLOOR_PLAN';
+        }
+        if (self.project.projectStatus == 'FLOOR_PLAN') {
+          status = 'ALTERNATIVES_READY';
+        }
+        if (self.project.projectStatus == 'REQUEST_ALTERNATIVES') {
+          status = 'ALTERNATIVES_READY';
+        }
+        if (self.project.revisionCount == 3) {
+          status = 'FINAL_DELIVERY';
+        }
+        this.projectService.updateRevisionCount(self.project, status)
+        .then(data => {
+          console.log(data);
+          if (!data['exception']) {
+            self.fetchDetails();
+          }
+        });
+      }
+    });
+    modal.present();
+  }
+
+  approveCollection() {
+    const self = this;
+    console.log("approve collection pressed");
+    let modal = this.modalCtrl.create('ConfirmPage', {
+      message: 'By selecting the button below, you are approving the collection and requesting alternates from your designer.'
+    });
+    modal.onDidDismiss(data => {
+      console.log(data);
+      if (data) {
+        this.projectService.updateStatus(self.project, 'REQUEST_ALTERNATIVES')
+        .then(data => {
+          console.log(data);
+          if (!data['exception']) {
+            self.fetchDetails();
+          }
+        });
+      }
+    });
+    modal.present();
+  }
+
+  requestAlternative(item) {
+    const self = this;
+    console.log("request alternative pressed");
+    this.projectService.updateItemStatus(item, 'REQUEST_ALTERNATIVE')
+    .then(data => {
+      if (!data['exception']) {
+          self.fetchDetails();
+        }
+    });
+  }
+
+  undoAlternative(item) {
+    const self = this;
+    console.log("undo alternative pressed");
+    this.projectService.updateItemStatus(item, 'SUBMITTED')
+    .then(data => {
+      if (!data['exception']) {
+          self.fetchDetails();
+        }
+    });
+  }
+
+  viewAlternatives(item, i) {
+    const self = this;
+    console.log("view alternatives pressed:");
+    console.log(item);
+    item.number = i + 1;
+    let popover = self.popoverCtrl.create('AlternativesPage', {
+      item: item,
+      alts: self.alternateItemsMap[item.projectItemId]
+    });
+      popover.onDidDismiss(data => {
+        console.log(data);
+        if (data) {
+          
+        }
+      });
+      popover.present();
   }
 
 }

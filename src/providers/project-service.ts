@@ -27,13 +27,29 @@ export class ProjectService {
       console.log("updating project status:");
       console.log(status);
       var endpoint = this.api + "/tmh-project-portlet.project/update-project-status/projectId/" + project.projectId + "/userId/" + project.userId + "/projectStatus/" + status;
-      if (status == 'FLOOR_PLAN') {
-        endpoint += "/daysLeft/" + 15;
+      if (status == 'CONCEPTS') {
+        endpoint += "/daysLeft/" + 14;
       }
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("status update returned response:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  updateRevisionCount(project, status) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("updating project status/revisionCount:");
+      console.log(status);
+      var endpoint = this.api + "/tmh-project-portlet.project//update-project-revision-count/projectId/" + project.projectId + "/userId/" + project.userId + "/projectStatus/" + status + "/revisionCount/" + Number(project.revisionCount) + 1;
+      self.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("status/revisionCount update returned response:");
         console.log(data);
         resolve(data);
       });
@@ -226,11 +242,8 @@ export class ProjectService {
       console.log("fetching items for project:");
       console.log(project.projectId);
       const map = {
-        "$item[itemMake,itemPrice,itemType,fileEntryId,projectItemStatus,XCoordinate,YCoordinate] = /tmh-project-portlet.projectitem/find-by-project-id": {
-          "projectId": project.projectId,
-          "$file[repositoryId,folderId,title,uuid,version,createDate] = /dlfileentry/get-file-entry": {
-            "@fileEntryId": "$item.fileEntryId"
-          }
+        "$item[itemMake,itemPrice,itemType,itemInspiration,fileEntryId,projectItemId,parentProjectItemId,projectItemStatus,XCoordinate,YCoordinate,userId,checked] = /tmh-project-portlet.projectitem/find-by-project-id": {
+          "projectId": project.projectId
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
@@ -244,7 +257,7 @@ export class ProjectService {
     });
   }
 
-  addDetail(project, file, type) {
+  addDetail(project, file, type, status) {
     console.log("adding detail of type:");
     console.log(type);
     const self = this;
@@ -252,7 +265,7 @@ export class ProjectService {
       var headers = self.headers;
       headers.append("enctype", "multipart/form-data");
       const now = new Date().getTime();
-      const endpoint = this.api + "/tmh-project-portlet.projectdetail/add-project-detail.9/globalGroupId/" + 20484 + "/projectId/" + project.projectId + "/projectDetailType/" + type + "/projectDetailStatus/PENDING/fileName/" + now + "-" + file.name + "/contentType/" + file.type.split("/")[1] + "/fileSize/" + file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
+      const endpoint = this.api + "/tmh-project-portlet.projectdetail/add-project-detail.9/globalGroupId/" + 20484 + "/projectId/" + project.projectId + "/projectDetailType/" + type + "/projectDetailStatus/" + status + "/fileName/" + now + "-" + file.name + "/contentType/" + file.type.split("/")[1] + "/fileSize/" + file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
       console.log(endpoint);
       var formData = new FormData();
       formData.append('file', file);
@@ -293,27 +306,77 @@ export class ProjectService {
       const map = {
         "/tmh-project-portlet.projectitem/add-project-item": {
           "projectId": project.projectId,
-          "parentProjectItemId": 0,
-          "projectItemStatus": "PENDING",
-          "fileName": now + "-" + item.file.name,
-          "contentType": item.file.type.split("/")[1],
-          "fileSize": item.file.size,
-          "itemMake": item.itemMake ? item.itemMake : "",
-          "itemType": item.itemType ? item.itemType : "",
-          "itemPrice": item.itemPrice ? item.itemPrice : "",
-          "itemInspiration": item.itemInspiration ? item.itemInspiration : "",
           "yCoordinate": item.YCoordinate,
           "xCoordinate": item.XCoordinate,
           "serviceContext": JSON.stringify({"userId":self.userService.currentUser.userId})
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      var formData = new FormData();
-      formData.append('file', item.file);
-      self.http.post(endpoint, formData, {headers})
+      self.http.post(endpoint, {}, {headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("add item returned response:");
+        console.log(data);
+        if (!data.exception) {
+          self.updateItem(project, data, 'PENDING')
+          .then(data => {
+            resolve(data);
+          });
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  }
+
+  updateItem(project, item, status) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("updating project item:");
+      console.log(item);
+      var headers = self.headers;
+      headers.append("enctype", "multipart/form-data");
+      const now = new Date().getTime();
+      const map = {
+        "/tmh-project-portlet.projectitem/update-project-item": {
+          "projectItemId": project.projectItemId,
+          "projectItemStatus": status,
+          "itemMake": item.itemMake ? item.itemMake : "",
+          "itemType": item.itemType ? item.itemType : "",
+          "itemPrice": item.itemPrice ? item.itemPrice : "",
+          "itemInspiration": item.itemInspiration ? item.itemInspiration : "",
+          "fileName": item.file ? now + "-" + item.file.name : "",
+          "contentType": item.file ? item.file.type.split("/")[1] : "",
+          "fileSize": item.file ? item.file.size : "",
+          "serviceContext": JSON.stringify({"userId":self.userService.currentUser.userId})
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      var formData = new FormData();
+      if (item.file) {
+        formData.append('file', item.file);
+      }
+      self.http.post(endpoint, formData, {headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("update item returned response:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  updateItemStatus(item, status) {
+    console.log("updating item status:");
+    console.log(item);
+    console.log(status);
+    const self = this;
+    return new Promise((resolve, reject) => {
+      const endpoint = this.api + "/tmh-project-portlet.projectitem/update-project-item-status/projectItemId/" + item.projectItemId + "/userId/" + item.userId + "/projectItemStatus/" + status;
+      this.http.get(endpoint, {headers: self.headers})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("update returned response:");
         console.log(data);
         resolve(data);
       });
