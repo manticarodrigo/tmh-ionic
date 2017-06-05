@@ -1,24 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Platform } from 'ionic-angular';
 
 import { UserService } from './user-service';
 
 @Injectable()
 export class ProjectService {
   headers: any;
-  api: any;
+  api = "http://stage.themanhome.com/api/jsonws";
 
   constructor(private http: Http,
-              private platform: Platform,
               private userService: UserService) {
     this.headers = this.userService.headers;
-    if (this.platform.is('cordova')) {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
-    } else {
-      this.api = '/api';
-    }
+    // this.api = "/api";
   }
 
   updateStatus(project, status) {
@@ -84,7 +78,7 @@ export class ProjectService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(projects => {
@@ -105,7 +99,7 @@ export class ProjectService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(projects => {
@@ -126,7 +120,7 @@ export class ProjectService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(projects => {
@@ -147,7 +141,7 @@ export class ProjectService {
           // }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(projects => {
@@ -168,7 +162,7 @@ export class ProjectService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(projects => {
@@ -191,7 +185,7 @@ export class ProjectService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -246,7 +240,7 @@ export class ProjectService {
           "projectId": project.projectId
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -311,7 +305,7 @@ export class ProjectService {
           "serviceContext": JSON.stringify({"userId":self.userService.currentUser.userId})
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.post(endpoint, {}, {headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -351,7 +345,7 @@ export class ProjectService {
           "serviceContext": JSON.stringify({"userId":self.userService.currentUser.userId})
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       var formData = new FormData();
       if (item.file) {
         formData.append('file', item.file);
@@ -409,7 +403,7 @@ export class ProjectService {
           "serviceContext": JSON.stringify({"userId":self.userService.currentUser.userId})
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       var formData = new FormData();
       if (file) {
         formData.append('file', item.file);

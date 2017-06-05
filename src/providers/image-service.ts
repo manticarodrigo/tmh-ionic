@@ -1,22 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Platform } from 'ionic-angular';
 
 import { UserService } from './user-service';
 
 @Injectable()
 export class ImageService {
-  api: any;
+  api = "http://stage.themanhome.com/api/jsonws";
 
   constructor(private http: Http,
-              private platform: Platform,
               private userService: UserService) {
-    if (this.platform.is('cordova')) {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
-    } else {
-      this.api = '/api';
-    }
+    // this.api = "/api";
   }
 
   createFileUrl(data) {
@@ -100,7 +94,7 @@ export class ImageService {
           "fileEntryId": fileEntryId
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: headers})
       .map(res => res.json())
       .subscribe(data => {

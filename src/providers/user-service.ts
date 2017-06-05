@@ -2,23 +2,18 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Storage } from '@ionic/storage';
-import { Platform } from 'ionic-angular';
 
 @Injectable()
 export class UserService {
   currentUser: any;
   headers: any;
   adminHeaders: any;
-  api: any;
+  api = "http://stage.themanhome.com/api/jsonws";
   
   constructor(private http: Http,
-              private storage: Storage,
-              private platform: Platform) {
-    if (this.platform.is('cordova')) {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
-    } else {
-      this.api = '/api';
-    }
+              private storage: Storage) {
+    // this.api = "/api";
+
     const token = btoa("manticarodrigo@gmail.com:tmh2017!");
     const adminHeaders = this.generateHeaders(token);
     this.adminHeaders = adminHeaders;
@@ -59,7 +54,7 @@ export class UserService {
         }
       }
     }
-    const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+    const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
     this.http.get(endpoint, {headers: headers})
     .map(res => res.json())
     .subscribe(user => {
@@ -159,7 +154,7 @@ export class UserService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       this.http.get(endpoint, {headers: this.headers})
       .map(res => res.json())
       .subscribe(user => {
