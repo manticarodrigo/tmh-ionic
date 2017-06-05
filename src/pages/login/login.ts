@@ -6,7 +6,10 @@ import { FacebookService } from 'ngx-facebook';
 import { UserService } from '../../providers/user-service';
 import { ImageService } from '../../providers/image-service';
 
-@IonicPage()
+@IonicPage({
+  name: 'login',
+  priority: 'high'
+})
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',

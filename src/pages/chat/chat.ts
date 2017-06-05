@@ -1,5 +1,5 @@
 import { Component, ViewChild, Input } from '@angular/core';
-import { IonicPage, NavController, ActionSheetController, AlertController, LoadingController, NavParams, ViewController, Content } from 'ionic-angular';
+import { NavController, ActionSheetController, AlertController, LoadingController, NavParams, ViewController, Content } from 'ionic-angular';
 // import { Camera, PhotoViewer } from 'ionic-native';
 import { StatusBar } from '@ionic-native/status-bar';
 

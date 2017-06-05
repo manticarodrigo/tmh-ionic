@@ -24,6 +24,32 @@ export class UserService {
     this.adminHeaders = adminHeaders;
   }
 
+  fetchCurrentUser() {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      Promise.all([this.storage.get('user'), this.storage.get('token')])
+      .then(data => {
+        const user = data[0];
+        const token = data[1];
+        if (!user || !token) {
+          console.log('No stored user found');
+          console.log(user);
+          console.log(token);
+          resolve(null);
+        } else {
+          console.log('Stored user found');
+          self.setCurrentUser(user, token)
+          .then(user => {
+            resolve(user);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+        }
+      });
+    });
+  }
+
   generateHeaders(token) {
     const headers = new Headers();
     var authHeader = `Basic ${token}`;

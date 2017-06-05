@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
@@ -8,6 +8,10 @@ import { ImageService } from '../../providers/image-service';
 import { DetailsPage } from '../details/details';
 import { DesignPage } from '../design/design';
 
+@IonicPage({
+  name: 'final-delivery',
+  // segment: 'project/:id'
+})
 @Component({
   selector: 'page-final-delivery',
   templateUrl: 'final-delivery.html',

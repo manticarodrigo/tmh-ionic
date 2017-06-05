@@ -6,10 +6,11 @@ import { ProjectService } from '../../providers/project-service';
 
 import { DetailsPage } from '../details/details';
 import { DesignPage } from '../design/design';
-import { FinalDeliveryPage } from '../final-delivery/final-delivery';
-import { ChatPage } from '../chat/chat';
 
-@IonicPage()
+@IonicPage({
+  name: 'dashboard',
+  // segment: 'user/:id'
+})
 @Component({
   selector: 'page-dashboard',
   templateUrl: 'dashboard.html'
@@ -42,13 +43,18 @@ export class DashboardPage {
     ARCHIVED: 'Archived'
   };
   constructor(private navCtrl: NavController,
+              private navParams: NavParams,
               private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
               private modalCtrl: ModalController,
               private platform: Platform,
               private userService: UserService,
               private projectService: ProjectService) {
-    this.user = this.userService.currentUser;
+    if (this.userService.currentUser) {
+      this.user = this.userService.currentUser;
+    } else if (this.navParams.get('id')) {
+
+    }
     this.tabs = {
       IN_PROGRESS: 'IN PROGRESS',
       COMPLETED: 'COMPLETED',
@@ -268,13 +274,13 @@ export class DashboardPage {
     if (project.projectStatus == 'ALTERNATIVES_READY')
       page = DesignPage;
     if (project.projectStatus == 'FINAL_DELIVERY')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (project.projectStatus == 'SHOPPING_CART')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (project.projectStatus == 'ARCHIVED')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     this.navCtrl.setRoot(page, {
       project: project
     });
