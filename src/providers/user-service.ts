@@ -2,23 +2,17 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Storage } from '@ionic/storage';
-import { Platform } from 'ionic-angular';
 
 @Injectable()
 export class UserService {
   currentUser: any;
   headers: any;
   adminHeaders: any;
-  api: any;
+  api = 'http://stage.themanhome.com/api/jsonws';
   
   constructor(private http: Http,
-              private storage: Storage,
-              private platform: Platform) {
-    if (this.platform.is('cordova')) {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
-    } else {
-      this.api = '/api';
-    }
+              private storage: Storage) {
+    // this.api = '/api';
     const token = btoa("manticarodrigo@gmail.com:tmh2017!");
     const adminHeaders = this.generateHeaders(token);
     this.adminHeaders = adminHeaders;
