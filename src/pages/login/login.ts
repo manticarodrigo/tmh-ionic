@@ -86,7 +86,7 @@ export class LoginPage {
           const token = btoa(this.email + ':' + this.password);
           self.userService.setCurrentUser(user, token)
           .then(user => {
-            this.navCtrl.setRoot('DashboardPage');
+            this.navCtrl.setRoot('dashboard');
             this.email = '';
             this.password = '';
             this.loading = false;
@@ -122,7 +122,7 @@ export class LoginPage {
             this.password = '';
             this.password2 = '';
             this.loading = false;
-            this.navCtrl.setRoot('DashboardPage');
+            this.navCtrl.setRoot('dashboard');
           });
         } else {
           this.presentError('Registration failed. Please try again.');
