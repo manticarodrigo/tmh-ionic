@@ -97,7 +97,7 @@ export class DesignPage {
       self.projectService.findByProjectId(id)
       .then(project => {
         if (!project['exception']) {
-          self.project = self.navParams.get('project');
+          self.project = project;
           self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
           if (self.project.projectStatus == 'FINAL_DELIVERY' || self.project.projectStatus == 'SHOPPING_CART' || self.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || self.project.projectStatus == 'ARCHIVED') {
               self.itemsViewMode = 'APPROVED';
@@ -242,7 +242,9 @@ export class DesignPage {
         self.pendingCollectionTotal = pendingCollectionTotal;
         self.modifiedCollectionTotal = modifiedCollectionTotal;
         self.approvedCollectionTotal = approvedCollectionTotal;
-        self.drawFloorplan();
+        if (self.view == 'FLOOR_PLAN') {
+          self.drawFloorplan();
+        }
       }
     });
   }
@@ -460,7 +462,8 @@ export class DesignPage {
           page = 'final-delivery';
         if (page)
           this.navCtrl.setRoot(page, {
-            project: self.project
+            project: self.project,
+            id: self.project.projectId
           });
       }
     });
@@ -478,7 +481,8 @@ export class DesignPage {
       page = 'final-delivery';
     if (page)
       this.navCtrl.setRoot(page, {
-        project: self.project
+        project: self.project,
+        id: self.project.projectId
       });
   }
 

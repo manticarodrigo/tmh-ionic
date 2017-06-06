@@ -88,7 +88,7 @@ export class DetailsPage {
       self.projectService.findByProjectId(id)
       .then(project => {
         if (!project['exception']) {
-          self.project = self.navParams.get('project');
+          self.project = project;
           self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
           self.fetchDetails();
         }
@@ -232,7 +232,8 @@ export class DetailsPage {
           page = 'final-delivery';
         if (page)
           this.navCtrl.setRoot(page, {
-            project: self.project
+            project: self.project,
+            id: self.project.projectId
           });
       }
     });
@@ -250,7 +251,8 @@ export class DetailsPage {
       page = 'final-delivery';
     if (page)
       this.navCtrl.setRoot(page, {
-        project: self.project
+        project: self.project,
+        id: self.project.projectId
       });
   }
 
@@ -303,7 +305,8 @@ export class DetailsPage {
         self.projectService.updateStatus(self.project, 'DESIGN')
         .then(data => {
           self.navCtrl.setRoot('design', {
-            project: self.project
+            project: self.project,
+            id: self.project.projectId
           });
         });
       }

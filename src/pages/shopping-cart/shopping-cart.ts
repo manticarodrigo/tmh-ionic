@@ -3,7 +3,10 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 
-@IonicPage()
+@IonicPage({
+  name: 'shopping-cart',
+  segment: 'shopping-cart/:id'
+})
 @Component({
   selector: 'page-shopping-cart',
   templateUrl: 'shopping-cart.html',

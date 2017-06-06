@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="project.client">{{ project.client.firstName }}'s </span><span *ngIf="project">{{ types[project.projectType] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="project">{{ project.client.firstName }}'s </span><span *ngIf="project">{{ types[project.projectType] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.photoURL" [src]="user.photoURL">
@@ -23,14 +23,14 @@
       1. DETAILS
       <img src="assets/down.png">
     </button>
-    <div class="days-left">
+    <div *ngIf="project" class="days-left">
       {{ project.endDateReadable }}
     </div>
   </div>
 </ion-header>
 
 <ion-content [class.minimized]="minimized">
-  <div class="collab-workzone">
+  <div class="collab-workzone" *ngIf="project">
     <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
     <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
     <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode" class="admin-segment">
@@ -143,7 +143,7 @@
     </div>
     <page-chat [project]="project" [class.wrapper-minimized]="minimized" [class.wrapper-maximized]="maximized" class="chat-wrapper desktop"></page-chat>
   </div>
-  <div class="project-details">
+  <div class="project-details" *ngIf="project">
     <div class="project-details-wrapper">
       <h1>Project Details</h1>
       <div *ngIf="project" class="project-details-box">

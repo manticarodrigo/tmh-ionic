@@ -3,7 +3,9 @@ import { IonicPage, NavController, NavParams, AlertController, PopoverController
 
 import { UserService } from '../../providers/user-service';
 
-@IonicPage()
+@IonicPage({
+  name: 'profile'
+})
 @Component({
   selector: 'page-profile',
   templateUrl: 'profile.html',

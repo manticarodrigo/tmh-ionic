@@ -27,7 +27,7 @@
 </ion-header>
 
 <ion-content>
-  <div class="collab-final-delivery" *ngIf="user && project">
+  <div class="collab-final-delivery" *ngIf="project">
     <ion-segment *ngIf="user.admin && project.projectStatus == 'SHOPPING_CART' || project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || project.projectStatus == 'ARCHIVED'" [(ngModel)]="viewMode" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
@@ -125,7 +125,7 @@
   </div>
 </ion-content>
 
-<ion-footer *ngIf="user && project">
+<ion-footer *ngIf="project">
   <div class="footer" *ngIf="viewMode == 'CLIENT' && project.projectStatus == 'SHOPPING_CART' || project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || project.projectStatus == 'ARCHIVED'">
     <div class="desktop footer-menu">
       <div class="button" (click)="selectFooterTabLink('DESIGNER_NOTE')">

@@ -5,9 +5,6 @@ import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 import { ImageService } from '../../providers/image-service';
 
-import { DetailsPage } from '../details/details';
-import { DesignPage } from '../design/design';
-
 @IonicPage({
   name: 'final-delivery',
   segment: 'final-delivery/:id'
@@ -149,7 +146,7 @@ export class FinalDeliveryPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('DashboardPage');
+    this.navCtrl.setRoot('dashboard');
   }
 
   selectTab() {
@@ -162,12 +159,13 @@ export class FinalDeliveryPage {
       if (data) {
         var page: any;
         if (data == 'DETAILS')
-          page = DetailsPage;
+          page = 'details';
         if (data == 'DESIGN')
-          page = DesignPage;
+          page = 'design';
         if (page)
           this.navCtrl.setRoot(page, {
-            project: self.project
+            project: self.project,
+            id: self.project.projectId
           });
       }
     });
@@ -180,12 +178,13 @@ export class FinalDeliveryPage {
     console.log(link);
     var page: any;
     if (link == 'DETAILS')
-      page = DetailsPage;
+      page = 'details';
     if (link == 'DESIGN')
-      page = DesignPage;
+      page = 'design';
     if (page)
       this.navCtrl.setRoot(page, {
-        project: self.project
+        project: self.project,
+        id: self.project.projectId
       });
   }
 
@@ -211,11 +210,15 @@ export class FinalDeliveryPage {
   }
 
   selectFooterTabLink(link) {
+    const self = this;
     console.log("selected footer tab link:");
     console.log(link);
     if (link == 'SHOPPING_CART') {
       console.log("selected footer tab shopping cart");
-      this.navCtrl.setRoot('ShoppingCartPage');
+      this.navCtrl.setRoot('shopping-cart', {
+        project: self.project,
+        id: self.project.projectId
+      });
     } else {
       this.view = link;
     }
