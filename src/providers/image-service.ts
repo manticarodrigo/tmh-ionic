@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Platform } from 'ionic-angular';
 
 import { UserService } from './user-service';
 
@@ -10,13 +9,8 @@ export class ImageService {
   api: any;
 
   constructor(private http: Http,
-              private platform: Platform,
               private userService: UserService) {
-    if (this.platform.is('cordova')) {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
-    } else {
-      this.api = '/api';
-    }
+    this.api = this.userService.api
   }
 
   createFileUrl(data) {
@@ -31,9 +25,8 @@ export class ImageService {
 
   imageForUser(user) {
     const self = this;
-    const headers = this.userService.headers;
     return new Promise((resolve, reject) => {
-      self.getImage(user.portraitId, headers, (data) => {
+      self.getImage(user.portraitId, self.userService.headers, (data) => {
         if (data) {
           console.log("fetched user portrait data:");
           console.log(data);
@@ -71,7 +64,7 @@ export class ImageService {
     console.log("uploading file in general folder:");
     console.log(file);
     const self = this;
-    const headers = this.userService.headers;
+    var headers = this.userService.headers;
     return new Promise((resolve, reject) => {
       headers.append("enctype", "multipart/form-data");
       let now = new Date();
@@ -90,8 +83,6 @@ export class ImageService {
 
   getFileEntry(fileEntryId) {
     const self = this;
-    const headers = this.userService.headers;
-    console.log(headers);
     return new Promise((resolve, reject) => {
       console.log("fetching file with entry id:");
       console.log(fileEntryId);
@@ -101,7 +92,7 @@ export class ImageService {
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("found file data:");

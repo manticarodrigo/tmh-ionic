@@ -20,8 +20,15 @@ export class ProfilePage {
               private popoverCtrl: PopoverController,
               private platform: Platform,
               private userService: UserService) {
-    this.user = this.userService.currentUser;
-    this.user.createDateReadable = this.getDateStringFrom(this.user.createDate);
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        this.user = user;
+        this.user.createDateReadable = this.getDateStringFrom(this.user.createDate);
+      } else {
+        this.navCtrl.setRoot('login');
+      }
+    });
   }
 
   homePressed() {

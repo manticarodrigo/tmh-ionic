@@ -22,32 +22,7 @@ export class UserService {
     const token = btoa("manticarodrigo@gmail.com:tmh2017!");
     const adminHeaders = this.generateHeaders(token);
     this.adminHeaders = adminHeaders;
-  }
-
-  fetchCurrentUser() {
-    const self = this;
-    return new Promise((resolve, reject) => {
-      Promise.all([this.storage.get('user'), this.storage.get('token')])
-      .then(data => {
-        const user = data[0];
-        const token = data[1];
-        if (!user || !token) {
-          console.log('No stored user found');
-          console.log(user);
-          console.log(token);
-          resolve(null);
-        } else {
-          console.log('Stored user found');
-          self.setCurrentUser(user, token)
-          .then(user => {
-            resolve(user);
-          })
-          .catch(error => {
-            console.log(error);
-          });
-        }
-      });
-    });
+    this.fetchCurrentUser();
   }
 
   generateHeaders(token) {
@@ -55,6 +30,58 @@ export class UserService {
     var authHeader = `Basic ${token}`;
     headers.append('Authorization', authHeader);
     return headers;
+  }
+
+  fetchCurrentUser() {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      if (self.currentUser) {
+        resolve(self.currentUser);
+      } else {
+        Promise.all([this.storage.get('user'), this.storage.get('token')])
+        .then(data => {
+          const user = data[0];
+          const token = data[1];
+          if (!user || !token) {
+            console.log('No stored user found');
+            console.log(user);
+            console.log(token);
+            resolve(null);
+          } else {
+            console.log('Stored user found');
+            self.setCurrentUser(user, token)
+            .then(user => {
+              resolve(user);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+          }
+        });
+      }
+    });
+  }
+
+  setCurrentUser(user, token) {
+    const self = this;
+    console.log("setting current user and token:");
+    console.log(user);
+    console.log(token);
+    return new Promise((resolve, reject) => {
+      if (user && token) {
+        self.headers = self.generateHeaders(token);
+        self.currentUser = user;
+        self.storage.set('user', user);
+        self.storage.set('token', token);
+        resolve(user);
+      } else {
+        self.currentUser = null;
+        self.headers = null;
+        self.storage.set('user', null);
+        self.storage.set('token', null);
+        resolve(null);
+      }
+    });
   }
 
   login(email, password, callback) {
@@ -133,28 +160,6 @@ export class UserService {
           resolve(data);
         }
       });
-    });
-  }
-
-  setCurrentUser(user, token) {
-    const self = this;
-    console.log("setting current user and token:");
-    console.log(user);
-    console.log(token);
-    return new Promise((resolve, reject) => {
-      if (user && token) {
-        self.headers = self.generateHeaders(token);
-        self.currentUser = user;
-        self.storage.set('user', user);
-        self.storage.set('token', token);
-        resolve(user);
-      } else {
-        self.currentUser = null;
-        self.headers = null;
-        self.storage.set('user', null);
-        self.storage.set('token', null);
-        resolve(null);
-      }
     });
   }
 

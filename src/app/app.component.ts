@@ -18,24 +18,15 @@ export class TheManHome {
               private statusBar: StatusBar,
               private splashScreen: SplashScreen,
               private userService: UserService,
-              private imageService: ImageService,
               private socketService: SocketService) {
+    
+    // Initizalize sockets
+    this.socketService.init();
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleLightContent();
       splashScreen.hide();
-      // Fetch current user
-      this.userService.fetchCurrentUser()
-      .then(user => {
-        if (user) {
-          this.nav.setRoot('dashboard');
-        } else {
-          this.nav.setRoot('login');
-        }
-      });
-      // Initizalize sockets
-      this.socketService.init();
     });
   }
 

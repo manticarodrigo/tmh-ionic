@@ -8,8 +8,7 @@ import { DetailsPage } from '../details/details';
 import { DesignPage } from '../design/design';
 
 @IonicPage({
-  name: 'dashboard',
-  // segment: 'user/:id'
+  name: 'dashboard'
 })
 @Component({
   selector: 'page-dashboard',
@@ -50,32 +49,37 @@ export class DashboardPage {
               private platform: Platform,
               private userService: UserService,
               private projectService: ProjectService) {
-    if (this.userService.currentUser) {
-      this.user = this.userService.currentUser;
-    } else if (this.navParams.get('id')) {
-
-    }
+    const self = this;
+    // Fetch current user
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        self.user = user;
+        if (self.user.designer) {
+          console.log("current user is a designer");
+          self.viewMode = "DESIGNER";
+        }
+        if (self.user.admin) {
+          console.log("current user is an admin");
+          self.viewMode = "ADMIN";
+          self.tab = 'IN_PROGRESS';
+          self.tabs = {
+            IN_PROGRESS: 'IN PROGRESS',
+            UP_NEXT: 'UP NEXT',
+            COMPLETED: 'COMPLETED',
+            ARCHIVED: 'ARCHIVED',
+            
+          };
+        }
+        self.loadProjects();
+      } else {
+        self.navCtrl.setRoot('login');
+      }
+    });
     this.tabs = {
       IN_PROGRESS: 'IN PROGRESS',
       COMPLETED: 'COMPLETED',
     };
-    if (this.userService.currentUser.designer) {
-      console.log("current user is a designer");
-      this.viewMode = "DESIGNER";
-    }
-    if (this.user.admin) {
-      console.log("current user is an admin");
-      this.viewMode = "ADMIN";
-      this.tab = 'IN_PROGRESS';
-      this.tabs = {
-        IN_PROGRESS: 'IN PROGRESS',
-        UP_NEXT: 'UP NEXT',
-        COMPLETED: 'COMPLETED',
-        ARCHIVED: 'ARCHIVED',
-        
-      };
-    }
-    this.loadProjects();
   }
 
   homePressed() {
@@ -282,7 +286,8 @@ export class DashboardPage {
     if (project.projectStatus == 'ARCHIVED')
       page = 'final-delivery';
     this.navCtrl.setRoot(page, {
-      project: project
+      project: project,
+      id: project.projectId
     });
   }
 

@@ -10,7 +10,7 @@ import { DesignPage } from '../design/design';
 
 @IonicPage({
   name: 'final-delivery',
-  // segment: 'project/:id'
+  segment: 'final-delivery/:id'
 })
 @Component({
   selector: 'page-final-delivery',
@@ -53,19 +53,50 @@ export class FinalDeliveryPage {
               private modalCtrl: ModalController,
               private platform: Platform) {
     const self = this;
-    this.user = this.userService.currentUser;
-    if (this.userService.currentUser.designer) {
-      console.log("current user is a designer");
-      this.viewMode = "DESIGNER";
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        self.user = user;
+        if (self.user.designer) {
+          self.viewMode = "DESIGNER";
+        }
+        if (self.user.admin) {
+          self.viewMode = "DESIGNER";
+        }
+        self.fetchProject();
+      } else {
+        self.navCtrl.setRoot('login');
+      }
+    });
+    
+  }
+
+  fetchProject() {
+    const self = this;
+    if (this.navParams.get('project')) {
+      self.project = this.navParams.get('project');
+      if (self.project && self.project.designerNote != '') {
+        self.designerNote = this.project.designerNote;
+      }
+      self.fetchDetails();
+    } else if (this.navParams.get('id')) {
+      const id = self.navParams.get('id');
+      self.projectService.findByProjectId(id)
+      .then(project => {
+        if (!project['exception']) {
+          self.project = project;
+          if (self.project && self.project.designerNote != '') {
+            self.designerNote = self.project.designerNote;
+          }
+          self.fetchDetails();
+        }
+      });
     }
-    if (this.user.admin) {
-      console.log("current user is an admin");
-      this.viewMode = "DESIGNER";
-    }
-    this.project = this.navParams.get('project');
-    if (this.project.designerNote != '') {
-      this.designerNote = this.project.designerNote;
-    }
+  }
+
+  fetchDetails() {
+    const self = this;
+    console.log("fetching project details");
     this.projectService.fetchProjectDetail(this.project.projectId, "CONCEPT")
     .then(data => {
       console.log("design page received concepts and floorplan:");

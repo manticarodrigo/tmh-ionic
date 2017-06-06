@@ -56,31 +56,59 @@ export class DetailsPage {
               private modalCtrl: ModalController,
               private platform: Platform) {
     const self = this;
-    this.user = this.userService.currentUser;
-    if (this.userService.currentUser.designer) {
-      console.log("current user is a designer");
-      this.viewMode = "DESIGNER";
+    // Fetch current user
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        self.user = user;
+        if (self.user.designer) {
+          console.log("current user is a designer");
+          self.viewMode = "DESIGNER";
+        }
+        if (self.user.admin) {
+          console.log("current user is an admin");
+          self.viewMode = "DESIGNER";
+        }
+        self.fetchProject();
+      } else {
+        self.navCtrl.setRoot('login');
+      }
+    });
+  }
+
+  fetchProject() {
+    const self = this;
+    console.log("fetching projects");
+    if (this.navParams.get('project')) {
+      self.project = self.navParams.get('project');
+      self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
+      self.fetchDetails();
+    } else if (this.navParams.get('id')) {
+      const id = self.navParams.get('id');
+      self.projectService.findByProjectId(id)
+      .then(project => {
+        if (!project['exception']) {
+          self.project = self.navParams.get('project');
+          self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
+          self.fetchDetails();
+        }
+      });
     }
-    if (this.user.admin) {
-      console.log("current user is an admin");
-      this.viewMode = "DESIGNER";
-    }
-    this.project = this.navParams.get('project');
-    this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
-    
+  }
+
+  fetchDetails() {
+    const self = this;
+    console.log("fetching details");
     this.projectService.fetchQuestionAnswers(this.project)
     .then(answers => {
       console.log("details page received answers:");
       console.log(answers);
       self.answers = answers;
     });
-
     this.fetchDrawings();
     this.fetchInspirations();
     this.fetchFurnitures();
   }
-
-  
 
   fetchDrawings() {
     const self = this;
@@ -183,7 +211,7 @@ export class DetailsPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('DashboardPage');
+    this.navCtrl.setRoot('dashboard');
   }
 
   selectTab() {

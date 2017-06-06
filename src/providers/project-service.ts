@@ -7,18 +7,12 @@ import { UserService } from './user-service';
 
 @Injectable()
 export class ProjectService {
-  headers: any;
   api: any;
 
   constructor(private http: Http,
               private platform: Platform,
               private userService: UserService) {
-    this.headers = this.userService.headers;
-    if (this.platform.is('cordova')) {
-      this.api = 'http://stage.themanhome.com/api/jsonws';
-    } else {
-      this.api = '/api';
-    }
+    this.api = this.userService.api;
   }
 
   updateStatus(project, status) {
@@ -30,7 +24,7 @@ export class ProjectService {
       if (status == 'CONCEPTS') {
         endpoint += "/daysLeft/" + 14;
       }
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("status update returned response:");
@@ -46,7 +40,7 @@ export class ProjectService {
       console.log("updating project status/revisionCount:");
       console.log(status);
       var endpoint = this.api + "/tmh-project-portlet.project//update-project-revision-count/projectId/" + project.projectId + "/userId/" + project.userId + "/projectStatus/" + status + "/revisionCount/" + Number(project.revisionCount) + 1;
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("status/revisionCount update returned response:");
@@ -63,12 +57,34 @@ export class ProjectService {
       console.log(status);
       var endpoint = this.api + "/tmh-project-portlet.projectdetail/update-project-detail/projectDetailId/" + detail.projectDetailId + "/projectDetailStatus/" + status;
       console.log(endpoint);
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("detail update returned response:");
         console.log(data);
         resolve(data);
+      });
+    });
+  }
+
+  findByProjectId(id) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      const map = {
+        "$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-project-id": {
+          "projectId": id,
+          "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
+            "@userId": "$project.userId"
+          }
+        }
+      }
+      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      self.http.get(endpoint, {headers: self.userService.headers})
+      .map(res => res.json())
+      .subscribe(project => {
+        console.log("found project:");
+        console.log(project);
+        resolve(project);
       });
     });
   }
@@ -85,7 +101,7 @@ export class ProjectService {
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(projects => {
         console.log("found projects:");
@@ -106,7 +122,7 @@ export class ProjectService {
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(projects => {
         console.log("found projects:");
@@ -127,7 +143,7 @@ export class ProjectService {
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(projects => {
         console.log("found projects:");
@@ -148,7 +164,7 @@ export class ProjectService {
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(projects => {
         console.log("found projects:");
@@ -169,7 +185,7 @@ export class ProjectService {
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(projects => {
         console.log("found projects:");
@@ -192,7 +208,7 @@ export class ProjectService {
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("found project detail:");
@@ -216,7 +232,7 @@ export class ProjectService {
       }
       var questionId = questionMap[questionNum];
       const endpoint = this.api + "/tmh-project-portlet.userquestionanswer/fetch-by-user-id-question-id/userId/" + project.userId + "/questionId/" + questionId;
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("found question answer:");
@@ -247,7 +263,7 @@ export class ProjectService {
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: self.headers})
+      self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("found project items:");
@@ -262,7 +278,7 @@ export class ProjectService {
     console.log(type);
     const self = this;
     return new Promise((resolve, reject) => {
-      var headers = self.headers;
+      var headers = self.userService.headers;
       headers.append("enctype", "multipart/form-data");
       const now = new Date().getTime();
       const endpoint = this.api + "/tmh-project-portlet.projectdetail/add-project-detail.9/globalGroupId/" + 20484 + "/projectId/" + project.projectId + "/projectDetailType/" + type + "/projectDetailStatus/" + status + "/fileName/" + now + "-" + file.name + "/contentType/" + file.type.split("/")[1] + "/fileSize/" + file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
@@ -285,7 +301,7 @@ export class ProjectService {
     const self = this;
     return new Promise((resolve, reject) => {
       const endpoint = this.api + "/tmh-project-portlet.projectdetail/delete-project-detail/projectId/" + project.projectId + "/projectDetailId/" + detail.projectDetailId;
-      this.http.get(endpoint, {headers: self.headers})
+      this.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("delete returned response:");
@@ -300,7 +316,7 @@ export class ProjectService {
     return new Promise((resolve, reject) => {
       console.log("adding project item:");
       console.log(item);
-      var headers = self.headers;
+      var headers = self.userService.headers;
       headers.append("enctype", "multipart/form-data");
       const now = new Date().getTime();
       const map = {
@@ -334,7 +350,7 @@ export class ProjectService {
     return new Promise((resolve, reject) => {
       console.log("updating project item:");
       console.log(item);
-      var headers = self.headers;
+      var headers = self.userService.headers;
       headers.append("enctype", "multipart/form-data");
       const now = new Date().getTime();
       const map = {
@@ -373,7 +389,7 @@ export class ProjectService {
     const self = this;
     return new Promise((resolve, reject) => {
       const endpoint = this.api + "/tmh-project-portlet.projectitem/update-project-item-status/projectItemId/" + item.projectItemId + "/userId/" + item.userId + "/projectItemStatus/" + status;
-      this.http.get(endpoint, {headers: self.headers})
+      this.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
         console.log("update returned response:");
@@ -391,7 +407,7 @@ export class ProjectService {
       console.log(item);
       console.log(file);
       console.log(parentItem);
-      var headers = self.headers;
+      var headers = self.userService.headers;
       headers.append("enctype", "multipart/form-data");
       const now = new Date().getTime();
       const map = {

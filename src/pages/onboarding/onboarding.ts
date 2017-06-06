@@ -71,7 +71,19 @@ export class OnboardingPage {
               private userService: UserService,
               private popoverCtrl: PopoverController,
               private platform: Platform) {
-    this.user = this.userService.currentUser;
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        this.user = user;
+        this.fetchCreditCard();
+      } else {
+        this.navCtrl.setRoot('login');
+      }
+    });
+  }
+
+  fetchCreditCard() {
+    console.log("fetching credit card");
     this.userService.fetchCreditCard(this.user)
     .then(data => {
       console.log("onboarding component received credit card data:");

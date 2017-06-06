@@ -33,6 +33,12 @@ export class LoginPage {
               private fb: FacebookService,
               private userService: UserService,
               private imageService: ImageService) {
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        this.navCtrl.setRoot('dashboard');
+      }
+    });
     this.platform.ready().then(() => {
       // Check If Cordova/Mobile
       if (this.platform.is('cordova')) {

@@ -18,6 +18,14 @@ export class ShoppingCartPage {
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService) {
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        this.user = user;
+      } else {
+        this.navCtrl.setRoot('login');
+      }
+    });
   }
 
 

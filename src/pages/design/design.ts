@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 import * as Leaflet from 'leaflet';
 
 import { UserService } from '../../providers/user-service';
@@ -10,6 +10,9 @@ import { DetailsPage } from '../details/details';
 import { FinalDeliveryPage } from '../final-delivery/final-delivery';
 import { ChatPage } from '../chat/chat';
 
+@IonicPage({
+  segment: 'design:id'
+})
 @Component({
   selector: 'page-design',
   templateUrl: 'design.html',
@@ -61,22 +64,52 @@ export class DesignPage {
               private modalCtrl: ModalController,
               private platform: Platform) {
     const self = this;
-    this.user = this.userService.currentUser;
-    if (this.userService.currentUser.designer) {
-      console.log("current user is a designer");
-      this.viewMode = "DESIGNER";
+     // Fetch current user
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        self.user = user;
+        if (self.user.designer) {
+          console.log("current user is a designer");
+          self.viewMode = "DESIGNER";
+        }
+        if (self.user.admin) {
+          console.log("current user is an admin");
+          self.viewMode = "DESIGNER";
+        }
+        self.fetchProject();
+      } else {
+        self.navCtrl.setRoot('login');
+      }
+    });
+  }
+
+  fetchProject() {
+    const self = this;
+    console.log("fetching project");
+    if (this.navParams.get('project')) {
+      self.project = self.navParams.get('project');
+      self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
+      if (self.project.projectStatus == 'FINAL_DELIVERY' || self.project.projectStatus == 'SHOPPING_CART' || self.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || self.project.projectStatus == 'ARCHIVED') {
+          self.itemsViewMode = 'APPROVED';
+      }
+      self.fetchDetails();
+      self.fetchItems();
+    } else if (this.navParams.get('id')) {
+      const id = self.navParams.get('id');
+      self.projectService.findByProjectId(id)
+      .then(project => {
+        if (!project['exception']) {
+          self.project = self.navParams.get('project');
+          self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
+          if (self.project.projectStatus == 'FINAL_DELIVERY' || self.project.projectStatus == 'SHOPPING_CART' || self.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || self.project.projectStatus == 'ARCHIVED') {
+              self.itemsViewMode = 'APPROVED';
+          }
+          self.fetchDetails();
+          self.fetchItems();
+        }
+      });
     }
-    if (this.user.admin) {
-      console.log("current user is an admin");
-      this.viewMode = "DESIGNER";
-    }
-    this.project = this.navParams.get('project');
-    this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
-    if (this.project.projectStatus == 'FINAL_DELIVERY' || this.project.projectStatus == 'SHOPPING_CART' || this.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || this.project.projectStatus == 'ARCHIVED') {
-        this.itemsViewMode = 'APPROVED';
-    }
-    this.fetchDetails();
-    this.fetchItems();
   }
 
   fetchDetails() {
@@ -409,7 +442,7 @@ export class DesignPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('DashboardPage');
+    this.navCtrl.setRoot('dashboard');
   }
 
   selectTab() {
