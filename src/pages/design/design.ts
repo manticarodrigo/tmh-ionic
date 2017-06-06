@@ -6,12 +6,9 @@ import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 import { ImageService } from '../../providers/image-service';
 
-import { DetailsPage } from '../details/details';
-import { FinalDeliveryPage } from '../final-delivery/final-delivery';
-import { ChatPage } from '../chat/chat';
-
 @IonicPage({
-  segment: 'design:id'
+  name: 'design',
+  segment: 'design/:id'
 })
 @Component({
   selector: 'page-design',
@@ -458,9 +455,9 @@ export class DesignPage {
       if (data) {
         var page: any;
         if (data == 'DETAILS')
-          page = DetailsPage;
+          page = 'details';
         if (data == 'FINAL DELIVERY')
-          page = FinalDeliveryPage;
+          page = 'final-delivery';
         if (page)
           this.navCtrl.setRoot(page, {
             project: self.project
@@ -476,9 +473,9 @@ export class DesignPage {
     console.log(link);
     var page: any;
     if (link == 'DETAILS')
-      page = DetailsPage;
+      page = 'details';
     if (link == 'FINAL_DELIVERY')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (page)
       this.navCtrl.setRoot(page, {
         project: self.project

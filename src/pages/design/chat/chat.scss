@@ -1,4 +1,8 @@
 page-chat {
+  .fixed-content, .scroll-content {
+    margin-top: 60px !important;
+    margin-bottom: 80px !important;
+  }
   .fixed-content {
     background-color: #fff !important;
   }

@@ -4,9 +4,6 @@ import { IonicPage, NavController, NavParams, AlertController, PopoverController
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 
-import { DetailsPage } from '../details/details';
-import { DesignPage } from '../design/design';
-
 @IonicPage({
   name: 'dashboard'
 })
@@ -266,22 +263,24 @@ export class DashboardPage {
     console.log(project.projectStatus);
     var page: any;
     if (project.projectStatus == 'DETAILS')
-      page = DetailsPage;
+      page = 'details';
     if (project.projectStatus == 'DESIGN')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'CONCEPTS')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'FLOOR_PLAN')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'REQUEST_ALTERNATIVES')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'ALTERNATIVES_READY')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'FINAL_DELIVERY')
       page = 'final-delivery';
     if (project.projectStatus == 'SHOPPING_CART')
       page = 'final-delivery';
     if (project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX')
+      page = 'final-delivery';
+    if (project.projectStatus == 'CHECKOUT')
       page = 'final-delivery';
     if (project.projectStatus == 'ARCHIVED')
       page = 'final-delivery';

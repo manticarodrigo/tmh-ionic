@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 import { ImageService } from '../../providers/image-service';
 
-import { DesignPage } from '../design/design';
-import { FinalDeliveryPage } from '../final-delivery/final-delivery';
-import { ChatPage } from '../chat/chat';
-
+@IonicPage({
+  name: 'details',
+  segment: 'details/:id'
+})
 @Component({
   selector: 'page-details',
   templateUrl: 'details.html'
@@ -227,9 +227,9 @@ export class DetailsPage {
       if (data) {
         var page: any;
         if (data == 'DESIGN')
-          page = DesignPage;
+          page = 'design';
         if (data == 'FINAL DELIVERY')
-          page = FinalDeliveryPage;
+          page = 'final-delivery';
         if (page)
           this.navCtrl.setRoot(page, {
             project: self.project
@@ -245,9 +245,9 @@ export class DetailsPage {
     console.log(link);
     var page: any;
     if (link == 'DESIGN')
-      page = DesignPage;
+      page = 'design';
     if (link == 'FINAL_DELIVERY')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (page)
       this.navCtrl.setRoot(page, {
         project: self.project
@@ -302,7 +302,7 @@ export class DetailsPage {
       if (data) {
         self.projectService.updateStatus(self.project, 'DESIGN')
         .then(data => {
-          self.navCtrl.setRoot(DesignPage, {
+          self.navCtrl.setRoot('design', {
             project: self.project
           });
         });
