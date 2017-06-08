@@ -3,7 +3,10 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 
-@IonicPage()
+@IonicPage({
+  name: 'shopping-cart',
+  segment: 'shopping-cart/:id'
+})
 @Component({
   selector: 'page-shopping-cart',
   templateUrl: 'shopping-cart.html',
@@ -18,6 +21,14 @@ export class ShoppingCartPage {
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
               private userService: UserService) {
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        this.user = user;
+      } else {
+        this.navCtrl.setRoot('login');
+      }
+    });
   }
 
 

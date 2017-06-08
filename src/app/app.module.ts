@@ -9,11 +9,6 @@ import { ProjectService } from '../providers/project-service';
 import { SocketService } from '../providers/socket-service';
 import { ChatService } from '../providers/chat-service';
 
-import { ChatPage } from '../pages/chat/chat';
-import { DetailsPage } from '../pages/details/details';
-import { DesignPage } from '../pages/design/design';
-import { FinalDeliveryPage } from '../pages/final-delivery/final-delivery';
-
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -25,28 +20,21 @@ import { FacebookService } from 'ngx-facebook';
 
 @NgModule({
   declarations: [
-    TheManHome,
-    ChatPage,
-    DetailsPage,
-    DesignPage,
-    FinalDeliveryPage
+    TheManHome
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(TheManHome, {
       mode: 'md',
-      activator: 'none'
+      activator: 'none',
+      preloadModules: true
     }),
     IonicStorageModule.forRoot(),
     HttpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    TheManHome,
-    ChatPage,
-    DetailsPage,
-    DesignPage,
-    FinalDeliveryPage
+    TheManHome
   ],
   providers: [
     StatusBar,
@@ -57,7 +45,6 @@ import { FacebookService } from 'ngx-facebook';
     ProjectService,
     SocketService,
     ChatService,
-    // Facebook,
     FacebookService
   ]
 })

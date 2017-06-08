@@ -3,7 +3,9 @@ import { IonicPage, NavController, NavParams, ModalController, AlertController, 
 
 import { UserService } from '../../providers/user-service';
 
-@IonicPage()
+@IonicPage({
+  name: 'onboarding'
+})
 @Component({
   selector: 'page-onboarding',
   templateUrl: 'onboarding.html',
@@ -71,7 +73,19 @@ export class OnboardingPage {
               private userService: UserService,
               private popoverCtrl: PopoverController,
               private platform: Platform) {
-    this.user = this.userService.currentUser;
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        this.user = user;
+        this.fetchCreditCard();
+      } else {
+        this.navCtrl.setRoot('login');
+      }
+    });
+  }
+
+  fetchCreditCard() {
+    console.log("fetching credit card");
     this.userService.fetchCreditCard(this.user)
     .then(data => {
       console.log("onboarding component received credit card data:");
@@ -115,7 +129,7 @@ export class OnboardingPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('DashboardPage');
+    this.navCtrl.setRoot('dashboard');
   }
 
   startProject() {

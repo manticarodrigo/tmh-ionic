@@ -4,12 +4,9 @@ import { IonicPage, NavController, NavParams, AlertController, PopoverController
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 
-import { DetailsPage } from '../details/details';
-import { DesignPage } from '../design/design';
-import { FinalDeliveryPage } from '../final-delivery/final-delivery';
-import { ChatPage } from '../chat/chat';
-
-@IonicPage()
+@IonicPage({
+  name: 'dashboard'
+})
 @Component({
   selector: 'page-dashboard',
   templateUrl: 'dashboard.html'
@@ -42,34 +39,44 @@ export class DashboardPage {
     ARCHIVED: 'Archived'
   };
   constructor(private navCtrl: NavController,
+              private navParams: NavParams,
               private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
               private modalCtrl: ModalController,
               private platform: Platform,
               private userService: UserService,
               private projectService: ProjectService) {
-    this.user = this.userService.currentUser;
+    const self = this;
+    // Fetch current user
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        self.user = user;
+        if (self.user.designer) {
+          console.log("current user is a designer");
+          self.viewMode = "DESIGNER";
+        }
+        if (self.user.admin) {
+          console.log("current user is an admin");
+          self.viewMode = "ADMIN";
+          self.tab = 'IN_PROGRESS';
+          self.tabs = {
+            IN_PROGRESS: 'IN PROGRESS',
+            UP_NEXT: 'UP NEXT',
+            COMPLETED: 'COMPLETED',
+            ARCHIVED: 'ARCHIVED',
+            
+          };
+        }
+        self.loadProjects();
+      } else {
+        self.navCtrl.setRoot('login');
+      }
+    });
     this.tabs = {
       IN_PROGRESS: 'IN PROGRESS',
       COMPLETED: 'COMPLETED',
     };
-    if (this.userService.currentUser.designer) {
-      console.log("current user is a designer");
-      this.viewMode = "DESIGNER";
-    }
-    if (this.user.admin) {
-      console.log("current user is an admin");
-      this.viewMode = "ADMIN";
-      this.tab = 'IN_PROGRESS';
-      this.tabs = {
-        IN_PROGRESS: 'IN PROGRESS',
-        UP_NEXT: 'UP NEXT',
-        COMPLETED: 'COMPLETED',
-        ARCHIVED: 'ARCHIVED',
-        
-      };
-    }
-    this.loadProjects();
   }
 
   homePressed() {
@@ -87,7 +94,7 @@ export class DashboardPage {
       {
         text: 'START',
         handler: data => {
-          this.navCtrl.setRoot('OnboardingPage')
+          this.navCtrl.setRoot('onboarding')
         }
       }]
     });
@@ -108,7 +115,7 @@ export class DashboardPage {
       console.log(tab);
       tabs.push(tab);
     }
-    let popover = this.popoverCtrl.create('DropdownPage', {
+    let popover = this.popoverCtrl.create('dropdown', {
       items: tabs
     }, 
     {
@@ -248,7 +255,7 @@ export class DashboardPage {
 
   startProject() {
     console.log("Start proj pressed");
-    this.navCtrl.setRoot('OnboardingPage');
+    this.navCtrl.setRoot('onboarding');
   }
 
   selectedProject(project) {
@@ -256,27 +263,30 @@ export class DashboardPage {
     console.log(project.projectStatus);
     var page: any;
     if (project.projectStatus == 'DETAILS')
-      page = DetailsPage;
+      page = 'details';
     if (project.projectStatus == 'DESIGN')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'CONCEPTS')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'FLOOR_PLAN')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'REQUEST_ALTERNATIVES')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'ALTERNATIVES_READY')
-      page = DesignPage;
+      page = 'design';
     if (project.projectStatus == 'FINAL_DELIVERY')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (project.projectStatus == 'SHOPPING_CART')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
+    if (project.projectStatus == 'CHECKOUT')
+      page = 'final-delivery';
     if (project.projectStatus == 'ARCHIVED')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     this.navCtrl.setRoot(page, {
-      project: project
+      project: project,
+      id: project.projectId
     });
   }
 

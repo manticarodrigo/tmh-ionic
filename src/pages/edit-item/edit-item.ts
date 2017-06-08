@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
-@IonicPage()
+@IonicPage({
+  name: 'edit-item'
+})
 @Component({
   selector: 'page-edit-item',
   templateUrl: 'edit-item.html',

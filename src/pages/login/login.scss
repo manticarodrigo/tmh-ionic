@@ -2,6 +2,15 @@ page-login {
   .scroll-content {
     background-color: #1b1b1b;
   }
+  .loading {
+    background-color: rgba(255,255,255,0) !important;
+    .logo {
+      filter: brightness(1);
+    }
+    .spinner * {
+      stroke: #fff;
+    }
+  }
   .center {
     background-color: #fff;
     padding: 30px;

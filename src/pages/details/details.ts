@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 import { ImageService } from '../../providers/image-service';
 
-import { DesignPage } from '../design/design';
-import { FinalDeliveryPage } from '../final-delivery/final-delivery';
-import { ChatPage } from '../chat/chat';
-
+@IonicPage({
+  name: 'details',
+  segment: 'details/:id'
+})
 @Component({
   selector: 'page-details',
   templateUrl: 'details.html'
@@ -56,31 +56,59 @@ export class DetailsPage {
               private modalCtrl: ModalController,
               private platform: Platform) {
     const self = this;
-    this.user = this.userService.currentUser;
-    if (this.userService.currentUser.designer) {
-      console.log("current user is a designer");
-      this.viewMode = "DESIGNER";
+    // Fetch current user
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        self.user = user;
+        if (self.user.designer) {
+          console.log("current user is a designer");
+          self.viewMode = "DESIGNER";
+        }
+        if (self.user.admin) {
+          console.log("current user is an admin");
+          self.viewMode = "DESIGNER";
+        }
+        self.fetchProject();
+      } else {
+        self.navCtrl.setRoot('login');
+      }
+    });
+  }
+
+  fetchProject() {
+    const self = this;
+    console.log("fetching projects");
+    if (this.navParams.get('project')) {
+      self.project = self.navParams.get('project');
+      self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
+      self.fetchDetails();
+    } else if (this.navParams.get('id')) {
+      const id = self.navParams.get('id');
+      self.projectService.findByProjectId(id)
+      .then(project => {
+        if (!project['exception']) {
+          self.project = project;
+          self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
+          self.fetchDetails();
+        }
+      });
     }
-    if (this.user.admin) {
-      console.log("current user is an admin");
-      this.viewMode = "DESIGNER";
-    }
-    this.project = this.navParams.get('project');
-    this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
-    
+  }
+
+  fetchDetails() {
+    const self = this;
+    console.log("fetching details");
     this.projectService.fetchQuestionAnswers(this.project)
     .then(answers => {
       console.log("details page received answers:");
       console.log(answers);
       self.answers = answers;
     });
-
     this.fetchDrawings();
     this.fetchInspirations();
     this.fetchFurnitures();
   }
-
-  
 
   fetchDrawings() {
     const self = this;
@@ -183,13 +211,13 @@ export class DetailsPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('DashboardPage');
+    this.navCtrl.setRoot('dashboard');
   }
 
   selectTab() {
     const self = this;
     console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('DropdownPage', {
+    let popover = this.popoverCtrl.create('dropdown', {
       items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     }, 
     {
@@ -199,12 +227,13 @@ export class DetailsPage {
       if (data) {
         var page: any;
         if (data == 'DESIGN')
-          page = DesignPage;
+          page = 'design';
         if (data == 'FINAL DELIVERY')
-          page = FinalDeliveryPage;
+          page = 'final-delivery';
         if (page)
           this.navCtrl.setRoot(page, {
-            project: self.project
+            project: self.project,
+            id: self.project.projectId
           });
       }
     });
@@ -217,12 +246,13 @@ export class DetailsPage {
     console.log(link);
     var page: any;
     if (link == 'DESIGN')
-      page = DesignPage;
+      page = 'design';
     if (link == 'FINAL_DELIVERY')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (page)
       this.navCtrl.setRoot(page, {
-        project: self.project
+        project: self.project,
+        id: self.project.projectId
       });
   }
 
@@ -266,7 +296,7 @@ export class DetailsPage {
   submitToDesigner() {
     const self = this;
     console.log("submit to designer pressed");
-    let modal = this.modalCtrl.create('ConfirmPage', {
+    let modal = this.modalCtrl.create('confirm', {
       message: 'Ready to connect with your designer? By selecting the confimation below, your details will be submitted so your designer can begin on your concept boards.'
     });
     modal.onDidDismiss(data => {
@@ -274,8 +304,9 @@ export class DetailsPage {
       if (data) {
         self.projectService.updateStatus(self.project, 'DESIGN')
         .then(data => {
-          self.navCtrl.setRoot(DesignPage, {
-            project: self.project
+          self.navCtrl.setRoot('design', {
+            project: self.project,
+            id: self.project.projectId
           });
         });
       }

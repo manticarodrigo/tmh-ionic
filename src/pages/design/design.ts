@@ -1,15 +1,15 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
 import * as Leaflet from 'leaflet';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
 import { ImageService } from '../../providers/image-service';
 
-import { DetailsPage } from '../details/details';
-import { FinalDeliveryPage } from '../final-delivery/final-delivery';
-import { ChatPage } from '../chat/chat';
-
+@IonicPage({
+  name: 'design',
+  segment: 'design/:id'
+})
 @Component({
   selector: 'page-design',
   templateUrl: 'design.html',
@@ -61,22 +61,52 @@ export class DesignPage {
               private modalCtrl: ModalController,
               private platform: Platform) {
     const self = this;
-    this.user = this.userService.currentUser;
-    if (this.userService.currentUser.designer) {
-      console.log("current user is a designer");
-      this.viewMode = "DESIGNER";
+     // Fetch current user
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        self.user = user;
+        if (self.user.designer) {
+          console.log("current user is a designer");
+          self.viewMode = "DESIGNER";
+        }
+        if (self.user.admin) {
+          console.log("current user is an admin");
+          self.viewMode = "DESIGNER";
+        }
+        self.fetchProject();
+      } else {
+        self.navCtrl.setRoot('login');
+      }
+    });
+  }
+
+  fetchProject() {
+    const self = this;
+    console.log("fetching project");
+    if (this.navParams.get('project')) {
+      self.project = self.navParams.get('project');
+      self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
+      if (self.project.projectStatus == 'FINAL_DELIVERY' || self.project.projectStatus == 'SHOPPING_CART' || self.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || self.project.projectStatus == 'ARCHIVED') {
+          self.itemsViewMode = 'APPROVED';
+      }
+      self.fetchDetails();
+      self.fetchItems();
+    } else if (this.navParams.get('id')) {
+      const id = self.navParams.get('id');
+      self.projectService.findByProjectId(id)
+      .then(project => {
+        if (!project['exception']) {
+          self.project = project;
+          self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
+          if (self.project.projectStatus == 'FINAL_DELIVERY' || self.project.projectStatus == 'SHOPPING_CART' || self.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || self.project.projectStatus == 'ARCHIVED') {
+              self.itemsViewMode = 'APPROVED';
+          }
+          self.fetchDetails();
+          self.fetchItems();
+        }
+      });
     }
-    if (this.user.admin) {
-      console.log("current user is an admin");
-      this.viewMode = "DESIGNER";
-    }
-    this.project = this.navParams.get('project');
-    this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.endDate);
-    if (this.project.projectStatus == 'FINAL_DELIVERY' || this.project.projectStatus == 'SHOPPING_CART' || this.project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || this.project.projectStatus == 'ARCHIVED') {
-        this.itemsViewMode = 'APPROVED';
-    }
-    this.fetchDetails();
-    this.fetchItems();
   }
 
   fetchDetails() {
@@ -242,81 +272,83 @@ export class DesignPage {
     if (this.floorplanMap) {
       this.floorplanMap.remove();
     }
-    setTimeout(() => {
-      // create the floorplan map
-      this.floorplanMap = Leaflet.map('floorplan-map', {
-        attributionControl: false,
-        scrollWheelZoom: false,
-        minZoom: 1,
-        maxZoom: 4,
-        center: [0, 0],
-        zoom: 1,
-        crs: Leaflet.CRS.Simple
-      });
-      // dimensions of the image
-      var w = this.floorplanMap.getSize().x,
-          h = this.floorplanMap.getSize().y,
-          url = self.floorplan.url;
-      console.log("map dimensions:");
-      console.log(w);
-      console.log(h);
+    if (self.view == 'FLOOR_PLAN') {
+      setTimeout(() => {
+        // create the floorplan map
+        this.floorplanMap = Leaflet.map('floorplan-map', {
+          attributionControl: false,
+          scrollWheelZoom: false,
+          minZoom: 1,
+          maxZoom: 4,
+          center: [0, 0],
+          zoom: 1,
+          crs: Leaflet.CRS.Simple
+        });
+        // dimensions of the image
+        var w = this.floorplanMap.getSize().x,
+            h = this.floorplanMap.getSize().y,
+            url = self.floorplan.url;
+        console.log("map dimensions:");
+        console.log(w);
+        console.log(h);
 
-      // calculate the edges of the image, in coordinate space
-      var southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
-      var northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
-      var bounds = new Leaflet.LatLngBounds(southWest, northEast);
-      
-      // add the image overlay, 
-      // so that it covers the entire map
-      Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
-      
-      this.floorplanMap.fitBounds(bounds);
+        // calculate the edges of the image, in coordinate space
+        var southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
+        var northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
+        var bounds = new Leaflet.LatLngBounds(southWest, northEast);
+        
+        // add the image overlay, 
+        // so that it covers the entire map
+        Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
+        
+        this.floorplanMap.fitBounds(bounds);
 
-      // draw markers
-      if (self.itemsViewMode == 'PENDING' && self.pendingItems) {
-        self.createMarkers(self.pendingItems, w, h);
-      } else if (self.itemsViewMode == 'MODIFIED' && self.modifiedItems) {
-        self.createMarkers(self.modifiedItems, w, h);
-      } else if (self.approvedItems) {
-        self.createMarkers(self.approvedItems, w, h);
-      }
-      // listen for new marker event
-      this.floorplanMap.on('dblclick', function(e) {
-        console.log(e);
-        if (self.viewMode == 'DESIGNER') {
-          var numberIcon = Leaflet.divIcon({
-            className: "number-icon",
-            iconSize: [30, 30],
-            iconAnchor: [15, 30],
-            popupAnchor: [0, -30],
-            html: "*"       
-          });
-          const marker = new Leaflet.Marker(e.latlng, {
-              icon: numberIcon
-          });
-          marker.addTo(self.floorplanMap);
-          let popover = self.popoverCtrl.create('EditItemPage');
-          popover.onDidDismiss(data => {
-            console.log(data);
-            if (data) {
-              data.YCoordinate = e.latlng.lat / -h * 8 ;
-              data.XCoordinate = e.latlng.lng / w * 8;
-              self.projectService.addItem(self.project, data)
-              .then(itemData => {
-                if (!itemData['exception']) {
-                  self.fetchItems();
-                }
-              });
-            } else {
-              marker.remove();
-            }
-          });
-          popover.present();
+        // draw markers
+        if (self.itemsViewMode == 'PENDING' && self.pendingItems) {
+          self.createMarkers(self.pendingItems, w, h);
+        } else if (self.itemsViewMode == 'MODIFIED' && self.modifiedItems) {
+          self.createMarkers(self.modifiedItems, w, h);
+        } else if (self.approvedItems) {
+          self.createMarkers(self.approvedItems, w, h);
         }
-      });
+        // listen for new marker event
+        this.floorplanMap.on('dblclick', function(e) {
+          console.log(e);
+          if (self.viewMode == 'DESIGNER') {
+            var numberIcon = Leaflet.divIcon({
+              className: "number-icon",
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+              popupAnchor: [0, -30],
+              html: "*"       
+            });
+            const marker = new Leaflet.Marker(e.latlng, {
+                icon: numberIcon
+            });
+            marker.addTo(self.floorplanMap);
+            let popover = self.popoverCtrl.create('edit-item');
+            popover.onDidDismiss(data => {
+              console.log(data);
+              if (data) {
+                data.YCoordinate = e.latlng.lat / -h * 8 ;
+                data.XCoordinate = e.latlng.lng / w * 8;
+                self.projectService.addItem(self.project, data)
+                .then(itemData => {
+                  if (!itemData['exception']) {
+                    self.fetchItems();
+                  }
+                });
+              } else {
+                marker.remove();
+              }
+            });
+            popover.present();
+          }
+        });
 
-      self.loading = false;
-    }, 2000);
+        self.loading = false;
+      }, 2000);
+    }
   }
 
   createMarkers(items, w, h) {
@@ -409,13 +441,13 @@ export class DesignPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('DashboardPage');
+    this.navCtrl.setRoot('dashboard');
   }
 
   selectTab() {
     const self = this;
     console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('DropdownPage', {
+    let popover = this.popoverCtrl.create('dropdown', {
       items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     }, 
     {
@@ -425,12 +457,13 @@ export class DesignPage {
       if (data) {
         var page: any;
         if (data == 'DETAILS')
-          page = DetailsPage;
+          page = 'details';
         if (data == 'FINAL DELIVERY')
-          page = FinalDeliveryPage;
+          page = 'final-delivery';
         if (page)
           this.navCtrl.setRoot(page, {
-            project: self.project
+            project: self.project,
+            id: self.project.projectId
           });
       }
     });
@@ -443,12 +476,13 @@ export class DesignPage {
     console.log(link);
     var page: any;
     if (link == 'DETAILS')
-      page = DetailsPage;
+      page = 'details';
     if (link == 'FINAL_DELIVERY')
-      page = FinalDeliveryPage;
+      page = 'final-delivery';
     if (page)
       this.navCtrl.setRoot(page, {
-        project: self.project
+        project: self.project,
+        id: self.project.projectId
       });
   }
 
@@ -482,7 +516,7 @@ export class DesignPage {
   submitConcepts() {
     const self = this;
     console.log("submit concepts pressed");
-    let modal = this.modalCtrl.create('ConfirmPage', {
+    let modal = this.modalCtrl.create('confirm', {
       message: 'By selecting the confimation below, the concept boards will be submitted to your client.'
     });
     modal.onDidDismiss(data => {
@@ -513,7 +547,7 @@ export class DesignPage {
   approveConcept() {
     const self = this;
     console.log("approve concepts pressed");
-    let modal = this.modalCtrl.create('ConfirmPage', {
+    let modal = this.modalCtrl.create('confirm', {
       message: 'By selecting the confirmation below, you are approving a concept board.'
     });
     modal.onDidDismiss(data => {
@@ -573,7 +607,7 @@ export class DesignPage {
     console.log("edit item pressed:");
     console.log(item);
     item.number = i + 1;
-    let popover = self.popoverCtrl.create('EditItemPage', {
+    let popover = self.popoverCtrl.create('edit-item', {
       item: item
     });
     popover.onDidDismiss(data => {
@@ -593,7 +627,7 @@ export class DesignPage {
   submitCollection() {
     const self = this;
     console.log("submit collection pressed");
-    let modal = this.modalCtrl.create('ConfirmPage', {
+    let modal = this.modalCtrl.create('confirm', {
       message: 'By selecting the confimation below, the collection, floor plan and concept board will be submitted to your client.'
     });
     modal.onDidDismiss(data => {
@@ -627,7 +661,7 @@ export class DesignPage {
   approveCollection() {
     const self = this;
     console.log("approve collection pressed");
-    let modal = this.modalCtrl.create('ConfirmPage', {
+    let modal = this.modalCtrl.create('confirm', {
       message: 'By selecting the button below, you are approving the collection and requesting alternates from your designer.'
     });
     modal.onDidDismiss(data => {
@@ -650,7 +684,7 @@ export class DesignPage {
     console.log("offer alt item pressed:");
     console.log(item);
     item.number = i + 1;
-    let modal = self.modalCtrl.create('AlternativesPage', {
+    let modal = self.modalCtrl.create('alternatives', {
       item: item,
       alts: self.alternateItemsMap[item.projectItemId]
     });
@@ -692,7 +726,7 @@ export class DesignPage {
     console.log("view alternatives pressed:");
     console.log(item);
     item.number = i + 1;
-    let modal = self.modalCtrl.create('AlternativesPage', {
+    let modal = self.modalCtrl.create('alternatives', {
       item: item,
       alts: self.alternateItemsMap[item.projectItemId]
     });

@@ -3,7 +3,9 @@ import { IonicPage, NavController, NavParams, AlertController, PopoverController
 
 import { UserService } from '../../providers/user-service';
 
-@IonicPage()
+@IonicPage({
+  name: 'profile'
+})
 @Component({
   selector: 'page-profile',
   templateUrl: 'profile.html',
@@ -20,13 +22,20 @@ export class ProfilePage {
               private popoverCtrl: PopoverController,
               private platform: Platform,
               private userService: UserService) {
-    this.user = this.userService.currentUser;
-    this.user.createDateReadable = this.getDateStringFrom(this.user.createDate);
+    this.userService.fetchCurrentUser()
+    .then(user => {
+      if (user) {
+        this.user = user;
+        this.user.createDateReadable = this.getDateStringFrom(this.user.createDate);
+      } else {
+        this.navCtrl.setRoot('login');
+      }
+    });
   }
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('Dashboard');
+    this.navCtrl.setRoot('dashboard');
   }
 
   editToggled() {

@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
-@IonicPage()
+@IonicPage({
+  name: 'dropdown'
+})
 @Component({
   selector: 'page-dropdown',
   templateUrl: 'dropdown.html',
