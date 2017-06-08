@@ -91,7 +91,7 @@ export class ImageService {
           "fileEntryId": fileEntryId
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
