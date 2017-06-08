@@ -35,7 +35,7 @@ export class ProfilePage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('Dashboard');
+    this.navCtrl.setRoot('dashboard');
   }
 
   editToggled() {

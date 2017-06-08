@@ -94,7 +94,7 @@ export class DashboardPage {
       {
         text: 'START',
         handler: data => {
-          this.navCtrl.setRoot('OnboardingPage')
+          this.navCtrl.setRoot('onboarding')
         }
       }]
     });
@@ -115,7 +115,7 @@ export class DashboardPage {
       console.log(tab);
       tabs.push(tab);
     }
-    let popover = this.popoverCtrl.create('DropdownPage', {
+    let popover = this.popoverCtrl.create('dropdown', {
       items: tabs
     }, 
     {
@@ -255,7 +255,7 @@ export class DashboardPage {
 
   startProject() {
     console.log("Start proj pressed");
-    this.navCtrl.setRoot('OnboardingPage');
+    this.navCtrl.setRoot('onboarding');
   }
 
   selectedProject(project) {

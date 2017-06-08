@@ -3,7 +3,9 @@ import { IonicPage, NavController, NavParams, ModalController, AlertController, 
 
 import { UserService } from '../../providers/user-service';
 
-@IonicPage()
+@IonicPage({
+  name: 'onboarding'
+})
 @Component({
   selector: 'page-onboarding',
   templateUrl: 'onboarding.html',
@@ -127,7 +129,7 @@ export class OnboardingPage {
 
   homePressed() {
     console.log("logo pressed");
-    this.navCtrl.setRoot('DashboardPage');
+    this.navCtrl.setRoot('dashboard');
   }
 
   startProject() {

@@ -1,7 +1,9 @@
 import { Component, ViewChild, ElementRef, Renderer } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
 
-@IonicPage()
+@IonicPage({
+  name: 'alternatives'
+})
 @Component({
   selector: 'page-alternatives',
   templateUrl: 'alternatives.html',

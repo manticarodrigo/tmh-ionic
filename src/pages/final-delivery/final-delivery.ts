@@ -152,7 +152,7 @@ export class FinalDeliveryPage {
   selectTab() {
     const self = this;
     console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('DropdownPage', {
+    let popover = this.popoverCtrl.create('dropdown', {
       items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     });
     popover.onDidDismiss(data => {

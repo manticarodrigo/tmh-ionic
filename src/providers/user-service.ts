@@ -78,12 +78,16 @@ export class UserService {
     });
   }
 
+  logout() {
+    this.setCurrentUser(null, null);
+  }
+
   login(email, password, callback) {
     const self = this;
     const token = btoa(email + ':' + password);
     const headers = this.generateHeaders(token);
     const map = {
-      "$user[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-email-address": {
+      "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /user/get-user-by-email-address": {
         "companyId": "20155",
         "emailAddress": email,
         "$image[modifiedDate] = /image/get-image": {
@@ -106,7 +110,7 @@ export class UserService {
         }
       }
     }
-    const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+    const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
     this.http.get(endpoint, {headers: headers})
     .map(res => res.json())
     .subscribe(user => {
@@ -133,8 +137,209 @@ export class UserService {
     });
   }
 
-  logout() {
-    this.setCurrentUser(null, null);
+  fetchUserByFacebookId(id) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("fetching user by facebook id:");
+      console.log(id);
+      const map = {
+        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /tmh-project-portlet.project/find-user-by-facebook-id": {
+          "companyId": 20155,
+          "facebookId": id,
+          "$image[modifiedDate] = /image/get-image": {
+            "@imageId": "$user.portraitId"
+          },
+          "$roles[name,descriptionCurrentValue] = /role/get-user-roles": {
+            "@userId": "$user.userId"
+          },
+          "$client = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20484
+          },
+          "$designer = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20488
+          },
+          "$operator = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20492
+          }
+        } 
+      }
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
+      self.http.get(endpoint, {headers: self.adminHeaders})
+      .map(res => res.json())
+      .subscribe(user => {
+        console.log("facebook user fetch returned response:");
+        console.log(user);
+        if (!user.exception) {
+          user.shortName = user.firstName;
+          if (user.lastName) {
+            user.shortName += ' ' + user.lastName.split('')[0] + '.';
+          }
+          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
+          if (user.image.modifiedDate) {
+            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
+          }
+          delete user.image;
+          for (var key in user.roles) {
+            const role = user.roles[key];
+            if (role.name == "Administrator") {
+              user.admin = true;
+            }
+          }
+          delete user.roles;
+        }
+        resolve(user);
+      });
+    });
+  }
+
+  fetchUserByEmail(email) {
+    const self = this;
+    console.log("fetching user by email address:");
+    console.log(email);
+    return new Promise((resolve, reject) => {
+      const map = {
+        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /user/get-user-by-email-address": {
+          "companyId": 20155,
+          "emailAddress": email,
+          "$image[modifiedDate] = /image/get-image": {
+            "@imageId": "$user.portraitId"
+          },
+          "$roles[name,descriptionCurrentValue] = /role/get-user-roles": {
+            "@userId": "$user.userId"
+          },
+          "$client = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20484
+          },
+          "$designer = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20488
+          },
+          "$operator = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20492
+          }
+        }
+      }
+      const endpoint = self.api + "/invoke?cmd=" + JSON.stringify(map);
+      self.http.get(endpoint, {headers: self.adminHeaders})
+      .map(res => res.json())
+      .subscribe(user => {
+        console.log("email user fetch returned response:");
+        console.log(user);
+        if (!user.exception) {
+          user.shortName = user.firstName;
+          if (user.lastName) {
+            user.shortName += ' ' + user.lastName.split('')[0] + '.';
+          }
+          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
+          if (user.image.modifiedDate) {
+            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
+          }
+          delete user.image;
+          for (var key in user.roles) {
+            const role = user.roles[key];
+            if (role.name == "Administrator") {
+              user.admin = true;
+            }
+          }
+          delete user.roles;
+        }
+        resolve(user);
+      });
+    });
+  }
+
+  getPassword(uid) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      console.log("fetching pass for uid:");
+      console.log(uid);
+      var endpoint = self.api + "/tmh-project-portlet.project/get-password/userId/" + uid;
+      self.http.get(endpoint, {headers: self.adminHeaders})
+      .map(res => res.json())
+      .subscribe(data => {
+        console.log("get pass returned response:");
+        console.log(data);
+        resolve(data);
+      });
+    });
+  }
+
+  facebookRegister(data) {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      const map = {
+        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /user/add-user.26": {
+          "autoPassword": true,
+          "auto-screen-name": true,
+          "emailAddress": data.email,
+          "facebookId": data.id,
+          "firstName": data.first_name,
+          "lastName": data.last_name ? data.last_name : "",
+          "prefixId": 0,
+          "suffixId": 0,
+          "male": true,
+          "birthdayMonth": 1,
+          "birthdayDay": 1,
+          "birthdayYear": 1980,
+          "groupIds": [20484],
+          "sendEmail": true,
+          "$image[modifiedDate] = /image/get-image": {
+            "@imageId": "$user.portraitId"
+          },
+          "$roles[name,descriptionCurrentValue] = /role/get-user-roles": {
+            "@userId": "$user.userId"
+          },
+          "$client = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20484
+          },
+          "$designer = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20488
+          },
+          "$operator = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20492
+          }
+        }
+      }
+      // var endpoint = self.api + "/user/add-user/company-id/20155/auto-password/true/-password1/-password2/auto-screen-name/true/-screen-name/email-address/" + data.email + "/facebook-id/" + data.id + "/-open-id/-locale/first-name/" + data.first_name + "/-middle-name/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/group-ids/" + [20484] + "/-organization-ids/-role-ids/-user-group-ids/send-email/true";
+      // if (data.last_name) {
+      //   endpoint += "/lastName/" + data.last_name;
+      // }
+      const endpoint = self.api + "/invoke?cmd=" + JSON.stringify(map);
+      console.log(endpoint);
+      self.http.post(endpoint, null, {headers: self.adminHeaders})
+      .map(res => res.json())
+      .subscribe(user => {
+        console.log("facebook register returned data");
+        console.log(user);
+        if (!user.exception) {
+          user.shortName = user.firstName;
+          if (user.lastName) {
+            user.shortName += ' ' + user.lastName.split('')[0] + '.';
+          }
+          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
+          if (user.image.modifiedDate) {
+            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
+          }
+          delete user.image;
+          for (var key in user.roles) {
+            const role = user.roles[key];
+            if (role.name == "Administrator") {
+              user.admin = true;
+            }
+          }
+          delete user.roles;
+        }
+        resolve(user);
+      });
+    });
   }
 
   register(firstName, lastName, email, password, password2) {
@@ -161,7 +366,7 @@ export class UserService {
     const self = this;
     return new Promise((resolve, reject) => {
       const map = {
-        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
+        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /user/get-user-by-id": {
           "companyId": "20155",
           "userId": uid,
           "$image[modifiedDate] = /image/get-image": {
@@ -184,7 +389,7 @@ export class UserService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
+      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       this.http.get(endpoint, {headers: this.headers})
       .map(res => res.json())
       .subscribe(user => {

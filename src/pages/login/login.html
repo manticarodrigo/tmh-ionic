@@ -1,5 +1,5 @@
 <ion-content text-center padding>
-  <div class="center">
+  <div class="center" [class.loading]="loading">
     <form>
       <img class="logo" src="assets/logo.png">
       <div *ngIf="!loading">

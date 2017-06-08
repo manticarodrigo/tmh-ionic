@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ViewController, AlertController } from 'ionic-angular';
 
-@IonicPage()
+@IonicPage({
+  name: 'additional-room'
+})
 @Component({
   selector: 'page-additional-room',
   templateUrl: 'additional-room.html',

@@ -217,7 +217,7 @@ export class DetailsPage {
   selectTab() {
     const self = this;
     console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('DropdownPage', {
+    let popover = this.popoverCtrl.create('dropdown', {
       items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     }, 
     {
@@ -296,7 +296,7 @@ export class DetailsPage {
   submitToDesigner() {
     const self = this;
     console.log("submit to designer pressed");
-    let modal = this.modalCtrl.create('ConfirmPage', {
+    let modal = this.modalCtrl.create('confirm', {
       message: 'Ready to connect with your designer? By selecting the confimation below, your details will be submitted so your designer can begin on your concept boards.'
     });
     modal.onDidDismiss(data => {
