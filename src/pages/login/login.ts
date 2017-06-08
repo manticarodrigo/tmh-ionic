@@ -245,7 +245,8 @@ export class LoginPage {
     self.userService.fetchUserByEmail(apiData.email)
     .then(user => {
       if (!user['exception']) {
-        if (user['facebookId'] == 0 ||  user['facebookId'] == response.authResponse.userID) {
+        if (user['facebookId'] == 0) {
+          // TODO: update user with fb id
           self.userService.getPassword(user['userId'])
           .then(pass => {
             if (!pass['exception']) {

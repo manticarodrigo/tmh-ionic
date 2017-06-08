@@ -118,7 +118,7 @@ export class UserService {
       console.log(user);
       if (!user.exception) {
         var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-        if (user.image.modifiedDate) {
+        if (user.image) {
           user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
         }
         delete user.image;
@@ -178,7 +178,7 @@ export class UserService {
             user.shortName += ' ' + user.lastName.split('')[0] + '.';
           }
           var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image.modifiedDate) {
+          if (user.image) {
             user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
           }
           delete user.image;
@@ -236,7 +236,7 @@ export class UserService {
             user.shortName += ' ' + user.lastName.split('')[0] + '.';
           }
           var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image.modifiedDate) {
+          if (user.image) {
             user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
           }
           delete user.image;
@@ -325,7 +325,7 @@ export class UserService {
             user.shortName += ' ' + user.lastName.split('')[0] + '.';
           }
           var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image.modifiedDate) {
+          if (user.image) {
             user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
           }
           delete user.image;
@@ -401,7 +401,7 @@ export class UserService {
             user.shortName += ' ' + user.lastName.split('')[0] + '.';
           }
           var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image.modifiedDate) {
+          if (user.image) {
             user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
           }
           delete user.image;
