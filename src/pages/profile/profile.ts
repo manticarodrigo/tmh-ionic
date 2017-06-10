@@ -96,11 +96,15 @@ export class ProfilePage {
   savePressed() {
     const self = this;
     console.log("save pressed");
-    this.userService.updateUser(this.user, this.oldPassword, this.newPassword1 ,this.newPassword2)
+    this.userService.updateUser(this.user)
     .then(data => {
       console.log("profile component received data:");
       console.log(data);
       self.editing = false;
+      if (!data['exception']) {
+        self.user = data;
+        self.userService.setCurrentUser(data)
+      }
     });
   }
 

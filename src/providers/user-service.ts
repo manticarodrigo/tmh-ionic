@@ -501,67 +501,63 @@ export class UserService {
     });
   }
 
-  updateUser(user, oldPassword, newPassword1, newPassword2) {
+  updateUser(user) {
     const self = this;
     return new Promise((resolve, reject) => {
       console.log("updating user:");
       console.log(user);
-      var groups = [];
-      if (user.client)
-        groups.push(20484);
-      if (user.designer)
-        groups.push(20488);
-      if (user.operator)
-        groups.push(20492);
       const map = {
-        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /user/update-user.41": {
+        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /tmh-project-portlet.project/update-user": {
           "userId": user.userId,
-          "screenName": user.screenName,
           "firstName": user.firstName,
           "lastName": user.lastName,
           "emailAddress": user.emailAddress,
-          "facebookId": user.facebookId,
-          "prefixId": 0,
-          "suffixId": 0,
-          "male": true,
-          "birthdayMonth": 1,
-          "birthdayDay": 1,
-          "birthdayYear": 1970,
-          "groupIds": groups,
-          "passwordReset": false,
-          // "oldPassword": oldPassword != '' ? oldPassword : null,
-          // "newPassword1": newPassword1 != '' ? newPassword1 : null,
-          // "newPassword2": newPassword2 != '' ? newPassword2 : null,
-
-          "serviceContext": JSON.stringify({"userId":user.userId}),
-          // "$image[modifiedDate] = /image/get-image": {
-          //   "@imageId": "$user.portraitId"
-          // },
-          // "$roles[name] = /role/get-user-roles": {
-          //   "@userId": "$user.userId"
-          // },
-          // "$client = /group/has-user-group": {
-          //   "@userId": "$user.userId",
-          //   "groupId": 20484
-          // },
-          // "$designer = /group/has-user-group": {
-          //   "@userId": "$user.userId",
-          //   "groupId": 20488
-          // },
-          // "$operator = /group/has-user-group": {
-          //   "@userId": "$user.userId",
-          //   "groupId": 20492
-          // }
+          "$image[modifiedDate] = /image/get-image": {
+            "@imageId": "$user.portraitId"
+          },
+          "$roles[name] = /role/get-user-roles": {
+            "@userId": "$user.userId"
+          },
+          "$client = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20484
+          },
+          "$designer = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20488
+          },
+          "$operator = /group/has-user-group": {
+            "@userId": "$user.userId",
+            "groupId": 20492
+          }
         }
       }
       const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
       console.log(endpoint);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
-      .subscribe(data => {
+      .subscribe(user => {
         console.log("updated user data:");
-        console.log(data);
-        resolve(data);
+        console.log(user);
+        if (!user.exception) {
+          user.shortName = user.firstName;
+          if (user.lastName) {
+            user.shortName += ' ' + user.lastName.split('')[0] + '.';
+          }
+          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
+          if (user.image) {
+            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
+          }
+          delete user.image;
+          for (var key in user.roles) {
+            const role = user.roles[key];
+            if (role.name == "Administrator") {
+              user.admin = true;
+            }
+          }
+          delete user.roles;
+        }
+        resolve(user);
       });
     });
   }

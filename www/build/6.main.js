@@ -86,7 +86,7 @@ LoadingPage = __decorate([
         priority: 'high'
     }),
     __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__angular_core__["d" /* Component */])({
-        selector: 'page-loading',template:/*ion-inline-start:"/Users/manticarodrigo/@manticarodrigo/tmh/tmh-ionic/src/pages/loading/loading.html"*/'<ion-content text-center padding>\n  <div class="center">\n    <img src="assets/logo.png">\n    <ion-spinner name="crescent"></ion-spinner>\n  </div>\n</ion-content>'/*ion-inline-end:"/Users/manticarodrigo/@manticarodrigo/tmh/tmh-ionic/src/pages/loading/loading.html"*/,
+        selector: 'page-loading',template:/*ion-inline-start:"/Users/manticarodrigo/@manticarodrigo/tmh/tmh-ionic/src/pages/loading/loading.html"*/'<ion-content text-center>\n  <div class="center">\n    <img src="assets/logo.png">\n    <ion-spinner name="crescent"></ion-spinner>\n  </div>\n</ion-content>'/*ion-inline-end:"/Users/manticarodrigo/@manticarodrigo/tmh/tmh-ionic/src/pages/loading/loading.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* NavParams */],
