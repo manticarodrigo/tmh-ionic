@@ -51,7 +51,9 @@ export class TheManHome {
   logout() {
     console.log("logout pressed");
     this.menuCtrl.close();
-    this.nav.setRoot('login');
-    this.userService.logout();
+    this.userService.logout()
+    .then(() => {
+      this.nav.setRoot('login');
+    });
   }
 }

@@ -51,7 +51,7 @@ export class AdditionalRoomPage {
       let alert = this.alertCtrl.create({
         title: 'Almost there!',
         message: 'Please select additional rooms.',
-        buttons: ['Dismiss']
+        buttons: ['DISMISS']
       });
       alert.present();
     }

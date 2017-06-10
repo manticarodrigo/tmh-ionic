@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, PopoverController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController, Platform } from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 
@@ -18,7 +18,6 @@ export class ProfilePage {
   newPassword2 = '';
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
-              private alertCtrl: AlertController,
               private popoverCtrl: PopoverController,
               private platform: Platform,
               private userService: UserService) {

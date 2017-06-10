@@ -52,7 +52,6 @@ export class LoginPage {
   }
 
   auth() {
-    this.loading = true;
     if (this.signup) {
       this.register();
     } else {
@@ -62,6 +61,7 @@ export class LoginPage {
 
   login() {
     const self = this;
+    this.loading = true;
     console.log("login pressed");
     if (this.email == '' || this.password == '') {
       this.presentError('Please provide a valid email and password.');
@@ -70,8 +70,7 @@ export class LoginPage {
       this.userService.login(this.email, this.password, (user) => {
         console.log(user);
         if (!user.exception) {
-          const token = btoa(this.email + ':' + this.password);
-          self.userService.setCurrentUser(user, token)
+          self.userService.setCurrentUser(user)
           .then(user => {
             this.navCtrl.setRoot('dashboard');
             this.email = '';
@@ -88,6 +87,7 @@ export class LoginPage {
 
   register() {
     const self = this;
+    this.loading = true;
     console.log("signup pressed");
     if (this.firstName == '' || this.email == '' || this.password == '' || this.password2 == '') {
       this.presentError('Please provide a first name, email, and matching passwords.');
@@ -100,8 +100,7 @@ export class LoginPage {
       .then(user => {
         console.log(user);
         if (!user['exception']) {
-          const token = btoa(this.email + ':' + this.password);
-          self.userService.setCurrentUser(user, token)
+          self.userService.setCurrentUser(user)
           .then(user => {
             this.firstName = '';
             this.lastName = '';
@@ -121,6 +120,7 @@ export class LoginPage {
 
   facebookLogin() {
     let self = this;
+    this.loading = true;
     console.log("starting facebook login...");
     self.fb.login({scope:'email,public_profile'})
     .then(response => {
@@ -156,25 +156,15 @@ export class LoginPage {
     self.userService.fetchUserByFacebookId(response.authResponse.userID)
     .then(user => {
       if (!user['exception']) {
-        self.userService.getPassword(user['userId'])
-        .then(pass => {
-          if (!pass['exception']) {
-            const token = btoa(apiData.email + ':') + pass;
-            self.userService.setCurrentUser(user, pass)
-            .then(user => {
-              self.firstName = '';
-              self.lastName = '';
-              self.email = '';
-              self.password = '';
-              self.password2 = '';
-              self.loading = false;
-              self.userService.headers = self.userService.adminHeaders; // temp
-              self.navCtrl.setRoot('dashboard');
-            });
-          } else {
-            self.presentError('Facebook auth failed. Please try again.');
-            self.loading = false;
-          }
+        self.userService.setCurrentUser(user)
+        .then(user => {
+          self.firstName = '';
+          self.lastName = '';
+          self.email = '';
+          self.password = '';
+          self.password2 = '';
+          self.loading = false;
+          self.navCtrl.setRoot('dashboard');
         });
       } else {
         if (!apiData.email) {
@@ -209,7 +199,7 @@ export class LoginPage {
         ],
         buttons: [
         {
-          text: 'Cancel',
+          text: 'CANCEL',
           role: 'cancel',
           handler: data => {
             console.log('Cancel clicked');
@@ -217,7 +207,7 @@ export class LoginPage {
           }
         },
         {
-          text: 'Submit',
+          text: 'SUBMIT',
           handler: input => {
             if (input.email) {
               self.userService.fetchUserByEmail(input.email)
@@ -246,12 +236,11 @@ export class LoginPage {
     .then(user => {
       if (!user['exception']) {
         if (user['facebookId'] == 0) {
-          // TODO: update user with fb id
-          self.userService.getPassword(user['userId'])
-          .then(pass => {
-            if (!pass['exception']) {
-              const token = btoa(apiData.email + ':') + pass;
-              self.userService.setCurrentUser(user, pass)
+          user['facebookId'] = response.authResponse.userID;
+          self.userService.updateUserFacebookId(user, response.authResponse.userID)
+          .then(user => {
+            if (!user['exception']) {
+              self.userService.setCurrentUser(user)
               .then(user => {
                 self.firstName = '';
                 self.lastName = '';
@@ -259,7 +248,6 @@ export class LoginPage {
                 self.password = '';
                 self.password2 = '';
                 self.loading = false;
-                self.userService.headers = self.userService.adminHeaders; // temp
                 self.navCtrl.setRoot('dashboard');
               });
             } else {
@@ -275,25 +263,16 @@ export class LoginPage {
         self.userService.facebookRegister(apiData)
         .then(user => {
           if (!user['exception']) {
-            self.userService.getPassword(user['userId'])
-            .then(pass => {
-              if (!pass['exception']) {
-                const token = btoa(apiData.email + ':') + pass;
-                self.userService.setCurrentUser(user, pass)
-                .then(user => {
-                  self.firstName = '';
-                  self.lastName = '';
-                  self.email = '';
-                  self.password = '';
-                  self.password2 = '';
-                  self.loading = false;
-                  self.userService.headers = self.userService.adminHeaders; // temporary
-                  self.navCtrl.setRoot('dashboard');
-                });
-              } else {
-                self.presentError('Facebook auth failed. Please try again.');
-                self.loading = false;
-              }
+            self.userService.setCurrentUser(user)
+            .then(user => {
+              self.firstName = '';
+              self.lastName = '';
+              self.email = '';
+              self.password = '';
+              self.password2 = '';
+              self.loading = false;
+              self.userService.headers = self.userService.headers;
+              self.navCtrl.setRoot('dashboard');
             });
           }
         });

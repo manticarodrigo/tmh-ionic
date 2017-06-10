@@ -228,7 +228,7 @@ export class OnboardingPage {
       let alert = this.alertCtrl.create({
         title: 'Bad Zip',
         message: 'Please enter a valid 5-digit U.S. zip code.',
-        buttons: ['Dismiss']
+        buttons: ['DISMISS']
       });
       alert.present();
     }

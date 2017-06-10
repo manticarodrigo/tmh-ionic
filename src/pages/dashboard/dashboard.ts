@@ -15,8 +15,9 @@ export class DashboardPage {
   user: any;
   viewMode = 'CLIENT';
   projects: Array<any>;
-  tab = 'IN_PROGRESS';
+  selectedTab = 'IN_PROGRESS';
   tabs: any;
+  tabsMap: any;
   types = {
     BEDROOM: 'Bedroom',
     LIVING_ROOM: 'Living Room',
@@ -47,6 +48,11 @@ export class DashboardPage {
               private userService: UserService,
               private projectService: ProjectService) {
     const self = this;
+    this.tabs = ['IN_PROGRESS', 'COMPLETED']
+    this.tabsMap = {
+      IN_PROGRESS: 'IN PROGRESS',
+      COMPLETED: 'COMPLETED'
+    }
     // Fetch current user
     this.userService.fetchCurrentUser()
     .then(user => {
@@ -59,8 +65,9 @@ export class DashboardPage {
         if (self.user.admin) {
           console.log("current user is an admin");
           self.viewMode = "ADMIN";
-          self.tab = 'IN_PROGRESS';
-          self.tabs = {
+          self.selectedTab = 'IN_PROGRESS';
+          self.tabs = ['IN_PROGRESS', 'UP_NEXT', 'COMPLETED', 'ARCHIVED']
+          self.tabsMap = {
             IN_PROGRESS: 'IN PROGRESS',
             UP_NEXT: 'UP NEXT',
             COMPLETED: 'COMPLETED',
@@ -73,10 +80,6 @@ export class DashboardPage {
         self.navCtrl.setRoot('login');
       }
     });
-    this.tabs = {
-      IN_PROGRESS: 'IN PROGRESS',
-      COMPLETED: 'COMPLETED',
-    };
   }
 
   homePressed() {
@@ -102,17 +105,15 @@ export class DashboardPage {
   }
 
   selectedTabLink(tab) {
-    this.tab = tab;
+    this.selectedTab = tab;
     this.loadProjects();
   }
 
   selectTab() {
     console.log("Toggling tab dropdown!");
     var tabs = [];
-    for (var key in this.tabs) {
-      console.log(key);
-      const tab = this.tabs[key];
-      console.log(tab);
+    for (let key in this.tabsMap) {
+      const tab = this.tabsMap[key];
       tabs.push(tab);
     }
     let popover = this.popoverCtrl.create('dropdown', {
@@ -123,7 +124,7 @@ export class DashboardPage {
     });
     popover.onDidDismiss(data => {
       if (data) {
-        this.tab = data.replace(" ", "_");
+        this.selectedTab = data.replace(" ", "_");
         this.loadProjects();
       }
     });
@@ -154,7 +155,7 @@ export class DashboardPage {
     return new Promise((resolve, reject) => {
       this.projectService.findByUserId(this.userService.currentUser.userId)
       .then(data => {
-        if (this.tab == 'IN_PROGRESS') {
+        if (this.selectedTab == 'IN_PROGRESS') {
           var projects = [];
           if (!data['exception']) {
             for (var key in data) {
@@ -167,7 +168,7 @@ export class DashboardPage {
             resolve(projects);
           }
         }
-        if (this.tab == 'COMPLETED') {
+        if (this.selectedTab == 'COMPLETED') {
           var projects = [];
           if (!data['exception']) {
             for (var key in data) {
@@ -190,13 +191,13 @@ export class DashboardPage {
 
 
   fetchProjects() {
-    if (this.tab == 'IN_PROGRESS')
+    if (this.selectedTab == 'IN_PROGRESS')
       return this.projectService.findByInProgress();
-    if (this.tab == 'COMPLETED')
+    if (this.selectedTab == 'COMPLETED')
       return this.projectService.findByComplete();
-    if (this.tab == 'UP_NEXT')
+    if (this.selectedTab == 'UP_NEXT')
       return this.projectService.findByUpNext();
-    if (this.tab == 'ARCHIVED')
+    if (this.selectedTab == 'ARCHIVED')
       return this.projectService.findByArchived();
   }
 

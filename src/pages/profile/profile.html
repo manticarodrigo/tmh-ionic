@@ -18,8 +18,8 @@
 <ion-content text-center>
   <div class="profile-header">
     <input class="img-input" *ngIf="editing" type="file" accept="image/*" #file (change)="fileChanged($event)" />
-    <img *ngIf="user" [src]="user.photoURL">
-    <img *ngIf="!user" src="assets/tmh.png">
+    <img *ngIf="user && user.photoURL" [src]="user.photoURL">
+    <img *ngIf="!user || !user.photoURL" src="assets/user-placeholder.png">
     <button ion-button type="button" (click)="editToggled()">{{ editing ? 'SAVE' : 'EDIT' }}</button>
     <h1 *ngIf="user">{{ user.firstName }} {{ user.lastName }}</h1>
     <h1 *ngIf="!user">Unknown User</h1>

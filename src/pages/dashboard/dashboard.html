@@ -15,13 +15,10 @@
   </ion-navbar>
   <div class="sub-nav">
     <div class="desktop menu">
-      <div><a [class.active]="tab == 'IN_PROGRESS'" (click)="selectedTabLink('IN_PROGRESS')">IN PROGRESS</a></div>
-      <div><a [class.active]="tab == 'UP_NEXT'" (click)="selectedTabLink('UP_NEXT')">UP NEXT</a></div>
-      <div><a [class.active]="tab == 'COMPLETED'" (click)="selectedTabLink('COMPLETED')">COMPLETED</a></div>
-      <div><a [class.active]="tab == 'ARCHIVED'" (click)="selectedTabLink('ARCHIVED')">ARCHIVED</a></div>
+      <div *ngFor="let tab of tabs"><a [class.active]="tab == selectedTab" (click)="selectedTabLink(tab)">{{ tabsMap[tab] }}</a></div>
     </div>
     <button class="mobile" ion-button type="button" (click)="selectTab()" full>
-      {{ tabs[tab] }}
+      {{ tabsMap[selectedTab] }}
       <img src="assets/down.png">
     </button>
   </div>

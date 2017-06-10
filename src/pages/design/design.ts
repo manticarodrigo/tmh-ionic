@@ -533,7 +533,7 @@ export class DesignPage {
               this.projectService.updateStatus(self.project, 'CONCEPT')
               .then(data => {
                 if (!data['exception']) {
-                  self.fetchDetails();
+                  self.fetchProject();
                 }
               });
             }
@@ -562,7 +562,7 @@ export class DesignPage {
             conceptCount += 1;
             if (conceptCount == self.concepts.length) {
               if (!data['exception']) {
-                self.fetchDetails();
+                self.fetchProject();
               }
             }
           });
@@ -650,7 +650,7 @@ export class DesignPage {
         .then(data => {
           console.log(data);
           if (!data['exception']) {
-            self.fetchItems();
+            self.fetchProject();
           }
         });
       }
@@ -671,7 +671,7 @@ export class DesignPage {
         .then(data => {
           console.log(data);
           if (!data['exception']) {
-            self.fetchItems();
+            self.fetchProject();
           }
         });
       }

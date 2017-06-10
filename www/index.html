@@ -17,8 +17,14 @@
   <!-- cordova.js required for cordova apps -->
   <script src="cordova.js"></script>
 
-  <!-- facebook web sdk module -->
+  <!-- facebook api -->
   <script type="text/javascript" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+  <!-- stripe api -->
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+  <script type="text/javascript">
+    Stripe.setPublishableKey('pk_test_oi0sKPJYLGjdvOXOM8tE8cMa');
+  </script>
 
   <!-- un-comment this code to enable service worker
   <script>
@@ -31,6 +37,7 @@
 
   <link href="build/main.css" rel="stylesheet">
 
+  <!-- leaflet.css -->
   <link href="assets/leaflet.css" rel="stylesheet">
 
 </head>
