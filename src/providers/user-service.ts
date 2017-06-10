@@ -11,7 +11,7 @@ export class UserService {
   
   constructor(private http: Http,
               private storage: Storage) {
-    this.api = '/api';
+    // this.api = '/api';
     const token = btoa("manticarodrigo@gmail.com:xlemrotm34711");
     const headers = this.generateHeaders(token);
     this.headers = headers;
