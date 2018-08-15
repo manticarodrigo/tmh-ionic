@@ -271,8 +271,8 @@ export class UserService {
         `${ENV.backendUrl}/auth/convert-token/`,
         {
           grant_type: 'convert_token',
-          client_id: 'KBS3OspYfCfmp88ltajXYtmXEL164QR2DNV2gAvf',
-          client_secret: '3qIijWNt9brsnPUS6VQ2fCTpHJftsz6s6rnvXTieWZOUZunL3YrjZtdHGipsucy5LcyiyurNBfEz4iB9IiEiyG1zKP0ZZgRXFdqP2Ed0JgCBCX248Lh8fQW9ZO85cgsZ',
+          client_id: ENV.socialClientId,
+          client_secret: ENV.socialClientSecret,
           backend: 'facebook',
           token
         }
