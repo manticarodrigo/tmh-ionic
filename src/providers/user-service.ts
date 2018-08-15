@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
 import { Storage } from '@ionic/storage';
 import { ENV } from '@env';
 
@@ -11,17 +12,16 @@ export class UserService {
   headers: any;
   api: any;
   
-  constructor(private http: Http,
-              private storage: Storage) {
-    const token = btoa("manticarodrigo@gmail.com:xlemrotm34711");
-    const headers = this.generateHeaders(token);
-    this.headers = headers;
+  constructor(
+    private http: Http,
+    private storage: Storage
+  ) {
     this.fetchCurrentUser();
   }
 
   generateHeaders(token) {
     const headers = new Headers();
-    var authHeader = `Token ${token}`;
+    const authHeader = `Token ${token}`;
     headers.append('Authorization', authHeader);
     return headers;
   }
@@ -33,256 +33,69 @@ export class UserService {
         resolve(self.currentUser);
       } else {
         this.storage.get('user')
-        .then(user => {
-          if (!user) {
-            console.log('No stored user found');
-            console.log(user);
-            resolve(null);
-          } else {
-            console.log('Stored user found');
-            self.setCurrentUser(user)
-            .then(user => {
-              resolve(user);
-            })
-            .catch(error => {
-              console.log(error);
-            });
-          }
-        });
+          .then(user => {
+            resolve(user ? self.setCurrentUser(user) : null);
+          });
       }
     });
   }
 
   setCurrentUser(user) {
-    const self = this;
-    console.log("setting current user:");
-    console.log(user);
-    return new Promise((resolve, reject) => {
-      if (user) {
-        self.currentUser = user;
-        self.storage.set('user', user);
-        resolve(user);
-      } else {
-        self.currentUser = null;
-        self.storage.set('user', null);
-        resolve(null);
-      }
-    });
+    console.log('setting current user:', user);
+    this.currentUser = user ? user : null;
+    this.storage.set('user', user ? user: null);
+    return user ? user: null;
   }
 
   logout() {
     return new Promise((resolve, reject) => {
       this.storage.clear()
-      .then(() => {
-        this.currentUser = null;
-        resolve(true);
-      });
+        .then(() => {
+          this.currentUser = null;
+          resolve(true);
+        });
     });
   }
 
-  login(email, password, callback) {
-    this.http.post(`${ENV.backendUrl}/api-token-auth/`, { username: email, password: password })
-    .map(res => res.json())
-    .subscribe(user => {
-      console.log("login returned data");
-      console.log(user);
-      callback(user);
-    });
-  }
-
-  fetchUserByFacebookId(id) {
-    const self = this;
-    return new Promise((resolve, reject) => {
-      console.log("fetching user by facebook id:");
-      console.log(id);
-      const map = {
-        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /tmh-project-portlet.project/find-user-by-facebook-id": {
-          "companyId": 20155,
-          "facebookId": id,
-          "$image[modifiedDate] = /image/get-image": {
-            "@imageId": "$user.portraitId"
-          },
-          "$roles[name,descriptionCurrentValue] = /role/get-user-roles": {
-            "@userId": "$user.userId"
-          },
-          "$client = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20484
-          },
-          "$designer = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20488
-          },
-          "$operator = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20492
-          }
-        } 
+  login(username, password, callback) {
+    this.http.post(
+      `${ENV.backendUrl}/api-token-auth/`,
+      {
+        username,
+        password
       }
-      const endpoint = ENV.backendUrl + "/invoke?cmd=" + JSON.stringify(map);
-      self.http.get(endpoint, {headers: self.headers})
+    )
       .map(res => res.json())
-      .subscribe(user => {
-        console.log("facebook user fetch returned response:");
-        console.log(user);
-        if (!user.exception) {
-          user.shortName = user.firstName;
-          if (user.lastName) {
-            user.shortName += ' ' + user.lastName.split('')[0] + '.';
-          }
-          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image) {
-            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
-          }
-          delete user.image;
-          for (var key in user.roles) {
-            const role = user.roles[key];
-            if (role.name == "Administrator") {
-              user.admin = true;
-            }
-          }
-          delete user.roles;
+      .subscribe(
+        res => {
+          console.log(res);
+          callback(res);
+        },
+        err => {
+          console.log(err);
+          callback(null);
         }
-        resolve(user);
-      });
-    });
+    );
   }
 
-  fetchUserByEmail(email) {
-    const self = this;
-    console.log("fetching user by email address:");
-    console.log(email);
-    return new Promise((resolve, reject) => {
-      const map = {
-        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId,screenName] = /user/get-user-by-email-address": {
-          "companyId": 20155,
-          "emailAddress": email,
-          "$image[modifiedDate] = /image/get-image": {
-            "@imageId": "$user.portraitId"
-          },
-          "$roles[name,descriptionCurrentValue] = /role/get-user-roles": {
-            "@userId": "$user.userId"
-          },
-          "$client = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20484
-          },
-          "$designer = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20488
-          },
-          "$operator = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20492
-          }
-        }
-      }
-      const endpoint = self.api + "/invoke?cmd=" + JSON.stringify(map);
-      self.http.get(endpoint, {headers: self.headers})
-      .map(res => res.json())
-      .subscribe(user => {
-        console.log("email user fetch returned response:");
-        console.log(user);
-        if (!user.exception) {
-          user.shortName = user.firstName;
-          if (user.lastName) {
-            user.shortName += ' ' + user.lastName.split('')[0] + '.';
-          }
-          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image) {
-            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
-          }
-          delete user.image;
-          for (var key in user.roles) {
-            const role = user.roles[key];
-            if (role.name == "Administrator") {
-              user.admin = true;
-            }
-          }
-          delete user.roles;
-        }
-        resolve(user);
-      });
-    });
-  }
-
-  updateUserFacebookId(user, facebookId) {
-    const self = this;
-    return new Promise((resolve, reject) => {
-      console.log("updating user facebook id:");
-      console.log(user);
-      const map = {
-        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /tmh-project-portlet.project/update-user-facebook-id": {
-          "userId": user.userId,
-          "facebookId": facebookId,
-          "$image[modifiedDate] = /image/get-image": {
-            "@imageId": "$user.portraitId"
-          },
-          "$roles[name,descriptionCurrentValue] = /role/get-user-roles": {
-            "@userId": "$user.userId"
-          },
-          "$client = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20484
-          },
-          "$designer = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20488
-          },
-          "$operator = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20492
-          }
-        } 
-      }
-      const endpoint = ENV.backendUrl + "/invoke?cmd=" + JSON.stringify(map);
-      self.http.get(endpoint, {headers: self.headers})
-      .map(res => res.json())
-      .subscribe(user => {
-        console.log("user facebookId update returned response:");
-        console.log(user);
-        if (!user.exception) {
-          user.shortName = user.firstName;
-          if (user.lastName) {
-            user.shortName += ' ' + user.lastName.split('')[0] + '.';
-          }
-          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image) {
-            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
-          }
-          delete user.image;
-          for (var key in user.roles) {
-            const role = user.roles[key];
-            if (role.name == "Administrator") {
-              user.admin = true;
-            }
-          }
-          delete user.roles;
-        }
-        resolve(user);
-      });
-    });
-  }
-
-  facebookRegister(token) {
+  facebookAuth(token) {
     const self = this;
     return new Promise((resolve, reject) => {
       self.http.post(
-        `${ENV.backendUrl}/auth/convert-token/`,
-        {
-          grant_type: 'convert_token',
-          client_id: ENV.socialClientId,
-          client_secret: ENV.socialClientSecret,
-          backend: 'facebook',
-          token
-        }
+        `${ENV.backendUrl}/rest-auth/facebook/`,
+        { access_token: token }
       )
-      .map(res => res.json())
-      .subscribe(user => {
-        console.log("facebook register returned data");
-        console.log(user);
-        resolve(user);
-      });
+        .map(res => res.json())
+        .subscribe(
+          res => {
+            console.log(res);
+            resolve(res);
+          },
+          err => {
+            console.log(err);
+            reject(err);
+          }
+        );
     });
   }
 
@@ -298,12 +111,17 @@ export class UserService {
           email
         }
       )
-      .map(res => res.json())
-      .subscribe(data => {
-        console.log("register returned data");
-        console.log(data);
-        resolve(data);
-      });
+        .map(res => res.json())
+        .subscribe(
+          res => {
+            console.log(res);
+            resolve(res);
+          },
+          err => {
+            console.log(err);
+            reject(err);
+          }
+        );
     });
   }
 

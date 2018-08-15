@@ -21,6 +21,7 @@ export class LoginPage {
   lastName = '';
   email = '';
   password = '';
+  password2 = '';
   
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
@@ -49,6 +50,7 @@ export class LoginPage {
     this.lastName = '';
     this.email = '';
     // this.password = '';
+    this.password2 = '';
   }
 
   auth() {
@@ -75,6 +77,7 @@ export class LoginPage {
             this.navCtrl.setRoot('dashboard');
             this.username = '';
             this.password = '';
+            this.password2 = '';
             this.loading = false;
           });
         } else {
@@ -89,8 +92,17 @@ export class LoginPage {
     const self = this;
     this.loading = true;
     console.log("signup pressed");
-    if (this.username == '' || this.firstName == '' || this.email == '' || this.password == '') {
+    if (
+      this.username === '' ||
+      this.firstName === '' ||
+      this.email === '' ||
+      this.password === '' ||
+      this.password2 === ''
+    ) {
       this.presentError('Please provide a first name, email, and matching passwords.');
+      this.loading = false;
+    } else if (this.password !== this.password2) {
+      this.presentError('The provided passwords do not match.')
       this.loading = false;
     } else {
       this.userService.register(this.username, this.password, this.firstName, this.lastName, this.email)
@@ -125,7 +137,22 @@ export class LoginPage {
         console.log(response);
         const token = response.authResponse.accessToken;
         if (token) {
-          self.userService.facebookRegister(token);
+          self.userService.facebookAuth(token)
+            .then(user => {
+              self.userService.setCurrentUser(user);
+              self.firstName = '';
+              self.lastName = '';
+              self.email = '';
+              self.password = '';
+              self.password2 = '';
+              self.loading = false;
+              self.navCtrl.setRoot('dashboard');
+            })
+            .catch(err => {
+              console.log(err);
+              self.loading = false;
+              self.presentError(JSON.parse(err._body).non_field_errors[0]);
+            });
         } else {
           self.presentError('Facebook auth failed. Please try again.');
           self.loading = false;
@@ -136,41 +163,6 @@ export class LoginPage {
         self.presentError('Facebook auth failed. Please try again.');
         self.loading = false;
       });
-  }
-
-  processFacebookResponse(response, apiData) {
-    const self = this;
-    console.log("processing facebook reponse");
-    self.userService.fetchUserByFacebookId(response.authResponse.userID)
-    .then(user => {
-      if (!user['exception']) {
-        self.userService.setCurrentUser(user)
-        .then(user => {
-          self.username = '';
-          self.firstName = '';
-          self.lastName = '';
-          self.email = '';
-          self.password = '';
-          self.loading = false;
-          self.navCtrl.setRoot('dashboard');
-        });
-      } else {
-        if (!apiData.email) {
-          self.handleNoEmail()
-          .then(data => {
-            if (data['email']) {
-              apiData.email = data['email'];
-              self.processFacebookAuth(response, apiData);
-            } else {
-              self.presentError('Facebook auth failed. Please try again.');
-              self.loading = false;
-            }
-          });
-        } else {
-          self.processFacebookAuth(response, apiData);
-        }
-      }
-    });
   }
 
   handleNoEmail() {
@@ -198,14 +190,14 @@ export class LoginPage {
           text: 'SUBMIT',
           handler: input => {
             if (input.email) {
-              self.userService.fetchUserByEmail(input.email)
-              .then(data => {
-                if (!data['exception']) {
-                  resolve(data);
-                } else {
-                  resolve(input);
-                }
-              });
+              // self.userService.fetchUserByEmail(input.email)
+              // .then(data => {
+              //   if (!data['exception']) {
+              //     resolve(data);
+              //   } else {
+              //     resolve(input);
+              //   }
+              // });
             } else {
               resolve(null);
             }
@@ -215,57 +207,6 @@ export class LoginPage {
       });
       alert.present();
     });
-  }
-
-  processFacebookAuth(response, apiData) {
-    const self = this;
-    console.log("processing facebook registration");
-    self.userService.fetchUserByEmail(apiData.email)
-    .then(user => {
-      if (!user['exception']) {
-        if (user['facebookId'] == 0) {
-          user['facebookId'] = response.authResponse.userID;
-          self.userService.updateUserFacebookId(user, response.authResponse.userID)
-          .then(user => {
-            if (!user['exception']) {
-              self.userService.setCurrentUser(user)
-              .then(user => {
-                self.username = '';
-                self.firstName = '';
-                self.lastName = '';
-                self.email = '';
-                self.password = '';
-                self.loading = false;
-                self.navCtrl.setRoot('dashboard');
-              });
-            } else {
-              self.presentError('Facebook auth failed. Please try again.');
-              self.loading = false;
-            }
-          });
-        } else {
-          self.presentError('Email is taken. Please try again.');
-          self.loading = false;
-        }
-      } else {
-        self.userService.facebookRegister(apiData)
-        .then(user => {
-          if (!user['exception']) {
-            self.userService.setCurrentUser(user)
-            .then(user => {
-              self.username = '';
-              self.firstName = '';
-              self.lastName = '';
-              self.email = '';
-              self.password = '';
-              self.loading = false;
-              self.userService.headers = self.userService.headers;
-              self.navCtrl.setRoot('dashboard');
-            });
-          }
-        });
-      }
-    })
   }
 
   presentError(message) {
