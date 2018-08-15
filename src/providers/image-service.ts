@@ -3,6 +3,7 @@ import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 
 import { UserService } from './user-service';
+import { ENV } from '@env';
 
 @Injectable()
 export class ImageService {

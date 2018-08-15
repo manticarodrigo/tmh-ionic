@@ -16,11 +16,11 @@ import { ImageService } from '../../providers/image-service';
 export class LoginPage {
   loading = false;
   signup = false;
+  username = '';
   firstName = '';
   lastName = '';
   email = '';
   password = '';
-  password2 = '';
   
   constructor(private navCtrl: NavController,
               private navParams: NavParams,
@@ -36,7 +36,7 @@ export class LoginPage {
     });
     // Web Facebook sdk
     this.fb.init({
-        appId: '1566594110311271',
+        appId: '245954362655647',
         version: 'v2.8'
     });
   }
@@ -44,11 +44,11 @@ export class LoginPage {
   toggleType() {
     console.log("Toggling auth type");
     this.signup = !this.signup;
+    // this.username = '';
     this.firstName = '';
     this.lastName = '';
     this.email = '';
-    this.password = '';
-    this.password2 = '';
+    // this.password = '';
   }
 
   auth() {
@@ -63,17 +63,17 @@ export class LoginPage {
     const self = this;
     this.loading = true;
     console.log("login pressed");
-    if (this.email == '' || this.password == '') {
-      this.presentError('Please provide a valid email and password.');
+    if (this.username == '' || this.password == '') {
+      this.presentError('Please provide a valid username and password.');
       this.loading = false;
     } else {
-      this.userService.login(this.email, this.password, (user) => {
+      this.userService.login(this.username, this.password, (user) => {
         console.log(user);
         if (!user.exception) {
           self.userService.setCurrentUser(user)
           .then(user => {
             this.navCtrl.setRoot('dashboard');
-            this.email = '';
+            this.username = '';
             this.password = '';
             this.loading = false;
           });
@@ -89,24 +89,21 @@ export class LoginPage {
     const self = this;
     this.loading = true;
     console.log("signup pressed");
-    if (this.firstName == '' || this.email == '' || this.password == '' || this.password2 == '') {
+    if (this.username == '' || this.firstName == '' || this.email == '' || this.password == '') {
       this.presentError('Please provide a first name, email, and matching passwords.');
       this.loading = false;
-    } else if (this.password != this.password2) {
-      this.presentError('The provided password do not match.')
-      this.loading = false;
     } else {
-      this.userService.register(this.firstName, this.lastName, this.email, this.password, this.password2)
+      this.userService.register(this.username, this.password, this.firstName, this.lastName, this.email)
       .then(user => {
         console.log(user);
         if (!user['exception']) {
           self.userService.setCurrentUser(user)
           .then(user => {
+            this.username = '';
             this.firstName = '';
             this.lastName = '';
             this.email = '';
             this.password = '';
-            this.password2 = '';
             this.loading = false;
             this.navCtrl.setRoot('dashboard');
           });
@@ -122,32 +119,23 @@ export class LoginPage {
     let self = this;
     this.loading = true;
     console.log("starting facebook login...");
-    self.fb.login({scope:'email,public_profile'})
-    .then(response => {
-      console.log("facebook login returned response:");
-      console.log(response);
-      if (response.authResponse.accessToken) {
-        console.log("calling core facebook api");
-        self.fb.api('/me?fields=id,email,name,first_name,last_name')
-        .then(apiData => {
-          console.log('facebook api returned:');
-          console.log(apiData);
-          self.processFacebookResponse(response, apiData);
-        }).catch(error => {
-          console.log(error);
+    self.fb.login({ scope:'email,public_profile' })
+      .then(response => {
+        console.log("facebook login returned response:");
+        console.log(response);
+        const token = response.authResponse.accessToken;
+        if (token) {
+          self.userService.facebookRegister(token);
+        } else {
           self.presentError('Facebook auth failed. Please try again.');
           self.loading = false;
-        });
-      } else {
+        }
+      })
+      .catch(error => {
+        console.log(error);
         self.presentError('Facebook auth failed. Please try again.');
         self.loading = false;
-      }
-    })
-    .catch(error => {
-      console.log(error);
-      self.presentError('Facebook auth failed. Please try again.');
-      self.loading = false;
-    });
+      });
   }
 
   processFacebookResponse(response, apiData) {
@@ -158,11 +146,11 @@ export class LoginPage {
       if (!user['exception']) {
         self.userService.setCurrentUser(user)
         .then(user => {
+          self.username = '';
           self.firstName = '';
           self.lastName = '';
           self.email = '';
           self.password = '';
-          self.password2 = '';
           self.loading = false;
           self.navCtrl.setRoot('dashboard');
         });
@@ -242,11 +230,11 @@ export class LoginPage {
             if (!user['exception']) {
               self.userService.setCurrentUser(user)
               .then(user => {
+                self.username = '';
                 self.firstName = '';
                 self.lastName = '';
                 self.email = '';
                 self.password = '';
-                self.password2 = '';
                 self.loading = false;
                 self.navCtrl.setRoot('dashboard');
               });
@@ -265,11 +253,11 @@ export class LoginPage {
           if (!user['exception']) {
             self.userService.setCurrentUser(user)
             .then(user => {
+              self.username = '';
               self.firstName = '';
               self.lastName = '';
               self.email = '';
               self.password = '';
-              self.password2 = '';
               self.loading = false;
               self.userService.headers = self.userService.headers;
               self.navCtrl.setRoot('dashboard');

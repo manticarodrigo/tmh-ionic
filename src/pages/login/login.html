@@ -3,11 +3,11 @@
     <form>
       <img class="logo" src="assets/logo.png">
       <div *ngIf="!loading">
+        <ion-input [(ngModel)]="username" name="username" type="text" placeholder="USERNAME"></ion-input>
         <ion-input *ngIf="signup" [(ngModel)]="firstName" name="firstName" type="text" placeholder="FIRST NAME"></ion-input>
         <ion-input *ngIf="signup" [(ngModel)]="lastName" name="lastName" type="text" placeholder="LAST NAME"></ion-input>
-        <ion-input [(ngModel)]="email" name="email" type="email" placeholder="EMAIL"></ion-input>
+        <ion-input *ngIf="signup" [(ngModel)]="email" name="email" type="email" placeholder="EMAIL"></ion-input>
         <ion-input [(ngModel)]="password" name="password" type="password" placeholder="PASSWORD"></ion-input>
-        <ion-input *ngIf="signup" [(ngModel)]="password2" name="password2" type="password" placeholder="CONFIRM PASSWORD"></ion-input>
         <button ion-button class="auth" type="submit" (click)="auth()">{{ signup ? 'SIGN UP' : 'LOG IN'}}</button>
         <button ion-button class="facebook" type="button" (click)="facebookLogin()">{{ signup ? 'SIGN UP WITH FACEBOOK' : 'LOG IN WITH FACEBOOK'}}</button>
         <p *ngIf="!signup"><a>Forgot your password?</a></p>

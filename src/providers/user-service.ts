@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Storage } from '@ionic/storage';
+import { ENV } from '@env';
 
 @Injectable()
 export class UserService {
+  // TODO: remove user service vars
   currentUser: any;
   headers: any;
-  api = 'http://stage.themanhome.com/api/jsonws';
+  api: any;
   
   constructor(private http: Http,
               private storage: Storage) {
-    // this.api = '/api';
     const token = btoa("manticarodrigo@gmail.com:xlemrotm34711");
     const headers = this.generateHeaders(token);
     this.headers = headers;
@@ -20,7 +21,7 @@ export class UserService {
 
   generateHeaders(token) {
     const headers = new Headers();
-    var authHeader = `Basic ${token}`;
+    var authHeader = `Token ${token}`;
     headers.append('Authorization', authHeader);
     return headers;
   }
@@ -80,56 +81,11 @@ export class UserService {
   }
 
   login(email, password, callback) {
-    const self = this;
-    const token = btoa(email + ':' + password);
-    const headers = this.generateHeaders(token);
-    const map = {
-      "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /user/get-user-by-email-address": {
-        "companyId": "20155",
-        "emailAddress": email,
-        "$image[modifiedDate] = /image/get-image": {
-          "@imageId": "$user.portraitId"
-        },
-        "$roles[name,descriptionCurrentValue] = /role/get-user-roles": {
-          "@userId": "$user.userId"
-        },
-        "$client = /group/has-user-group": {
-          "@userId": "$user.userId",
-          "groupId": 20484
-        },
-        "$designer = /group/has-user-group": {
-          "@userId": "$user.userId",
-          "groupId": 20488
-        },
-        "$operator = /group/has-user-group": {
-          "@userId": "$user.userId",
-          "groupId": 20492
-        }
-      }
-    }
-    const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
-    this.http.get(endpoint, {headers: headers})
+    this.http.post(`${ENV.backendUrl}/api-token-auth/`, { username: email, password: password })
     .map(res => res.json())
     .subscribe(user => {
       console.log("login returned data");
       console.log(user);
-      if (!user.exception) {
-        var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-        if (user.image) {
-          user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
-        }
-        delete user.image;
-        for (var key in user.roles) {
-          const role = user.roles[key];
-          if (role.name == "Administrator") {
-            console.log("welcome back " + user.firstName + ".");
-            console.log("you're an admin, and always remember what liferay says about at admins:");
-            console.log(role.descriptionCurrentValue);
-            user.admin = true;
-          }
-        }
-        delete user.roles;
-      }
       callback(user);
     });
   }
@@ -163,7 +119,7 @@ export class UserService {
           }
         } 
       }
-      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
+      const endpoint = ENV.backendUrl + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(user => {
@@ -279,7 +235,7 @@ export class UserService {
           }
         } 
       }
-      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
+      const endpoint = ENV.backendUrl + "/invoke?cmd=" + JSON.stringify(map);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(user => {
@@ -308,95 +264,45 @@ export class UserService {
     });
   }
 
-  facebookRegister(data) {
+  facebookRegister(token) {
     const self = this;
     return new Promise((resolve, reject) => {
-      const map = {
-        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /user/add-user.26": {
-          "autoPassword": true,
-          "auto-screen-name": true,
-          "emailAddress": data.email,
-          "facebookId": data.id,
-          "firstName": data.first_name,
-          "lastName": data.last_name ? data.last_name : "",
-          "prefixId": 0,
-          "suffixId": 0,
-          "male": true,
-          "birthdayMonth": 1,
-          "birthdayDay": 1,
-          "birthdayYear": 1970,
-          "groupIds": [20484],
-          "sendEmail": true,
-          "$image[modifiedDate] = /image/get-image": {
-            "@imageId": "$user.portraitId"
-          },
-          "$roles[name,descriptionCurrentValue] = /role/get-user-roles": {
-            "@userId": "$user.userId"
-          },
-          "$client = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20484
-          },
-          "$designer = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20488
-          },
-          "$operator = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20492
-          }
+      self.http.post(
+        `${ENV.backendUrl}/auth/convert-token/`,
+        {
+          grant_type: 'convert_token',
+          client_id: 'KBS3OspYfCfmp88ltajXYtmXEL164QR2DNV2gAvf',
+          client_secret: '3qIijWNt9brsnPUS6VQ2fCTpHJftsz6s6rnvXTieWZOUZunL3YrjZtdHGipsucy5LcyiyurNBfEz4iB9IiEiyG1zKP0ZZgRXFdqP2Ed0JgCBCX248Lh8fQW9ZO85cgsZ',
+          backend: 'facebook',
+          token
         }
-      }
-      // var endpoint = self.api + "/user/add-user/company-id/20155/auto-password/true/-password1/-password2/auto-screen-name/true/-screen-name/email-address/" + data.email + "/facebook-id/" + data.id + "/-open-id/-locale/first-name/" + data.first_name + "/-middle-name/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/group-ids/" + [20484] + "/-organization-ids/-role-ids/-user-group-ids/send-email/true";
-      // if (data.last_name) {
-      //   endpoint += "/lastName/" + data.last_name;
-      // }
-      const endpoint = self.api + "/invoke?cmd=" + JSON.stringify(map);
-      console.log(endpoint);
-      self.http.post(endpoint, null, {headers: self.headers})
+      )
       .map(res => res.json())
       .subscribe(user => {
         console.log("facebook register returned data");
         console.log(user);
-        if (!user.exception) {
-          user.shortName = user.firstName;
-          if (user.lastName) {
-            user.shortName += ' ' + user.lastName.split('')[0] + '.';
-          }
-          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image) {
-            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
-          }
-          delete user.image;
-          for (var key in user.roles) {
-            const role = user.roles[key];
-            if (role.name == "Administrator") {
-              user.admin = true;
-            }
-          }
-          delete user.roles;
-        }
         resolve(user);
       });
     });
   }
 
-  register(firstName, lastName, email, password, password2) {
-    const self = this;
+  register(username, password, first_name, last_name, email) {
     return new Promise((resolve, reject) => {
-      const endpoint = self.api + "/user/add-user/company-id/20155/auto-password/false/password1/" + password + "/password2/" + password2 + "/auto-screen-name/false/screen-name/" + email.split("@")[0] + "/email-address/" + encodeURIComponent(email) + "/facebook-id/0/-open-id/-locale/first-name/" + firstName + "/-middle-name/last-name/" + lastName + "/prefix-id/0/suffix-id/0/male/true/birthday-month/1/birthday-day/1/birthday-year/1970/-job-title/group-ids/" + [20484] + "/-organization-ids/-role-ids/-user-group-ids/send-email/true";
-      this.http.post(endpoint, null, {headers: self.headers})
+      this.http.post(
+        `${ENV.backendUrl}/api/v1/users/`,
+        {
+          username,
+          password,
+          first_name,
+          last_name,
+          email
+        }
+      )
       .map(res => res.json())
       .subscribe(data => {
         console.log("register returned data");
         console.log(data);
-        if (!data.exception) {
-          self.login(email, password, (user) => {
-            resolve(user);
-          });
-        } else {
-          resolve(data);
-        }
+        resolve(data);
       });
     });
   }
@@ -428,7 +334,7 @@ export class UserService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
+      const endpoint = ENV.backendUrl + "/invoke?cmd=" + JSON.stringify(map);
       this.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(user => {
@@ -473,7 +379,7 @@ export class UserService {
     const self = this;
     var headers = this.headers;
     headers.append("enctype", "multipart/form-data");
-    const endpoint = this.api + "/user/update-portrait.2/userId/" + user.userId;
+    const endpoint = ENV.backendUrl + "/user/update-portrait.2/userId/" + user.userId;
     var formData = new FormData();
     formData.append('bytes', bytes);
     this.http.post(endpoint, formData, {headers})
@@ -490,7 +396,7 @@ export class UserService {
     return new Promise((resolve, reject) => {
       console.log("fetching credit card for user:");
       console.log(user);
-      const endpoint = this.api + "/tmh-project-portlet.usercreditcard/fetch-by-user-id/userId/" + user.userId;
+      const endpoint = ENV.backendUrl + "/tmh-project-portlet.usercreditcard/fetch-by-user-id/userId/" + user.userId;
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -532,7 +438,7 @@ export class UserService {
           }
         }
       }
-      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
+      const endpoint = ENV.backendUrl + "/invoke?cmd=" + JSON.stringify(map);
       console.log(endpoint);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())

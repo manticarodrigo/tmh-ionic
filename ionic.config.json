@@ -1,11 +1,5 @@
 {
   "name": "tmh",
-  "app_id": "",
-  "proxies": [
-    {
-      "path": "/api",
-      "proxyUrl": "http://stage.themanhome.com/api/jsonws"
-    }
-  ],
+  "integrations": {},
   "type": "ionic-angular"
 }
