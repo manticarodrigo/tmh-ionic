@@ -19,9 +19,9 @@ export class UserService {
     this.fetchCurrentUser();
   }
 
-  generateHeaders(token) {
+  getHeaders() {
     const headers = new Headers();
-    const authHeader = `Token ${token}`;
+    const authHeader = `Token ${this.currentUser.token}`;
     headers.append('Authorization', authHeader);
     return headers;
   }

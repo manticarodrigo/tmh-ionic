@@ -153,11 +153,10 @@ export class DashboardPage {
   fetchClientProjects() {
     const self = this;
     return new Promise((resolve, reject) => {
-      this.projectService.findByUserId(this.userService.currentUser.userId)
-      .then(data => {
-        if (this.selectedTab == 'IN_PROGRESS') {
-          var projects = [];
-          if (!data['exception']) {
+      this.projectService.fetchUserProjects()
+        .then(data => {
+          if (this.selectedTab == 'IN_PROGRESS') {
+            var projects = [];
             for (var key in data) {
               const project = data[key];
               const status = self.phases[project.projectStatus];
@@ -166,20 +165,17 @@ export class DashboardPage {
               }
             }
             resolve(projects);
-          }
         }
         if (this.selectedTab == 'COMPLETED') {
           var projects = [];
-          if (!data['exception']) {
-            for (var key in data) {
-              const project = data[key];
-              const status = self.phases[project.projectStatus];
-              if (status == 'ARCHIVED') {
-                projects.push(project);
-              }
+          for (var key in data) {
+            const project = data[key];
+            const status = self.phases[project.projectStatus];
+            if (status == 'ARCHIVED') {
+              projects.push(project);
             }
-            resolve(projects);
           }
+          resolve(projects);
         }
       });
     });
