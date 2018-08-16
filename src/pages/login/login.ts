@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
-import { FacebookService, LoginOptions } from 'ngx-facebook';
+import { IonicPage, NavController, AlertController } from 'ionic-angular';
+import { FacebookService } from 'ngx-facebook';
 
 import { UserService } from '../../providers/user-service';
-import { ImageService } from '../../providers/image-service';
 
 @IonicPage({
   name: 'login',
@@ -23,18 +22,12 @@ export class LoginPage {
   password = '';
   password2 = '';
   
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private alertCtrl: AlertController,
-              private fb: FacebookService,
-              private userService: UserService,
-              private imageService: ImageService) {
-    this.userService.fetchCurrentUser()
-    .then(user => {
-      if (user) {
-        this.navCtrl.setRoot('dashboard');
-      }
-    });
+  constructor(
+    private navCtrl: NavController,
+    private alertCtrl: AlertController,
+    private fb: FacebookService,
+    private userService: UserService
+  ) {
     // Web Facebook sdk
     this.fb.init({
         appId: '245954362655647',
@@ -43,55 +36,43 @@ export class LoginPage {
   }
 
   toggleType() {
-    console.log("Toggling auth type");
     this.signup = !this.signup;
-    // this.username = '';
-    this.firstName = '';
-    this.lastName = '';
-    this.email = '';
-    // this.password = '';
-    this.password2 = '';
   }
 
   auth() {
-    if (this.signup) {
-      this.register();
-    } else {
-      this.login();
+    switch(this.signup) {
+      case true:
+        this.register()
+      case false:
+        this.login();
+      default:
+        this.login();
     }
   }
 
   login() {
-    const self = this;
     this.loading = true;
-    console.log("login pressed");
     if (this.username == '' || this.password == '') {
       this.presentError('Please provide a valid username and password.');
       this.loading = false;
     } else {
-      this.userService.login(this.username, this.password, (user) => {
-        console.log(user);
-        if (!user.exception) {
-          self.userService.setCurrentUser(user)
-          .then(user => {
-            this.navCtrl.setRoot('dashboard');
-            this.username = '';
-            this.password = '';
-            this.password2 = '';
-            this.loading = false;
-          });
-        } else {
-          this.presentError('No user found with the provided credentials.');
+      this.userService.login(
+        this.username,
+        this.password,
+        (user) => {
+          this.userService.setCurrentUser(user)
+          this.navCtrl.setRoot('dashboard');
+          this.username = '';
+          this.password = '';
+          this.password2 = '';
           this.loading = false;
         }
-      });
+      );
     }
   }
 
   register() {
-    const self = this;
     this.loading = true;
-    console.log("signup pressed");
     if (
       this.username === '' ||
       this.firstName === '' ||
@@ -105,12 +86,17 @@ export class LoginPage {
       this.presentError('The provided passwords do not match.')
       this.loading = false;
     } else {
-      this.userService.register(this.username, this.password, this.firstName, this.lastName, this.email)
-      .then(user => {
-        console.log(user);
-        if (!user['exception']) {
-          self.userService.setCurrentUser(user)
-          .then(user => {
+      this.userService.register(
+        this.username,
+        this.password,
+        this.firstName,
+        this.lastName,
+        this.email
+      )
+        .then(
+          res => {
+            console.log(res);
+            this.userService.setCurrentUser(res);
             this.username = '';
             this.firstName = '';
             this.lastName = '';
@@ -118,95 +104,51 @@ export class LoginPage {
             this.password = '';
             this.loading = false;
             this.navCtrl.setRoot('dashboard');
-          });
-        } else {
-          this.presentError('Registration failed. Please try again.');
-          this.loading = false;
-        }
-      });
+          },
+          err => {
+            console.log(err);
+            this.presentError('Registration failed. Please try again.');
+            this.loading = false;
+          },
+        );
     }
   }
 
   facebookLogin() {
-    let self = this;
     this.loading = true;
-    console.log("starting facebook login...");
-    self.fb.login({ scope:'email,public_profile' })
+    this.fb.login({ scope:'email,public_profile' })
       .then(response => {
-        console.log("facebook login returned response:");
         console.log(response);
         const token = response.authResponse.accessToken;
         if (token) {
-          self.userService.facebookAuth(token)
-            .then(user => {
-              self.userService.setCurrentUser(user);
-              self.firstName = '';
-              self.lastName = '';
-              self.email = '';
-              self.password = '';
-              self.password2 = '';
-              self.loading = false;
-              self.navCtrl.setRoot('dashboard');
-            })
-            .catch(err => {
-              console.log(err);
-              self.loading = false;
-              self.presentError(JSON.parse(err._body).non_field_errors[0]);
-            });
+          this.userService.facebookAuth(token)
+            .then(
+              user => {
+                this.userService.setCurrentUser(user);
+                this.firstName = '';
+                this.lastName = '';
+                this.email = '';
+                this.password = '';
+                this.password2 = '';
+                this.loading = false;
+                this.navCtrl.setRoot('dashboard');
+              },
+              err => {
+                console.log(err);
+                this.loading = false;
+                this.presentError(JSON.parse(err._body).non_field_errors[0]);
+              }
+            );
         } else {
-          self.presentError('Facebook auth failed. Please try again.');
-          self.loading = false;
+          this.presentError('Facebook auth failed. Please try again.');
+          this.loading = false;
         }
       })
-      .catch(error => {
-        console.log(error);
-        self.presentError('Facebook auth failed. Please try again.');
-        self.loading = false;
+      .catch(err => {
+        console.log(err);
+        this.presentError('Facebook auth failed. Please try again.');
+        this.loading = false;
       });
-  }
-
-  handleNoEmail() {
-    const self = this;
-    console.log("handling no email");
-    return new Promise((resolve, reject) => {
-      let alert = this.alertCtrl.create({
-        title: 'Please provide a valid email:',
-        inputs: [
-        {
-          name: 'email',
-          placeholder: 'Email Address'
-        }
-        ],
-        buttons: [
-        {
-          text: 'CANCEL',
-          role: 'cancel',
-          handler: data => {
-            console.log('Cancel clicked');
-            resolve(null);
-          }
-        },
-        {
-          text: 'SUBMIT',
-          handler: input => {
-            if (input.email) {
-              // self.userService.fetchUserByEmail(input.email)
-              // .then(data => {
-              //   if (!data['exception']) {
-              //     resolve(data);
-              //   } else {
-              //     resolve(input);
-              //   }
-              // });
-            } else {
-              resolve(null);
-            }
-          }
-        }
-        ]
-      });
-      alert.present();
-    });
   }
 
   presentError(message) {

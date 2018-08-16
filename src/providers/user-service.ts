@@ -78,12 +78,17 @@ export class UserService {
     );
   }
 
-  facebookAuth(token) {
-    const self = this;
+  register(username, password, first_name, last_name, email) {
     return new Promise((resolve, reject) => {
-      self.http.post(
-        `${ENV.backendUrl}/rest-auth/facebook/`,
-        { access_token: token }
+      this.http.post(
+        `${ENV.backendUrl}/api/v1/users/`,
+        {
+          username,
+          password,
+          first_name,
+          last_name,
+          email
+        }
       )
         .map(res => res.json())
         .subscribe(
@@ -99,17 +104,12 @@ export class UserService {
     });
   }
 
-  register(username, password, first_name, last_name, email) {
+  facebookAuth(token) {
+    const self = this;
     return new Promise((resolve, reject) => {
-      this.http.post(
-        `${ENV.backendUrl}/api/v1/users/`,
-        {
-          username,
-          password,
-          first_name,
-          last_name,
-          email
-        }
+      self.http.post(
+        `${ENV.backendUrl}/rest-auth/facebook/`,
+        { access_token: token }
       )
         .map(res => res.json())
         .subscribe(
