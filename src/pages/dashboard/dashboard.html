@@ -73,7 +73,7 @@
       <div class="mobile">
         <div class="header">
           <div class="type" item-left>
-            <img src="assets/{{ project.projectType }}.png">
+            <img src="assets/{{ project.room }}.png">
           </div>
           <div class="chat" item-right>
             <img src="assets/chat.png">
@@ -81,14 +81,8 @@
         </div>
         <div class="details">
           <p class="title">
-            <span *ngIf="!project.client">
-              <ion-spinner name="crescent"></ion-spinner>
-            </span>
             <b>
-            <span *ngIf="project.client">
-              {{ project.client.shortName }}
-            </span>
-             - {{ project.projectTypeReadable }} Project
+            {{ project.user.first_name }} - {{ project.projectTypeReadable }} Project
             </b>
           </p>
           <div class="section">
@@ -107,7 +101,7 @@
       </div>
       <div class="desktop">
         <div class="section type">
-          <img src="assets/{{ project.projectType }}.png">
+          <img src="assets/{{ project.room }}.png">
         </div>
         <div class="section">
           <ion-spinner *ngIf="!project.client" name="crescent"></ion-spinner>

@@ -17,7 +17,9 @@ export class ProjectService {
 
   fetchUserProjects() {
     return new Promise((resolve, reject) => {
-      this.http.get(`${ENV.backendUrl}/api/v1/projects/me/`, { headers: this.userService.getHeaders() })
+      this.http.get(
+        `${ENV.backendUrl}/api/v1/projects/me/`,
+        { headers: this.userService.getHeaders() })
       .map(res => res.json())
       .subscribe(
         res => {

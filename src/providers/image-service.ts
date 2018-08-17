@@ -33,7 +33,7 @@ export class ImageService {
           console.log(data);
           var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
           if (data.modifiedDate) {
-            photoURL = photoURL + '&t=' + data.modifiedDate;
+            photoURL = photoURL + '&t=' + data.modified_date;
           }
           resolve(photoURL);
         } else {

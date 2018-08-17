@@ -159,7 +159,7 @@ export class DashboardPage {
             var projects = [];
             for (var key in data) {
               const project = data[key];
-              const status = self.phases[project.projectStatus];
+              const status = self.phases[project.status];
               if (status != 'ARCHIVED') {
                 projects.push(project);
               }
@@ -170,7 +170,7 @@ export class DashboardPage {
           var projects = [];
           for (var key in data) {
             const project = data[key];
-            const status = self.phases[project.projectStatus];
+            const status = self.phases[project.status];
             if (status == 'ARCHIVED') {
               projects.push(project);
             }
@@ -203,9 +203,9 @@ export class DashboardPage {
     if (!data.exception) {
       for (var key in data) {
         const project = data[key];
-        project.projectTypeReadable = self.types[project.projectType]
-        project.projectStatusReadable = self.phases[project.projectStatus]
-        project.modifiedDateReadable = self.getDateStringFrom(project.modifiedDate);
+        project.projectTypeReadable = self.types[project.room]
+        project.projectStatusReadable = self.phases[project.status]
+        project.modifiedDateReadable = self.getDateStringFrom(project.modified_date);
         project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
         if (project.client) {
           project.client.shortName = project.client.firstName;
