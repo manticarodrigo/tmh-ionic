@@ -45,66 +45,55 @@ export class DetailsPage {
   drawings: any;
   inspirations: any;
   furnitures: any;
-  answers = {};
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private userService: UserService,
-              private projectService: ProjectService,
-              private imageService: ImageService,
-              private alertCtrl: AlertController,
-              private popoverCtrl: PopoverController,
-              private modalCtrl: ModalController,
-              private platform: Platform) {
+  constructor(
+    private navCtrl: NavController,
+    private navParams: NavParams,
+    private userService: UserService,
+    private projectService: ProjectService,
+    private imageService: ImageService,
+    private alertCtrl: AlertController,
+    private popoverCtrl: PopoverController,
+    private modalCtrl: ModalController,
+    private platform: Platform
+  ) {
     const self = this;
     // Fetch current user
     this.userService.fetchCurrentUser()
-    .then(user => {
-      if (user) {
-        self.user = user;
-        if (self.user.designer) {
-          console.log("current user is a designer");
-          self.viewMode = "DESIGNER";
+      .subscribe(user => {
+        if (user) {
+          self.user = user;
+          if (self.user.designer) {
+            console.log("current user is a designer");
+            self.viewMode = "DESIGNER";
+          }
+          if (self.user.admin) {
+            console.log("current user is an admin");
+            self.viewMode = "DESIGNER";
+          }
+          self.fetchProject();
         }
-        if (self.user.admin) {
-          console.log("current user is an admin");
-          self.viewMode = "DESIGNER";
-        }
-        self.fetchProject();
-      } else {
-        self.navCtrl.setRoot('login');
-      }
-    });
+      });
   }
 
   fetchProject() {
-    const self = this;
     console.log("fetching projects");
     if (this.navParams.get('project')) {
-      self.project = self.navParams.get('project');
-      self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
-      self.fetchDetails();
+      this.project = this.navParams.get('project');
+      this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.end_date);
+      this.fetchDetails();
     } else if (this.navParams.get('id')) {
-      const id = self.navParams.get('id');
-      self.projectService.findByProjectId(id)
+      const id = this.navParams.get('id');
+      this.projectService.findByProjectId(id)
       .then(project => {
-        if (!project['exception']) {
-          self.project = project;
-          self.project.endDateReadable = self.getDaysLeftStringFrom(self.project.endDate);
-          self.fetchDetails();
-        }
+        this.project = project;
+        this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.end_date);
+        this.fetchDetails();
       });
     }
   }
 
   fetchDetails() {
-    const self = this;
     console.log("fetching details");
-    this.projectService.fetchQuestionAnswers(this.project)
-    .then(answers => {
-      console.log("details page received answers:");
-      console.log(answers);
-      self.answers = answers;
-    });
     this.fetchDrawings();
     this.fetchInspirations();
     this.fetchFurnitures();
@@ -112,7 +101,7 @@ export class DetailsPage {
 
   fetchDrawings() {
     const self = this;
-    this.projectService.fetchProjectDetail(this.project.projectId, "DRAWING")
+    this.projectService.fetchProjectDetail(this.project.id, "DRAWING")
     .then(data => {
       console.log("details page received drawings:");
       console.log(data);
@@ -141,7 +130,7 @@ export class DetailsPage {
 
   fetchInspirations() {
     const self = this;
-    this.projectService.fetchProjectDetail(this.project.projectId, "INSPIRATION")
+    this.projectService.fetchProjectDetail(this.project.id, "INSPIRATION")
     .then(data => {
       console.log("details page received inspirations:");
       console.log(data);
@@ -167,7 +156,7 @@ export class DetailsPage {
 
   fetchFurnitures() {
     const self = this;
-    this.projectService.fetchProjectDetail(this.project.projectId, "FURNITURE")
+    this.projectService.fetchProjectDetail(this.project.id, "FURNITURE")
     .then(data => {
       console.log("details page received furnitures:");
       console.log(data);
@@ -233,7 +222,7 @@ export class DetailsPage {
         if (page)
           this.navCtrl.setRoot(page, {
             project: self.project,
-            id: self.project.projectId
+            id: self.project.id
           });
       }
     });
@@ -252,7 +241,7 @@ export class DetailsPage {
     if (page)
       this.navCtrl.setRoot(page, {
         project: self.project,
-        id: self.project.projectId
+        id: self.project.id
       });
   }
 
@@ -306,7 +295,7 @@ export class DetailsPage {
         .then(data => {
           self.navCtrl.setRoot('design', {
             project: self.project,
-            id: self.project.projectId
+            id: self.project.id
           });
         });
       }

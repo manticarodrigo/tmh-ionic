@@ -42,14 +42,16 @@ export class DashboardPage {
     CHECKOUT: 'Checkout',
     ARCHIVED: 'Archived'
   };
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private alertCtrl: AlertController,
-              private popoverCtrl: PopoverController,
-              private modalCtrl: ModalController,
-              private platform: Platform,
-              private userService: UserService,
-              private projectService: ProjectService) {
+  constructor(
+    private navCtrl: NavController,
+    private navParams: NavParams,
+    private alertCtrl: AlertController,
+    private popoverCtrl: PopoverController,
+    private modalCtrl: ModalController,
+    private platform: Platform,
+    private userService: UserService,
+    private projectService: ProjectService
+  ) {
     this.userService.fetchCurrentUser()
       .subscribe(user => {
         this.user = user;
@@ -220,33 +222,33 @@ export class DashboardPage {
 
   selectedProject(project) {
     console.log("selected project with status:");
-    console.log(project.projectStatus);
+    console.log(project.status);
     var page: any;
-    if (project.projectStatus == 'DETAILS')
+    if (project.status == 'DETAILS')
       page = 'details';
-    if (project.projectStatus == 'DESIGN')
+    if (project.status == 'DESIGN')
       page = 'design';
-    if (project.projectStatus == 'CONCEPTS')
+    if (project.status == 'CONCEPTS')
       page = 'design';
-    if (project.projectStatus == 'FLOOR_PLAN')
+    if (project.status == 'FLOOR_PLAN')
       page = 'design';
-    if (project.projectStatus == 'REQUEST_ALTERNATIVES')
+    if (project.status == 'REQUEST_ALTERNATIVES')
       page = 'design';
-    if (project.projectStatus == 'ALTERNATIVES_READY')
+    if (project.status == 'ALTERNATIVES_READY')
       page = 'design';
-    if (project.projectStatus == 'FINAL_DELIVERY')
+    if (project.status == 'FINAL_DELIVERY')
       page = 'final-delivery';
-    if (project.projectStatus == 'SHOPPING_CART')
+    if (project.status == 'SHOPPING_CART')
       page = 'final-delivery';
-    if (project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX')
+    if (project.status == 'ESTIMATE_SHIPPING_AND_TAX')
       page = 'final-delivery';
-    if (project.projectStatus == 'CHECKOUT')
+    if (project.status == 'CHECKOUT')
       page = 'final-delivery';
-    if (project.projectStatus == 'ARCHIVED')
+    if (project.status == 'ARCHIVED')
       page = 'final-delivery';
     this.navCtrl.setRoot(page, {
       project: project,
-      id: project.projectId
+      id: project.id
     });
   }
 

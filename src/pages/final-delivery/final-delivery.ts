@@ -51,20 +51,18 @@ export class FinalDeliveryPage {
               private platform: Platform) {
     const self = this;
     this.userService.fetchCurrentUser()
-    .then(user => {
-      if (user) {
-        self.user = user;
-        if (self.user.designer) {
-          self.viewMode = "DESIGNER";
+      .subscribe(user => {
+        if (user) {
+          self.user = user;
+          if (self.user.designer) {
+            self.viewMode = "DESIGNER";
+          }
+          if (self.user.admin) {
+            self.viewMode = "DESIGNER";
+          }
+          self.fetchProject();
         }
-        if (self.user.admin) {
-          self.viewMode = "DESIGNER";
-        }
-        self.fetchProject();
-      } else {
-        self.navCtrl.setRoot('login');
-      }
-    });
+      });
     
   }
 

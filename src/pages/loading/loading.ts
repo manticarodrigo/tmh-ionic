@@ -18,13 +18,11 @@ export class LoadingPage {
               private userService: UserService) {
     // Fetch current user
     this.userService.fetchCurrentUser()
-    .then(user => {
-      if (user) {
-        this.navCtrl.setRoot('dashboard');
-      } else {
-        this.navCtrl.setRoot('login');
-      }
-    });
+      .subscribe(user => {
+        if (user) {
+          this.navCtrl.setRoot('dashboard');
+        }
+      });
   }
 
   

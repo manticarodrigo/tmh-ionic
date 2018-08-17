@@ -15,7 +15,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicStorageModule } from '@ionic/storage';
 import { HttpModule } from '@angular/http';
 
-// import { Facebook } from '@ionic-native/facebook';
 import { FacebookService } from 'ngx-facebook';
 
 @NgModule({

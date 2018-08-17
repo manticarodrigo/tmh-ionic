@@ -34,6 +34,20 @@ export class ProjectService {
     });
   }
 
+  findByProjectId(id) {
+    return new Promise((resolve, reject) => {
+      this.http.get(
+        `${ENV.backendUrl}/api/v1/projects/${id}/`,
+        { headers: this.userService.getHeaders() })
+      .map(res => res.json())
+      .subscribe(res => {
+        console.log("found project:");
+        console.log(res);
+        resolve(res);
+      });
+    });
+  }
+
   updateStatus(project, status) {
     const self = this;
     return new Promise((resolve, reject) => {
@@ -82,28 +96,6 @@ export class ProjectService {
         console.log("detail update returned response:");
         console.log(data);
         resolve(data);
-      });
-    });
-  }
-
-  findByProjectId(id) {
-    const self = this;
-    return new Promise((resolve, reject) => {
-      const map = {
-        "$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-project-id": {
-          "projectId": id,
-          "$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id": {
-            "@userId": "$project.userId"
-          }
-        }
-      }
-      const endpoint = this.api + "/invoke?cmd=" + encodeURIComponent(JSON.stringify(map));
-      self.http.get(endpoint, {headers: self.userService.headers})
-      .map(res => res.json())
-      .subscribe(project => {
-        console.log("found project:");
-        console.log(project);
-        resolve(project);
       });
     });
   }

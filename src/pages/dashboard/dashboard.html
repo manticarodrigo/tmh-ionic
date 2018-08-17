@@ -82,7 +82,7 @@
         <div class="details">
           <p class="title">
             <b>
-            {{ project.user.first_name }} - {{ project.projectTypeReadable }} Project
+            {{ project.user.first_name }}  {{ project.user.last_name[0] }} - {{ project.projectTypeReadable }} Project
             </b>
           </p>
           <div class="section">
@@ -104,8 +104,7 @@
           <img src="assets/{{ project.room }}.png">
         </div>
         <div class="section">
-          <ion-spinner *ngIf="!project.client" name="crescent"></ion-spinner>
-          <p class="info" *ngIf="project.client">{{ project.client.shortName }}</p>
+          <p class="info">{{ project.user.first_name }} {{ project.user.last_name[0] }}</p>
         </div>
         <div class="section">
           <p class="info">{{ project.projectTypeReadable }}</p>

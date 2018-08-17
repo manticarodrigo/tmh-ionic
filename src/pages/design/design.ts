@@ -63,7 +63,7 @@ export class DesignPage {
     const self = this;
      // Fetch current user
     this.userService.fetchCurrentUser()
-    .then(user => {
+    .subscribe(user => {
       if (user) {
         self.user = user;
         if (self.user.designer) {
@@ -75,8 +75,6 @@ export class DesignPage {
           self.viewMode = "DESIGNER";
         }
         self.fetchProject();
-      } else {
-        self.navCtrl.setRoot('login');
       }
     });
   }

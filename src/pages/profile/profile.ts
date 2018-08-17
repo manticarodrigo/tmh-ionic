@@ -22,14 +22,12 @@ export class ProfilePage {
               private platform: Platform,
               private userService: UserService) {
     this.userService.fetchCurrentUser()
-    .then(user => {
-      if (user) {
-        this.user = user;
-        this.user.createDateReadable = this.getDateStringFrom(this.user.createDate);
-      } else {
-        this.navCtrl.setRoot('login');
-      }
-    });
+      .subscribe(user => {
+        if (user) {
+          this.user = user;
+          this.user.createDateReadable = this.getDateStringFrom(this.user.createDate);
+        }
+      });
   }
 
   homePressed() {

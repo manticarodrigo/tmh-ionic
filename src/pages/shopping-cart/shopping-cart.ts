@@ -22,13 +22,11 @@ export class ShoppingCartPage {
               private navParams: NavParams,
               private userService: UserService) {
     this.userService.fetchCurrentUser()
-    .then(user => {
-      if (user) {
-        this.user = user;
-      } else {
-        this.navCtrl.setRoot('login');
-      }
-    });
+      .subscribe(user => {
+        if (user) {
+          this.user = user;
+        }
+      });
   }
 
 

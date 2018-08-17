@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.firstName }}'s </span><span *ngIf="project">{{ types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="project">{{ project.user.first_name }}'s </span><span *ngIf="project">{{ types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.photoURL" [src]="user.photoURL">
@@ -81,7 +81,7 @@
           <img class="thumb-img add" src="assets/add.png" (click)="file.click()">
         </div>
       </div>
-      <button *ngIf="viewMode == 'CLIENT' && status.UPLOADED_INSPIRATION && project.projectStatus == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+      <button *ngIf="viewMode == 'CLIENT' && status.UPLOADED_INSPIRATION && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
     <div *ngIf="view == 'INSPIRATION' && viewMode == 'CLIENT' && !status.UPLOADED_INSPIRATION" class="collab-alert">
       <p>Upload inspiration images that you would like your designer to reference for your space.</p>
@@ -102,7 +102,7 @@
           <img class="thumb-img  add" src="assets/add.png" (click)="file.click()">
         </div>
       </div>
-      <button *ngIf="viewMode == 'CLIENT' && status.UPLOADED_DRAWING && project.projectStatus == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+      <button *ngIf="viewMode == 'CLIENT' && status.UPLOADED_DRAWING && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
     <div *ngIf="view == 'FURNITURE' && viewMode == 'CLIENT' && !status.UPLOADED_FURNITURE" class="collab-alert">
       <p>Upload pictures and note measurements of any existing furniture that you would like the designer to incorporate into their designs.</p>
@@ -123,7 +123,7 @@
           <img class="thumb-img add" src="assets/add.png" (click)="file.click()">
         </div>
       </div>
-      <button *ngIf="viewMode == 'CLIENT' && status.UPLOADED_DRAWING && status.UPLOADED_INSPIRATION && project.projectStatus == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+      <button *ngIf="viewMode == 'CLIENT' && status.UPLOADED_DRAWING && status.UPLOADED_INSPIRATION && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
     <div class="collab-details-menu-mobile mobile">
       <div class="menu-item" [class.inactive]="view != 'DRAWING'" (click)="selectMenuItem('DRAWING')">
@@ -151,13 +151,13 @@
           <img src="assets/{{ project.room }}.png">
         </div>
         <h1>{{ types[project.room] }}</h1>
-        <h1 *ngIf="answers[4]">{{ answers[4].answer }}</h1>
+        <h1 *ngIf="project.budget">{{ project.budget }}</h1>
         <h4>Project Notes</h4>
         <p *ngIf="project.style">Style: {{ project.style }}</p>
-        <p *ngIf="answers[0]">ZIP Code: {{ answers[0].answer }}</p>
-        <p *ngIf="answers[1]">Share your space with: {{ answers[1].answer }}</p>
-        <p *ngIf="answers[2]">Pet friendly options: {{ answers[2].answer }}</p>
-        <p *ngIf="answers[3]">Limited access: {{ answers[3].answer }}</p>
+        <p *ngIf="project.zipcode">ZIP Code: {{ project.zipcode }}</p>
+        <p *ngIf="project.shared_with">Share your space with: {{ project.shared_with }}</p>
+        <p *ngIf="project.pet_friendly">Pet friendly options: {{ project.pet_friendly }}</p>
+        <p *ngIf="project.limited_access">Limited access: {{ project.limited_access }}</p>
       </div>
     </div>
   </div>
