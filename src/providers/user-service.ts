@@ -29,10 +29,12 @@ export class UserService {
     return new Observable(observer => {
       if (this.currentUser) {
         observer.next(this.currentUser);
+        observer.complete()
       } else {
         this.storage.get('user')
           .then(user => {
             observer.next(user ? this.setCurrentUser(user) : null);
+            observer.complete()
           });
       }
     });

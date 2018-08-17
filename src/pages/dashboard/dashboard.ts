@@ -52,7 +52,6 @@ export class DashboardPage {
               private projectService: ProjectService) {
     this.userService.fetchCurrentUser()
       .subscribe(user => {
-        console.log(user);
         this.user = user;
         this.loadProjects();
       });
@@ -86,15 +85,16 @@ export class DashboardPage {
   }
 
   selectTab() {
-    console.log("Toggling tab dropdown!");
     var tabs = [];
     for (let key in this.tabsMap) {
       const tab = this.tabsMap[key];
       tabs.push(tab);
     }
-    let popover = this.popoverCtrl.create('dropdown', {
-      items: tabs
-    }, { cssClass: 'tab-popover' });
+    let popover = this.popoverCtrl.create(
+      'dropdown',
+      { items: tabs },
+      { cssClass: 'tab-popover'
+    });
     popover.onDidDismiss(data => {
       if (data) {
         this.selectedTab = data.replace(" ", "_");

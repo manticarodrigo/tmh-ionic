@@ -74,14 +74,12 @@ export class OnboardingPage {
               private popoverCtrl: PopoverController,
               private platform: Platform) {
     this.userService.fetchCurrentUser()
-    .then(user => {
-      if (user) {
-        this.user = user;
-        this.fetchCreditCard();
-      } else {
-        this.navCtrl.setRoot('login');
-      }
-    });
+      .subscribe(user => {
+        if (user) {
+          this.user = user;
+          this.fetchCreditCard();
+        }
+      });
   }
 
   fetchCreditCard() {
