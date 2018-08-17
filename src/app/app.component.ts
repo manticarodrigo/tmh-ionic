@@ -28,6 +28,19 @@ export class TheManHome {
       statusBar.styleLightContent();
       splashScreen.hide();
     });
+
+    this.userService.fetchCurrentUser()
+      .subscribe(user => {
+        let view = this.nav.getActive();
+        switch (view.component.name) {
+          case !user:
+            this.nav.setRoot('login');
+          case user && 'LoginPage':
+            this.nav.setRoot('dashboard');
+          default:
+            return
+        }
+      });
   }
 
   profilePressed() {

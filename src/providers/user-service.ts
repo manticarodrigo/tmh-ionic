@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { Storage } from '@ionic/storage';
 import { ENV } from '@env';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class UserService {
@@ -15,9 +16,7 @@ export class UserService {
   constructor(
     private http: Http,
     private storage: Storage
-  ) {
-    this.fetchCurrentUser();
-  }
+  ) {}
 
   getHeaders() {
     const headers = new Headers();
@@ -27,14 +26,13 @@ export class UserService {
   }
 
   fetchCurrentUser() {
-    const self = this;
-    return new Promise((resolve, reject) => {
-      if (self.currentUser) {
-        resolve(self.currentUser);
+    return new Observable(observer => {
+      if (this.currentUser) {
+        observer.next(this.currentUser);
       } else {
         this.storage.get('user')
           .then(user => {
-            resolve(user ? self.setCurrentUser(user) : null);
+            observer.next(user ? this.setCurrentUser(user) : null);
           });
       }
     });

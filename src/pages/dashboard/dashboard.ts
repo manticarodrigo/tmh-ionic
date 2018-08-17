@@ -16,8 +16,11 @@ export class DashboardPage {
   viewMode = 'CLIENT';
   projects: Array<any>;
   selectedTab = 'IN_PROGRESS';
-  tabs: any;
-  tabsMap: any;
+  tabs: ['IN_PROGRESS', 'COMPLETED'];
+  tabsMap = {
+    IN_PROGRESS: 'IN PROGRESS',
+    COMPLETED: 'COMPLETED'
+  };
   types = {
     BEDROOM: 'Bedroom',
     LIVING_ROOM: 'Living Room',
@@ -47,39 +50,12 @@ export class DashboardPage {
               private platform: Platform,
               private userService: UserService,
               private projectService: ProjectService) {
-    const self = this;
-    this.tabs = ['IN_PROGRESS', 'COMPLETED']
-    this.tabsMap = {
-      IN_PROGRESS: 'IN PROGRESS',
-      COMPLETED: 'COMPLETED'
-    }
-    // Fetch current user
     this.userService.fetchCurrentUser()
-    .then(user => {
-      if (user) {
-        self.user = user;
-        if (self.user.designer) {
-          console.log("current user is a designer");
-          self.viewMode = "DESIGNER";
-        }
-        if (self.user.admin) {
-          console.log("current user is an admin");
-          self.viewMode = "ADMIN";
-          self.selectedTab = 'IN_PROGRESS';
-          self.tabs = ['IN_PROGRESS', 'UP_NEXT', 'COMPLETED', 'ARCHIVED']
-          self.tabsMap = {
-            IN_PROGRESS: 'IN PROGRESS',
-            UP_NEXT: 'UP NEXT',
-            COMPLETED: 'COMPLETED',
-            ARCHIVED: 'ARCHIVED',
-            
-          };
-        }
-        self.loadProjects();
-      } else {
-        self.navCtrl.setRoot('login');
-      }
-    });
+      .subscribe(user => {
+        console.log(user);
+        this.user = user;
+        this.loadProjects();
+      });
   }
 
   homePressed() {
@@ -118,10 +94,7 @@ export class DashboardPage {
     }
     let popover = this.popoverCtrl.create('dropdown', {
       items: tabs
-    }, 
-    {
-      cssClass: 'tab-popover'
-    });
+    }, { cssClass: 'tab-popover' });
     popover.onDidDismiss(data => {
       if (data) {
         this.selectedTab = data.replace(" ", "_");
@@ -200,23 +173,13 @@ export class DashboardPage {
   processProjects(data) {
     const self = this;
     var projects = [];
-    if (!data.exception) {
-      for (var key in data) {
-        const project = data[key];
-        project.projectTypeReadable = self.types[project.room]
-        project.projectStatusReadable = self.phases[project.status]
-        project.modifiedDateReadable = self.getDateStringFrom(project.modified_date);
-        project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
-        if (project.client) {
-          project.client.shortName = project.client.firstName;
-          if (project.client.lastName) {
-            project.client.shortName += ' ' + project.client.lastName.split('')[0] + '.';
-          }
-        }
-        projects.push(project);
-      }
-    } else {
-      console.log(data.exception);
+    for (var key in data) {
+      const project = data[key];
+      project.projectTypeReadable = self.types[project.room]
+      project.projectStatusReadable = self.phases[project.status]
+      project.modifiedDateReadable = self.getDateStringFrom(project.modified_date);
+      project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
+      projects.push(project);
     }
 
     if (projects.length > 0) {
@@ -227,11 +190,11 @@ export class DashboardPage {
   }
 
   getDateStringFrom(timestamp) {
-    var todate=new Date(timestamp).getDate();
-    var tomonth=new Date(timestamp).getMonth()+1;
-    var toyear=new Date(timestamp).getFullYear();
+    var todate = new Date(timestamp).getDate();
+    var tomonth = new Date(timestamp).getMonth() + 1;
+    var toyear = new Date(timestamp).getFullYear();
     var shortyear = toyear.toString().slice(2);
-    return tomonth+'/'+todate+'/'+shortyear;
+    return `${tomonth}/${todate}/${shortyear}`;
   }
 
   getDaysLeftStringFrom(timestamp) {
