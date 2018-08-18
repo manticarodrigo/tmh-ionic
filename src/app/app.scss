@@ -35,27 +35,7 @@
 
 /* Header styles */
 
-h1 {
-  font-family: $font-family-base !important;
-}
-h2 {font-family: $font-family-base !important;
-}
-h3 {
-    font-family: $font-family-base !important;
-}
-h4 {
-    font-family: $font-family-base !important;
-}
-h5 {
-    font-family: $font-family-base !important;
-}
-h6 {
-    font-family: $font-family-base !important;
-}
-p {
-    font-family: $font-family-base !important;
-}
-strong {
+h1, h2, h3, h4, h5, h6, p, strong, .label  {
     font-family: $font-family-base !important;
 }
 
@@ -67,10 +47,6 @@ button {
   border-radius: 0px !important;
   height: 40px !important;
   margin: 0 auto !important;
-}
-
-.label {
-  font-family: $font-family-base !important;
 }
 
 

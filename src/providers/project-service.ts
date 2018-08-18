@@ -48,6 +48,20 @@ export class ProjectService {
     });
   }
 
+  fetchProjectDetails(projectId) {
+    return new Promise((resolve, reject) => {
+      this.http.get(
+        `${ENV.backendUrl}/api/v1/details/project/?project=${projectId}`,
+        { headers: this.userService.getHeaders() })
+        .map(res => res.json())
+        .subscribe(res => {
+          console.log("found project details:");
+          console.log(res);
+          resolve(res);
+        });
+    });
+  }
+
   updateStatus(project, status) {
     const self = this;
     return new Promise((resolve, reject) => {
@@ -184,63 +198,6 @@ export class ProjectService {
     });
   }
 
-  fetchProjectDetail(projectId, type) {
-    const self = this;
-    return new Promise((resolve, reject) => {
-      const map = {
-        "$detail[fileEntryId,projectDetailId,projectDetailStatus,projectDetailType] = /tmh-project-portlet.projectdetail/find-by-project-id-project-detail-type": {
-          "projectId": projectId,
-          "projectDetailTypeStr": type,
-          "$file[repositoryId,folderId,title,uuid,version,createDate] = /dlfileentry/get-file-entry": {
-            "@fileEntryId": "$detail.fileEntryId"
-          }
-        }
-      }
-      const endpoint = this.api + "/invoke?cmd=" + JSON.stringify(map);
-      self.http.get(endpoint, {headers: self.userService.headers})
-      .map(res => res.json())
-      .subscribe(data => {
-        console.log("found project detail:");
-        console.log(data);
-        resolve(data);
-      });
-    });
-  }
-
-  fetchQuestionAnswer(project, questionNum) {
-    const self = this;
-    return new Promise((resolve, reject) => {
-      console.log("fetching question answer for question num:");
-      console.log(questionNum);
-      const questionMap = {
-        1: 20454,
-        2: 20455,
-        3: 20456,
-        4: 20457,
-        5: 20458
-      }
-      var questionId = questionMap[questionNum];
-      const endpoint = this.api + "/tmh-project-portlet.userquestionanswer/fetch-by-user-id-question-id/userId/" + project.userId + "/questionId/" + questionId;
-      self.http.get(endpoint, {headers: self.userService.headers})
-      .map(res => res.json())
-      .subscribe(data => {
-        console.log("found question answer:");
-        console.log(data);
-        resolve(data);
-      });
-    });
-  }
-
-  fetchQuestionAnswers(project) {
-    console.log("fetching question answers for project:");
-    console.log(project.projectId);
-    var promises = [];
-    for (var i=1;i<6;i++) {
-      promises.push(this.fetchQuestionAnswer(project, i));
-    }
-    return Promise.all(promises);
-  }
-
   fetchItems(project) {
     const self = this;
     return new Promise((resolve, reject) => {
@@ -263,24 +220,23 @@ export class ProjectService {
   }
 
   addDetail(project, file, type, status) {
-    console.log("adding detail of type:");
-    console.log(type);
-    const self = this;
     return new Promise((resolve, reject) => {
-      var headers = self.userService.headers;
-      headers.append("enctype", "multipart/form-data");
-      const now = new Date().getTime();
-      const endpoint = this.api + "/tmh-project-portlet.projectdetail/add-project-detail.9/globalGroupId/" + 20484 + "/projectId/" + project.projectId + "/projectDetailType/" + type + "/projectDetailStatus/" + status + "/fileName/" + now + "-" + file.name + "/contentType/" + file.type.split("/")[1] + "/fileSize/" + file.size + "/serviceContext/" + JSON.stringify({"userId":self.userService.currentUser.userId});
-      console.log(endpoint);
+      var headers = this.userService.getHeaders();
+      // headers.append("enctype", "multipart/form-data");
       var formData = new FormData();
-      formData.append('file', file);
-      this.http.post(endpoint, formData, {headers})
-      .map(res => res.json())
-      .subscribe(data => {
-        console.log("add detail returned response:");
-        console.log(data);
-        resolve(data);
-      });
+      formData.append('image', file);
+      formData.append('type', type);
+      formData.append('project', project.id);
+      this.http.post(
+        `${ENV.backendUrl}/api/v1/details/`,
+        formData,
+        { headers }
+      )
+        .map(res => res.json())
+        .subscribe(res => {
+          console.log(res);
+          resolve(res);
+        });
     });
   }
 

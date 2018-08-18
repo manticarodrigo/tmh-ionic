@@ -82,7 +82,7 @@
         <div class="details">
           <p class="title">
             <b>
-            {{ project.user.first_name }}  {{ project.user.last_name[0] }} - {{ project.projectTypeReadable }} Project
+            {{ project.user.first_name }}  {{ project.user.last_name[0] }} - {{ project.room }} Project
             </b>
           </p>
           <div class="section">
@@ -90,7 +90,7 @@
             <p class="sub-title">Edited</p>
           </div>
           <div class="section">
-            <p class="info">{{ project.projectStatusReadable }}</p>
+            <p class="info">{{ phases[project.status] }}</p>
             <p class="sub-title">Phase</p>
           </div>
           <div class="section">
@@ -107,13 +107,13 @@
           <p class="info">{{ project.user.first_name }} {{ project.user.last_name[0] }}</p>
         </div>
         <div class="section">
-          <p class="info">{{ project.projectTypeReadable }}</p>
+          <p class="info">{{ project.room }}</p>
         </div>
         <div class="section">
           <p class="info">{{ project.modifiedDateReadable }}</p>
         </div>
         <div class="section">
-          <p class="info">{{ project.projectStatusReadable }}</p>
+          <p class="info">{{ phases[project.status] }}</p>
         </div>
         <div class="section">
           <p class="info">{{ project.endDateReadable }}</p>

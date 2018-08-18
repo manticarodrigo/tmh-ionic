@@ -35,10 +35,12 @@ export class TheManHome {
         switch (view.component.name) {
           case !user:
             this.nav.setRoot('login');
+            break;
           case user && 'LoginPage':
             this.nav.setRoot('dashboard');
+            break;
           default:
-            return
+            return;
         }
       });
   }

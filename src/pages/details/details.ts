@@ -94,90 +94,59 @@ export class DetailsPage {
 
   fetchDetails() {
     console.log("fetching details");
-    this.fetchDrawings();
-    this.fetchInspirations();
-    this.fetchFurnitures();
-  }
-
-  fetchDrawings() {
-    const self = this;
-    this.projectService.fetchProjectDetail(this.project.id, "DRAWING")
-    .then(data => {
-      console.log("details page received drawings:");
-      console.log(data);
-      if (!data['exception']) {
-        var drawings = [];
-        for (var key in data) {
-          var drawing = data[key];
-          drawing.url = self.imageService.createFileUrl(drawing.file);
-          drawings.push(drawing);
+    this.projectService.fetchProjectDetails(this.project.id)
+      .then(data => {
+        let drawings = [];
+        let inspirations = [];
+        let furnitures = [];
+        for (let key in data) {
+          let detail =  data[key];
+          switch (detail.type) {
+            case 'DRAWING':
+              drawings.push(detail);
+              break;
+            case 'INSPIRATION':
+              inspirations.push(detail);
+              break;
+            case 'FURNITURE':
+              furnitures.push(detail);
+              break;
+            default:
+              console.log('detail mismatch', detail);
+          }
         }
+        if (this.loading) { this.loading = false; }
+
         if (drawings.length > 0) {
-          self.status.UPLOADED_DRAWING = true;
-          self.selectedDrawing = drawings[0];
-          self.drawings = drawings;
+          this.status.UPLOADED_DRAWING = true;
+          this.selectedDrawing = drawings[0];
+          this.drawings = drawings;
         } else {
-          self.status.UPLOADED_DRAWING = false;
-          self.selectedDrawing = null;
-          self.drawings = null;
+          this.status.UPLOADED_DRAWING = false;
+          this.selectedDrawing = null;
+          this.drawings = null;
         }
-        if (self.loading) {
-          self.loading = false;
-        }
-      }
-    });
-  }
 
-  fetchInspirations() {
-    const self = this;
-    this.projectService.fetchProjectDetail(this.project.id, "INSPIRATION")
-    .then(data => {
-      console.log("details page received inspirations:");
-      console.log(data);
-      if (!data['exception']) {
-        var inspirations = [];
-        for (var key in data) {
-          var inspiration = data[key];
-          inspiration.url = self.imageService.createFileUrl(inspiration.file);
-          inspirations.push(inspiration);
-        }
         if (inspirations.length > 0) {
-          self.status.UPLOADED_INSPIRATION = true;
-          self.selectedInspiration = inspirations[0];
-          self.inspirations = inspirations;
+          this.status.UPLOADED_INSPIRATION = true;
+          this.selectedInspiration = inspirations[0];
+          this.inspirations = inspirations;
         } else {
-          self.status.UPLOADED_INSPIRATION = false;
-          self.selectedInspiration = null;
-          self.inspirations = null;
+          this.status.UPLOADED_INSPIRATION = false;
+          this.selectedInspiration = null;
+          this.inspirations = null;
         }
-      }
-    });
-  }
-
-  fetchFurnitures() {
-    const self = this;
-    this.projectService.fetchProjectDetail(this.project.id, "FURNITURE")
-    .then(data => {
-      console.log("details page received furnitures:");
-      console.log(data);
-      if (!data['exception']) {
-        var furnitures = [];
-        for (var key in data) {
-          var furniture = data[key];
-          furniture.url = self.imageService.createFileUrl(furniture.file);
-          furnitures.push(furniture);
-        }
+        
         if (furnitures.length > 0) {
-          self.status.UPLOADED_FURNITURE = true;
-          self.selectedFurniture = furnitures[0];
-          self.furnitures = furnitures;
+          this.status.UPLOADED_FURNITURE = true;
+          this.selectedFurniture = furnitures[0];
+          this.furnitures = furnitures;
         } else {
-          self.status.UPLOADED_FURNITURE = false;
-          self.selectedFurniture = null;
-          self.furnitures = null;
+          this.status.UPLOADED_FURNITURE = false;
+          this.selectedFurniture = null;
+          this.furnitures = null;
         }
-      }
-    });
+      });
   }
 
   getDaysLeftStringFrom(timestamp) {
@@ -304,58 +273,43 @@ export class DetailsPage {
   }
 
   fileChanged(event) {
-    const self = this;
     console.log("file changed:");
     console.log(event.target.files[0]);
     const file = event.target.files[0];
-    if (this.view == 'DRAWING') {
-      this.projectService.addDetail(this.project, file, 'DRAWING', 'APPROVED')
-      .then(data => {
-        console.log(data);
-        if (!data['exception']) {
-          self.fetchDrawings();
-        }
-      });
-    }
-    if (this.view == 'INSPIRATION') {
-      this.projectService.addDetail(this.project, file, 'INSPIRATION', 'APPROVED')
-      .then(data => {
-        console.log(data);
-        if (!data['exception']) {
-          self.fetchInspirations();
-        }
-      });
-    }
-    if (this.view == 'FURNITURE') {
-      this.projectService.addDetail(this.project, file, 'FURNITURE', 'APPROVED')
-      .then(data => {
-        console.log(data);
-        if (!data['exception']) {
-          self.fetchFurnitures();
-        }
-      });
+    switch (this.view) {
+      case 'DRAWING':
+        this.projectService.addDetail(this.project, file, 'DRAWING', 'APPROVED')
+          .then(data => {
+            console.log(data);
+            this.fetchDetails();
+          });
+          break;
+      case 'INSPIRATION':
+        this.projectService.addDetail(this.project, file, 'INSPIRATION', 'APPROVED')
+          .then(data => {
+            console.log(data);
+            this.fetchDetails();
+          });
+          break;
+      case 'FURNITURE':
+        this.projectService.addDetail(this.project, file, 'FURNITURE', 'APPROVED')
+          .then(data => {
+            console.log(data);
+            this.fetchDetails();
+          });
+          break;
+      default:
+        console.log('view mismatch', this.view);
     }
   }
 
   deleteDetail(detail) {
-    const self = this;
-    console.log("delete detail pressed:");
-    console.log(detail);
+    console.log("deleting detail:", detail);
     this.projectService.deleteDetail(this.project, detail)
-    .then(data => {
-      console.log(data);
-      if (!data['exception']) {
-        if (this.view == 'DRAWING') {
-          self.fetchDrawings();
-        }
-        if (this.view == 'INSPIRATION') {
-          self.fetchInspirations();
-        }
-        if (this.view == 'FURNITURE') {
-          self.fetchFurnitures();
-        }
-      }
-    });
+      .then(data => {
+        console.log(data);
+        this.fetchDetails();
+      });
   }
 
 }

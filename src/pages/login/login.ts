@@ -43,8 +43,10 @@ export class LoginPage {
     switch(this.signup) {
       case true:
         this.register()
+        break;
       case false:
         this.login();
+        break;
       default:
         this.login();
     }

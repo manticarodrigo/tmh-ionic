@@ -71,10 +71,10 @@
       <p>Feel free to chat with your client to prepare for the design phase and to help them prepare as well.</p>
     </div>
     <div *ngIf="view == 'DRAWING' && status.UPLOADED_DRAWING" class="collab-image">
-      <img class="selected-img" [src]="selectedDrawing.url">
+      <img class="selected-img" [src]="selectedDrawing.image">
       <div class="collab-thumb-wrapper">
         <div class="collab-thumb" *ngFor="let thumb of drawings">
-          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedDrawing.id" (click)="selectDrawing(thumb)">
+          <img class="thumb-img" [src]="thumb.image" [class.active]="thumb.id == selectedDrawing.id" (click)="selectDrawing(thumb)">
           <img *ngIf="viewMode == 'CLIENT'" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
         </div>
         <div *ngIf="viewMode == 'CLIENT'" class="collab-thumb">
@@ -92,10 +92,10 @@
       <p>Your client has not uploaded inspiration images yet.</p>
     </div>
     <div *ngIf="view == 'INSPIRATION' && status.UPLOADED_INSPIRATION" class="collab-image">
-      <img class="selected-img" [src]="selectedInspiration.url">
+      <img class="selected-img" [src]="selectedInspiration.image">
       <div class="collab-thumb-wrapper">
         <div class="collab-thumb" *ngFor="let thumb of inspirations">
-          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedInspiration.id" (click)="selectInspiration(thumb)">
+          <img class="thumb-img" [src]="thumb.image" [class.active]="thumb.id == selectedInspiration.id" (click)="selectInspiration(thumb)">
           <img *ngIf="viewMode == 'CLIENT'" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
         </div>
         <div *ngIf="viewMode == 'CLIENT'" class="collab-thumb">
@@ -113,10 +113,10 @@
       <p>Your client has not uploaded existing furniture images yet.</p>
     </div>
     <div *ngIf="view == 'FURNITURE' && status.UPLOADED_FURNITURE" class="collab-image">
-      <img class="selected-img" [src]="selectedFurniture.url">
+      <img class="selected-img" [src]="selectedFurniture.image">
       <div class="collab-thumb-wrapper">
         <div class="collab-thumb" *ngFor="let thumb of furnitures">
-          <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedFurniture.id" (click)="selectFurniture(thumb)">
+          <img class="thumb-img" [src]="thumb.image" [class.active]="thumb.id == selectedFurniture.id" (click)="selectFurniture(thumb)">
           <img *ngIf="viewMode == 'CLIENT'" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
         </div>
         <div *ngIf="viewMode == 'CLIENT'" class="collab-thumb">

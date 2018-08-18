@@ -21,14 +21,6 @@ export class DashboardPage {
     IN_PROGRESS: 'IN PROGRESS',
     COMPLETED: 'COMPLETED'
   };
-  types = {
-    BEDROOM: 'Bedroom',
-    LIVING_ROOM: 'Living Room',
-    MULTIPURPOSE_ROOM: 'Open Layout',
-    STUDIO: 'Studio',
-    DINING_ROOM: 'Dining Room',
-    HOME_OFFICE: 'Office'
-  };
   phases = {
     DETAILS: 'Details',
     DESIGN: 'Design',
@@ -126,7 +118,6 @@ export class DashboardPage {
   }
 
   fetchClientProjects() {
-    const self = this;
     return new Promise((resolve, reject) => {
       this.projectService.fetchUserProjects()
         .then(data => {
@@ -134,7 +125,7 @@ export class DashboardPage {
             var projects = [];
             for (var key in data) {
               const project = data[key];
-              const status = self.phases[project.status];
+              const status = project.status;
               if (status != 'ARCHIVED') {
                 projects.push(project);
               }
@@ -145,7 +136,7 @@ export class DashboardPage {
           var projects = [];
           for (var key in data) {
             const project = data[key];
-            const status = self.phases[project.status];
+            const status = project.status;
             if (status == 'ARCHIVED') {
               projects.push(project);
             }
@@ -177,8 +168,6 @@ export class DashboardPage {
     var projects = [];
     for (var key in data) {
       const project = data[key];
-      project.projectTypeReadable = self.types[project.room]
-      project.projectStatusReadable = self.phases[project.status]
       project.modifiedDateReadable = self.getDateStringFrom(project.modified_date);
       project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
       projects.push(project);
@@ -221,31 +210,32 @@ export class DashboardPage {
   }
 
   selectedProject(project) {
-    console.log("selected project with status:");
-    console.log(project.status);
     var page: any;
-    if (project.status == 'DETAILS')
-      page = 'details';
-    if (project.status == 'DESIGN')
-      page = 'design';
-    if (project.status == 'CONCEPTS')
-      page = 'design';
-    if (project.status == 'FLOOR_PLAN')
-      page = 'design';
-    if (project.status == 'REQUEST_ALTERNATIVES')
-      page = 'design';
-    if (project.status == 'ALTERNATIVES_READY')
-      page = 'design';
-    if (project.status == 'FINAL_DELIVERY')
-      page = 'final-delivery';
-    if (project.status == 'SHOPPING_CART')
-      page = 'final-delivery';
-    if (project.status == 'ESTIMATE_SHIPPING_AND_TAX')
-      page = 'final-delivery';
-    if (project.status == 'CHECKOUT')
-      page = 'final-delivery';
-    if (project.status == 'ARCHIVED')
-      page = 'final-delivery';
+    switch (project.status) {
+      case ('DETAILS'):
+        page = 'details'
+        break;
+      case (
+        'DESIGN' ||
+        'CONCEPTS' ||
+        'FLOOR_PLAN' ||
+        'REQUEST_ALTERNATIVES' ||
+        'ALTERNATIVES_READY'
+      ):
+        page = 'design'
+        break;
+      case (
+        'FINAL_DELIVERY' ||
+        'SHOPPING_CART' ||
+        'ESTIMATE_SHIPPING_AND_TAX' ||
+        'CHECKOUT' ||
+        'ARCHIVED'
+      ):
+        page = 'final-delivery'
+        break;
+      default:
+        page = 'details'
+    }
     this.navCtrl.setRoot(page, {
       project: project,
       id: project.id
