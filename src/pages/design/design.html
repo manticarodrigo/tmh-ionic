@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.firstName }}'s </span><span *ngIf="project">{{ types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="project">{{ project.user.first_name }}'s </span><span *ngIf="project">{{ types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.photoURL" [src]="user.photoURL">
@@ -48,7 +48,7 @@
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
     </div>
-    <div *ngIf="view == 'APPROVE_CONCEPT' && viewMode == 'CLIENT' && concepts[0].projectDetailStatus == 'PENDING'" class="collab-alert">
+    <div *ngIf="view == 'APPROVE_CONCEPT' && viewMode == 'CLIENT' && concepts && concepts[0].status == 'PENDING'" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
     </div>
@@ -58,27 +58,27 @@
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
     <div *ngIf="view == 'APPROVE_CONCEPT' && concepts && !conceptboard" class="collab-image">
-      <div *ngIf="viewMode == 'CLIENT' && concepts[0].projectDetailStatus == 'SUBMITTED'">
-        <img class="selected-img" [src]="selectedConcept.url">
+      <div *ngIf="viewMode == 'CLIENT' && concepts[0].status == 'SUBMITTED'">
+        <img class="selected-img" [src]="selectedConcept.image">
         <div class="collab-thumb-wrapper">
           <div class="collab-thumb" *ngFor="let thumb of concepts">
-            <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
+            <img class="thumb-img" [src]="thumb.image" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
           </div>
         </div>
         <button (click)="approveConcept()" ion-button full type="button">APPROVE CONCEPT {{ concepts[0].id == selectedConcept.id ? 1 : 2 }}</button>
       </div>
       <div *ngIf="viewMode == 'DESIGNER'">
-        <img class="selected-img" [src]="selectedConcept.url">
+        <img class="selected-img" [src]="selectedConcept.image">
         <div class="collab-thumb-wrapper">
           <div class="collab-thumb" *ngFor="let thumb of concepts">
-            <img class="thumb-img" [src]="thumb.url" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
+            <img class="thumb-img" [src]="thumb.image" [class.active]="thumb.id == selectedConcept.id" (click)="selectConcept(thumb)">
             <img class="delete" src="assets/delete.png" (click)="deleteConcept(thumb)">
           </div>
           <div class="collab-thumb">
             <img class="thumb-img add" src="assets/add.png" (click)="file.click()">
           </div>
         </div>
-        <button (click)="submitConcepts()" ion-button full type="button">{{ concepts[0].projectDetailStatus == 'SUBMITTED' ? 'RESUBMIT CONCEPTS' : 'SUBMIT CONCEPTS'}}</button>
+        <button (click)="submitConcepts()" ion-button full type="button">{{ concepts[0].status == 'SUBMITTED' ? 'RESUBMIT CONCEPTS' : 'SUBMIT CONCEPTS'}}</button>
       </div>
     </div>
     <div *ngIf="view == 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && viewMode == 'CLIENT' && !loading" class="collab-alert">
@@ -90,10 +90,10 @@
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
     <div *ngIf="view == 'FLOOR_PLAN' && floorplan" class="collab-image" id="floorplan-map">
-      <img [src]="floorplan.url" id="floorplan-img">
+      <img [src]="floorplan.image" id="floorplan-img">
     </div>
     <div *ngIf="view == 'CONCEPT_BOARD' && conceptboard" class="collab-image">
-      <img [src]="conceptboard.url" class="selected-img">
+      <img [src]="conceptboard.image" class="selected-img">
     </div>
     <div *ngIf="view != 'APPROVE_CONCEPT' && view != 'APPROVE_FLOOR_PLAN'" class="collab-design-switcher">
       <a (click)="selectFloorplan()">FLOOR PLAN</a>
@@ -108,8 +108,8 @@
   </div>
   <div class="project-items-view-switcher" *ngIf="pendingItems || approvedItems">
     <ion-segment [(ngModel)]="itemsViewMode" (ionChange)="itemViewSwitched()">
-      <ion-segment-button value="PENDING" *ngIf="project.projectStatus != 'FINAL_DELIVERY' && project.projectStatus != 'SHOPPING_CART' && project.projectStatus != 'ESTIMATE_SHIPPING_AND_TAX' && this.project.projectStatus != 'ARCHIVED'">
-        <span *ngIf="viewMode == 'CLIENT'">PENDING</span><span *ngIf="viewMode == 'DESIGNER'">{{ project.projectStatus == 'FLOOR_PLAN' ? 'SUBMITTED' : 'PENDING' }}</span>
+      <ion-segment-button value="PENDING" *ngIf="project.status != 'FINAL_DELIVERY' && project.status != 'SHOPPING_CART' && project.status != 'ESTIMATE_SHIPPING_AND_TAX' && this.project.status != 'ARCHIVED'">
+        <span *ngIf="viewMode == 'CLIENT'">PENDING</span><span *ngIf="viewMode == 'DESIGNER'">{{ project.status == 'FLOOR_PLAN' ? 'SUBMITTED' : 'PENDING' }}</span>
       </ion-segment-button>
       <ion-segment-button value="MODIFIED" *ngIf="modifiedItems">
         MODIFIED
@@ -119,16 +119,16 @@
       </ion-segment-button>
     </ion-segment>
   </div>
-  <div *ngIf="viewMode == 'CLIENT' && pendingItems && project.projectStatus == 'CONCEPTS' && itemsViewMode == 'PENDING'" class="collection-box">
+  <div *ngIf="viewMode == 'CLIENT' && pendingItems && project.status == 'CONCEPTS' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>HANG TIGHT</h1>
     <p>Your designer is hard at work putting together the Floor Plan of your room!</p>
   </div>
-  <div *ngIf="viewMode == 'CLIENT' && pendingItems && project.projectStatus != 'REQUEST_ALTERNATIVES' && project.projectStatus != 'CONCEPTS' && itemsViewMode == 'PENDING'" class="collection-box">
+  <div *ngIf="viewMode == 'CLIENT' && pendingItems && project.status != 'REQUEST_ALTERNATIVES' && project.status != 'CONCEPTS' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>YOUR COLLECTION</h1>
     <p>Review your furnishings and note the items that you would like to see alternatives from your designer. Happy with the collection? Go ahead and approve all!</p>
     <button ion-button type="button" (click)="approveCollection()">APPROVE & SUBMIT</button>
   </div>
-  <div *ngIf="viewMode == 'CLIENT' && pendingItems && project.projectStatus == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
+  <div *ngIf="viewMode == 'CLIENT' && pendingItems && project.status == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>ALTERNATES REQUESTED</h1>
     <p>Please wait for your designer to submit alternatives for the items you requested.</p>
     <button ion-button type="button" disabled>APPROVE & SUBMIT</button>
@@ -145,27 +145,27 @@
     <h1>{{ types[project.room] }} COLLECTION</h1>
     <p>Add furniture to fill the space. Double tap at a location on the floorplan to add a new item.</p>
   </div>
-  <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.projectStatus == 'CONCEPTS' && project.projectStatus != 'FLOOR_PLAN' && itemsViewMode == 'PENDING'" class="collection-box">
+  <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.status == 'CONCEPTS' && project.status != 'FLOOR_PLAN' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>{{ types[project.room] }} COLLECTION</h1>
     <p>Continue adding furniture to fill the space. When you're satisfied with the collection, go ahead and submit it to your client.</p>
     <button ion-button type="button" (click)="submitCollection()">SUBMIT COLLECTION</button>
   </div>
-  <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.projectStatus == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
+  <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.status == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>ALTERNATES REQUESTED:</h1>
     <p>Review the items below. Your client wants to see alternatives furniture for them. When you're satisfied with the collection, go ahead and submit it to your client.</p>
     <button ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
   </div>
-  <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.projectStatus == 'ALTERNATIVES_READY' && itemsViewMode == 'PENDING'" class="collection-box">
+  <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.status == 'ALTERNATIVES_READY' && itemsViewMode == 'PENDING'" class="collection-box">
     <h1>ALTERNATES READY</h1>
     <p>Please wait for your client to approve alternatives for the items you submitted.</p>
     <button ion-button type="button" disabled>SUBMIT ALTERNATIVES</button>
   </div>
-  <div *ngIf="viewMode == 'DESIGNER' && modifiedItems && project.projectStatus == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'MODIFIED'" class="collection-box">
+  <div *ngIf="viewMode == 'DESIGNER' && modifiedItems && project.status == 'REQUEST_ALTERNATIVES' && itemsViewMode == 'MODIFIED'" class="collection-box">
     <h1>MODIFIED ITEMS:</h1>
     <p>Review the items below and submit to your client when ready.</p>
     <button ion-button type="button" (click)="submitCollection()">SUBMIT COLLECTION</button>
   </div>
-  <div *ngIf="viewMode == 'DESIGNER' && modifiedItems && project.projectStatus == 'ALTERNATIVES_READY' && itemsViewMode == 'MODIFIED'" class="collection-box">
+  <div *ngIf="viewMode == 'DESIGNER' && modifiedItems && project.status == 'ALTERNATIVES_READY' && itemsViewMode == 'MODIFIED'" class="collection-box">
     <h1>MODIFIED ITEMS:</h1>
     <p>Please wait for your client to approve the items you submitted.</p>
     <button ion-button type="button" disabled>SUBMIT COLLECTION</button>
@@ -173,7 +173,7 @@
   <div *ngIf="viewMode == 'DESIGNER' && approvedItems && itemsViewMode == 'APPROVED'" class="collection-box">
     <h1>APPROVED ITEMS</h1>
     <p>The client has already approved the following items:</p>
-    <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
+    <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
   </div>
   <ion-grid *ngIf="pendingItems || approvedItems" class="project-items">
     <h4 *ngIf="itemsViewMode == 'PENDING' && pendingItems">{{ pendingItems.length }} ITEMS</h4>
@@ -188,29 +188,29 @@
           ITEM {{ i + 1 }}
         </div>
         <div class="project-items-img">
-          <img *ngIf="pendingItemsMap[item.fileEntryId]" [src]="pendingItemsMap[item.fileEntryId].url">
+          <img *ngIf="pendingItemsMap[item.fileEntryId]" [src]="pendingItemsMap[item.fileEntryId].image">
         </div>
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>
         <h2>${{ item.itemPrice/100 }}</h2>
         <div *ngIf="viewMode == 'CLIENT'">
           <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
-            <button *ngIf="project.projectStatus == 'FLOOR_PLAN' || project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
+            <button *ngIf="project.status == 'FLOOR_PLAN' || project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
           </div>
           <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
-            <button *ngIf="project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
           </div>
         </div>
         <div *ngIf="viewMode == 'DESIGNER'">
           <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
           </div>
           <div *ngIf="item.projectItemStatus == 'ALTERNATE_READY'">
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
           </div>
         </div>
       </ion-col>
@@ -219,29 +219,29 @@
           ITEM {{ i + 1 }}
         </div>
         <div class="project-items-img" (click)="editItem(item, i)">
-          <img *ngIf="modifiedItemsMap[item.fileEntryId]" [src]="modifiedItemsMap[item.fileEntryId].url">
+          <img *ngIf="modifiedItemsMap[item.fileEntryId]" [src]="modifiedItemsMap[item.fileEntryId].image">
         </div>
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>
         <h2>${{ item.itemPrice/100 }}</h2>
         <div *ngIf="viewMode == 'CLIENT'">
           <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
-            <button *ngIf="project.projectStatus == 'FLOOR_PLAN' || project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
+            <button *ngIf="project.status == 'FLOOR_PLAN' || project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
           </div>
           <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
-            <button *ngIf="project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
           </div>
         </div>
         <div *ngIf="viewMode == 'DESIGNER'">
           <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
           </div>
           <div *ngIf="item.projectItemStatus == 'ALTERNATE_READY'">
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
           </div>
         </div>
       </ion-col>
@@ -250,29 +250,29 @@
           ITEM {{ i + 1 }}
         </div>
         <div class="project-items-img" (click)="editItem(item, i)">
-          <img *ngIf="approvedItemsMap[item.fileEntryId]" [src]="approvedItemsMap[item.fileEntryId].url">
+          <img *ngIf="approvedItemsMap[item.fileEntryId]" [src]="approvedItemsMap[item.fileEntryId].image">
         </div>
         <h6>{{ item.itemMake }}</h6>
         <p>{{ item.itemType }}</p>
         <h2>${{ item.itemPrice/100 }}</h2>
         <div *ngIf="viewMode == 'CLIENT'">
           <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
-            <button *ngIf="project.projectStatus == 'FLOOR_PLAN' || project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
+            <button *ngIf="project.status == 'FLOOR_PLAN' || project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
           </div>
           <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
-            <button *ngIf="project.projectStatus != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status != 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
           </div>
         </div>
         <div *ngIf="viewMode == 'DESIGNER'">
           <div *ngIf="item.projectItemStatus == 'REQUEST_ALTERNATIVE'">
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status == 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
           </div>
           <div *ngIf="item.projectItemStatus == 'ALTERNATE_READY'">
-            <button *ngIf="project.projectStatus == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-            <button *ngIf="project.projectStatus == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
+            <button *ngIf="project.status == 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
+            <button *ngIf="project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
           </div>
         </div>
       </ion-col>

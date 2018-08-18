@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+
+import {
+  IonicPage,
+  NavController,
+  NavParams,
+  PopoverController
+} from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
@@ -40,116 +46,86 @@ export class FinalDeliveryPage {
   videoUrl = '';
   snapshots: any;
   finalNote = '';
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private userService: UserService,
-              private projectService: ProjectService,
-              private imageService: ImageService,
-              private alertCtrl: AlertController,
-              private popoverCtrl: PopoverController,
-              private modalCtrl: ModalController,
-              private platform: Platform) {
-    const self = this;
+  constructor(
+    private navCtrl: NavController,
+    private navParams: NavParams,
+    private userService: UserService,
+    private projectService: ProjectService,
+    private imageService: ImageService,
+    private popoverCtrl: PopoverController
+  ) {
     this.userService.fetchCurrentUser()
       .subscribe(user => {
         if (user) {
-          self.user = user;
-          if (self.user.designer) {
-            self.viewMode = "DESIGNER";
+          this.user = user;
+          if (this.user.designer) {
+            this.viewMode = 'DESIGNER';
           }
-          if (self.user.admin) {
-            self.viewMode = "DESIGNER";
+          if (this.user.admin) {
+            this.viewMode = 'DESIGNER';
           }
-          self.fetchProject();
+          this.fetchProject();
         }
       });
-    
   }
 
   fetchProject() {
-    const self = this;
     if (this.navParams.get('project')) {
-      self.project = this.navParams.get('project');
-      if (self.project && self.project.designerNote != '') {
-        self.designerNote = this.project.designerNote;
+      this.project = this.navParams.get('project');
+      if (this.project && this.project.designerNote != '') {
+        this.designerNote = this.project.designerNote;
       }
-      self.fetchDetails();
+      this.fetchDetails();
     } else if (this.navParams.get('id')) {
-      const id = self.navParams.get('id');
-      self.projectService.findByProjectId(id)
+      const id = this.navParams.get('id');
+      this.projectService.findByProjectId(id)
       .then(project => {
         if (!project['exception']) {
-          self.project = project;
-          if (self.project && self.project.designerNote != '') {
-            self.designerNote = self.project.designerNote;
+          this.project = project;
+          if (this.project && this.project.designerNote != '') {
+            this.designerNote = this.project.designerNote;
           }
-          self.fetchDetails();
+          this.fetchDetails();
         }
       });
     }
   }
 
   fetchDetails() {
-    const self = this;
-    console.log("fetching project details");
-    this.projectService.fetchProjectDetail(this.project.projectId, "CONCEPT")
-    .then(data => {
-      console.log("design page received concepts and floorplan:");
-      console.log(data);
-      if (!data['exception']) {
-        for (var key in data) {
-          var detail = data[key];
-          if (detail && detail.projectDetailStatus == 'APPROVED') {
-            detail.url = self.imageService.createFileUrl(detail.file);
-            self.conceptboard = detail;
+    console.log('fetching project details');
+    this.projectService.fetchProjectDetails(this.project.id)
+      .then(data => {
+        console.log('design page received details:', data);
+        const snapshots = [];
+        for (const key in data) {
+          const detail = data[key];
+          if (detail && (detail.type === 'CONCEPT' && detail.status == 'APPROVED')) {
+            this.conceptboard = detail;
           }
-        }
-      }
-    });
-    this.projectService.fetchProjectDetail(this.project.projectId, "FLOOR_PLAN")
-    .then(data => {
-      console.log("design page received concepts and floorplan:");
-      console.log(data);
-      if (!data['exception']) {
-        for (var key in data) {
-          var detail = data[key];
-          if (detail && detail.projectDetailStatus == 'APPROVED') {
-            detail.url = self.imageService.createFileUrl(detail.file);
-            self.floorplan = detail;
+          if (detail && (detail.type === 'FLOOR_PLAN' && detail.status == 'APPROVED')) {
+            this.floorplan = detail;
           }
-        }
-      }
-    });
-    this.projectService.fetchProjectDetail(this.project.projectId, "FINAL_SNAPSHOTS")
-    .then(data => {
-      console.log("details page received final snapshots:");
-      console.log(data);
-      if (!data['exception']) {
-        var snapshots = [];
-        for (var key in data) {
-          var detail = data[key];
-          detail.url = self.imageService.createFileUrl(detail.file);
-          snapshots.push(detail);
+          if (detail && (detail.type === 'FINAL_SNAPSHOT' && detail.status == 'APPROVED')) {
+            snapshots.push(detail);
+          }
         }
         if (snapshots.length > 0) {
-          self.snapshots = detail;
+          this.snapshots = snapshots;
         }
-      }
-    });
+      });
   }
 
   stringForView(view) {
-    return view.replace("_", " ");
+    return view.replace('_', ' ');
   }
 
   homePressed() {
-    console.log("logo pressed");
+    console.log('logo pressed');
     this.navCtrl.setRoot('dashboard');
   }
 
   selectTab() {
-    const self = this;
-    console.log("toggling tab dropdown");
+    console.log('toggling tab dropdown');
     let popover = this.popoverCtrl.create('dropdown', {
       items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
     });
@@ -162,8 +138,8 @@ export class FinalDeliveryPage {
           page = 'design';
         if (page)
           this.navCtrl.setRoot(page, {
-            project: self.project,
-            id: self.project.projectId
+            project: this.project,
+            id: this.project.projectId
           });
       }
     });
@@ -171,36 +147,31 @@ export class FinalDeliveryPage {
   }
 
   selectTabLink(link) {
-    const self = this;
-    console.log("selected tab link:");
-    console.log(link);
+    console.log('selected tab link:', link);
     var page: any;
-    if (link == 'DETAILS')
+    if (link === 'DETAILS')
       page = 'details';
-    if (link == 'DESIGN')
+    if (link === 'DESIGN')
       page = 'design';
     if (page)
       this.navCtrl.setRoot(page, {
-        project: self.project,
-        id: self.project.projectId
+        project: this.project,
+        id: this.project.projectId
       });
   }
 
   selectFooterTab() {
-    const self = this;
-    console.log("toggling tab dropdown");
+    console.log('toggling tab dropdown');
     let popover = this.popoverCtrl.create('Dropdown', {
       items: ['DESIGNER NOTE', 'FLOOR PLAN', 'CONCEPT BOARD', '3D MODEL', 'SNAPSHOTS', 'FINAL NOTES', 'SHOPPING CART']
     }, 
-    {
-      cssClass: 'tab-popover'
-    });
+    { cssClass: 'tab-popover' });
     popover.onDidDismiss(data => {
       if (data) {
         if (data == 'SHOPPING CART') {
-          console.log("selected footer tab shopping cart");
+          console.log('selected footer tab shopping cart');
         } else {
-          self.view = data.replace(" ", "_");
+          this.view = data.replace(' ', '_');
         }
       }
     });
@@ -208,14 +179,12 @@ export class FinalDeliveryPage {
   }
 
   selectFooterTabLink(link) {
-    const self = this;
-    console.log("selected footer tab link:");
-    console.log(link);
+    console.log('selected footer tab link:', link);
     if (link == 'SHOPPING_CART') {
-      console.log("selected footer tab shopping cart");
+      console.log('selected footer tab shopping cart');
       this.navCtrl.setRoot('shopping-cart', {
-        project: self.project,
-        id: self.project.projectId
+        project: this.project,
+        id: this.project.projectId
       });
     } else {
       this.view = link;

@@ -126,63 +126,21 @@ export class UserService {
   }
 
   fetchUser(uid) {
-    const self = this;
     return new Promise((resolve, reject) => {
-      const map = {
-        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /user/get-user-by-id": {
-          "companyId": "20155",
-          "userId": uid,
-          "$image[modifiedDate] = /image/get-image": {
-            "@imageId": "$user.portraitId"
-          },
-          "$roles[name] = /role/get-user-roles": {
-            "@userId": "$user.userId"
-          },
-          "$client = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20484
-          },
-          "$designer = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20488
-          },
-          "$operator = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20492
-          }
-        }
-      }
-      const endpoint = ENV.backendUrl + "/invoke?cmd=" + JSON.stringify(map);
-      this.http.get(endpoint, {headers: self.headers})
-      .map(res => res.json())
-      .subscribe(user => {
-        console.log("fetched user:");
-        console.log(user);
-        if (!user.exception) {
-          user.shortName = user.firstName;
-          if (user.lastName) {
-            user.shortName += ' ' + user.lastName.split('')[0] + '.';
-          }
-          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
-          if (user.image) {
-            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
-          }
-          delete user.image;
-          for (var key in user.roles) {
-            const role = user.roles[key];
-            if (role.name == "Administrator") {
-              user.admin = true;
-            }
-          }
-          delete user.roles;
-        }
-        resolve(user);
-      });
+      this.http.get(
+        `${ENV.backendUrl}/api/v1/users/${uid}/`,
+        { headers: this.getHeaders() }
+      )
+        .map(res => res.json())
+        .subscribe(user => {
+          console.log('fetched user:', user);
+          resolve(user);
+        });
     });
   }
 
   fetchUsers(uids): Promise<any> {
-    console.log("getting users with ids: " + JSON.stringify(uids));
+    console.log('getting users with ids: ' + JSON.stringify(uids));
     const self = this;
     var promises = [];
     uids.forEach(uid => {
@@ -196,14 +154,14 @@ export class UserService {
   updatePortrait(user, bytes, callback) {
     const self = this;
     var headers = this.headers;
-    headers.append("enctype", "multipart/form-data");
-    const endpoint = ENV.backendUrl + "/user/update-portrait.2/userId/" + user.userId;
+    headers.append('enctype', 'multipart/form-data');
+    const endpoint = ENV.backendUrl + '/user/update-portrait.2/userId/' + user.userId;
     var formData = new FormData();
     formData.append('bytes', bytes);
     this.http.post(endpoint, formData, {headers})
     .map(res => res.json())
     .subscribe(data => {
-      console.log("updated user portrait:");
+      console.log('updated user portrait:');
       console.log(data);
       callback(data);
     });
@@ -212,13 +170,13 @@ export class UserService {
   fetchCreditCard(user) {
     const self = this;
     return new Promise((resolve, reject) => {
-      console.log("fetching credit card for user:");
+      console.log('fetching credit card for user:');
       console.log(user);
-      const endpoint = ENV.backendUrl + "/tmh-project-portlet.usercreditcard/fetch-by-user-id/userId/" + user.userId;
+      const endpoint = ENV.backendUrl + '/tmh-project-portlet.usercreditcard/fetch-by-user-id/userId/' + user.userId;
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log("found user credit card:");
+        console.log('found user credit card:');
         console.log(data);
         resolve(data);
       });
@@ -228,54 +186,54 @@ export class UserService {
   updateUser(user) {
     const self = this;
     return new Promise((resolve, reject) => {
-      console.log("updating user:");
+      console.log('updating user:');
       console.log(user);
       const map = {
-        "$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /tmh-project-portlet.project/update-user": {
-          "userId": user.userId,
-          "firstName": user.firstName,
-          "lastName": user.lastName,
-          "emailAddress": user.emailAddress,
-          "$image[modifiedDate] = /image/get-image": {
-            "@imageId": "$user.portraitId"
+        '$user[firstName,lastName,emailAddress,portraitId,userId,createDate,facebookId] = /tmh-project-portlet.project/update-user': {
+          'userId': user.userId,
+          'firstName': user.firstName,
+          'lastName': user.lastName,
+          'emailAddress': user.emailAddress,
+          '$image[modifiedDate] = /image/get-image': {
+            '@imageId': '$user.portraitId'
           },
-          "$roles[name] = /role/get-user-roles": {
-            "@userId": "$user.userId"
+          '$roles[name] = /role/get-user-roles': {
+            '@userId': '$user.userId'
           },
-          "$client = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20484
+          '$client = /group/has-user-group': {
+            '@userId': '$user.userId',
+            'groupId': 20484
           },
-          "$designer = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20488
+          '$designer = /group/has-user-group': {
+            '@userId': '$user.userId',
+            'groupId': 20488
           },
-          "$operator = /group/has-user-group": {
-            "@userId": "$user.userId",
-            "groupId": 20492
+          '$operator = /group/has-user-group': {
+            '@userId': '$user.userId',
+            'groupId': 20492
           }
         }
       }
-      const endpoint = ENV.backendUrl + "/invoke?cmd=" + JSON.stringify(map);
+      const endpoint = ENV.backendUrl + '/invoke?cmd=' + JSON.stringify(map);
       console.log(endpoint);
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(user => {
-        console.log("updated user data:");
+        console.log('updated user data:');
         console.log(user);
         if (!user.exception) {
           user.shortName = user.firstName;
           if (user.lastName) {
             user.shortName += ' ' + user.lastName.split('')[0] + '.';
           }
-          var photoURL = "http://stage.themanhome.com/image/user_male_portrait?img_id=" + user.portraitId;
+          var photoURL = 'http://stage.themanhome.com/image/user_male_portrait?img_id=' + user.portraitId;
           if (user.image) {
             user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
           }
           delete user.image;
           for (var key in user.roles) {
             const role = user.roles[key];
-            if (role.name == "Administrator") {
+            if (role.name == 'Administrator') {
               user.admin = true;
             }
           }

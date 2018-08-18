@@ -1,7 +1,14 @@
-import { Component, ViewChild, Input } from '@angular/core';
-import { NavController, ActionSheetController, AlertController, LoadingController, NavParams, ViewController, Content } from 'ionic-angular';
-// import { Camera, PhotoViewer } from 'ionic-native';
-import { StatusBar } from '@ionic-native/status-bar';
+import {
+  Component,
+  ViewChild,
+  Input
+} from '@angular/core';
+
+import {
+  NavParams,
+  ViewController,
+  Content
+} from 'ionic-angular';
 
 import { ChatService } from '../../../providers/chat-service';
 import { UserService } from '../../../providers/user-service';
@@ -23,13 +30,8 @@ export class ChatPage {
   };
   memberMap = {};
   fileMap = {};
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
+  constructor(private navParams: NavParams,
               private viewCtrl: ViewController,
-              private actionSheetCtrl: ActionSheetController,
-              private alertCtrl: AlertController,
-              private loadingCtrl: LoadingController,
-              private statusBar: StatusBar,
               private chatService: ChatService,
               private userService: UserService,
               private imageService: ImageService) {
@@ -40,44 +42,37 @@ export class ChatPage {
     }
     if (this.navParams.get('project')) {
       this.project = this.navParams.get('project');
-      console.log("found project for chat:");
-      console.log(this.project);
-      this.chatService.join(this.project.projectId);
+      console.log("found project for chat:", this.project);
+      this.chatService.join(this.project.id);
       this.fetchMessages();
       this.observeMessages();
     }
   }
 
-  ionViewWillLoad() {
-    // this.statusBar.styleDefault();
-  }
-
   ionViewWillLeave() {
-    // this.statusBar.styleLightContent();
     if (this.project) {
-      this.chatService.leave(this.project.projectId);
+      this.chatService.leave(this.project.id);
     }
   }
 
   fetchMessages() {
-    const self = this;
     this.chatService.fetchMessages()
     .then(data => {
       console.log("chat component received messages:");
       console.log(data);
       if (data) {
-        var messageArr = [];
-        for (var key in data[0]) {
+        let messageArr = [];
+        for (const key in data[0]) {
           if (data[0].hasOwnProperty(key) && key != '_id') {
-            var message = data[0][key];
-            if (!self.memberMap[message.senderId]) {
-              self.addMemberData(message.senderId);
+            const message = data[0][key];
+            if (!this.memberMap[message.senderId]) {
+              this.addMemberData(message.senderId);
             }
             if (message.createdAt) {
-              message.createdAtReadable = self.getTimeStringFrom(message.createdAt);
+              message.createdAtReadable = this.getTimeStringFrom(message.createdAt);
             }
             if (message.fileEntryId) {
-              self.fetchImage(message.fileEntryId);
+              this.fetchImage(message.fileEntryId);
             }
             messageArr.push(message);
           }
@@ -85,41 +80,36 @@ export class ChatPage {
         messageArr.sort(function(a, b){
             return a.createdAt-b.createdAt;
         });
-        self.messages = messageArr;
+        this.messages = messageArr;
         setTimeout(() => {
-          self.scrollToBottom();
+          this.scrollToBottom();
         }, 500);
       } else {
-        self.messages = null;
+        this.messages = null;
       }
     })
   }
 
   fetchImage(fileEntryId) {
-    const self = this;
     this.imageService.getFileEntry(fileEntryId)
-    .then(data => {
-      console.log("chat component received file:");
-      console.log(data);
-      if (!data['exception']) {
-        self.fileMap[fileEntryId] = data;
-      }
-    });
+      .then(data => {
+        console.log("chat component received file:");
+        console.log(data);
+        this.fileMap[fileEntryId] = data;
+      });
   }
 
   observeMessages() {
-    const self = this;
     this.chatService.observeMessages(data => {
-      console.log("chat component received message:");
-      console.log(data);
-      if (!self.memberMap[data['senderId']]) {
-       self.addMemberData(data['senderId']);
+      console.log("chat component received message:", data);
+      if (!this.memberMap[data['senderId']]) {
+       this.addMemberData(data['senderId']);
       }
       if (data['createdAt']) {
         data['createdAtReadable'] = this.getTimeStringFrom(data['createdAt']);
       }
       if (data['fileEntryId']) {
-        self.fetchImage(data['fileEntryId']);
+        this.fetchImage(data['fileEntryId']);
       }
       this.messages.push(data);
       this.scrollToBottom();
@@ -127,53 +117,50 @@ export class ChatPage {
   }
 
   addMemberData(uid) {
-    const self = this;
-    const headers = this.userService.headers;
     if (!this.memberMap[uid]) {
-      self.memberMap[uid] = {
+      this.memberMap[uid] = {
         loading: true
       }
-      self.userService.fetchUser(uid)
-      .then(user => {
-        if (!user['exception'] && user['portraitId']) {
-          if (user['file']) {
-            self.memberMap[uid] = {
-              firstName: user['firstName'],
-              photoURL: self.imageService.createFileUrl(user['file']),
-              loading: false
+      this.userService.fetchUser(uid)
+        .then(user => {
+          if (!user['exception'] && user['portraitId']) {
+            if (user['file']) {
+              this.memberMap[uid] = {
+                firstName: user['firstName'],
+                photoURL: this.imageService.createFileUrl(user['file']),
+                loading: false
+              }
+            } else {
+              this.imageService.imageForUser(user)
+                .then(url => {
+                  if (url) {
+                    this.memberMap[uid] = {
+                      firstName: user['firstName'],
+                      photoURL: url,
+                      loading: false
+                    }
+                  } else {
+                    console.log("no image found");
+                    this.memberMap[uid] = null;
+                  }
+                });
             }
           } else {
-            self.imageService.imageForUser(user)
-            .then(url => {
-              if (url) {
-                self.memberMap[uid] = {
-                  firstName: user['firstName'],
-                  photoURL: url,
-                  loading: false
-                }
-              } else {
-                console.log("No image found");
-                self.memberMap[uid] = null;
-              }
-            });
+            console.log("got back object instead of valid user:", user);
+            this.memberMap[uid] = null;
           }
-        } else {
-          console.log("Got back object instead of valid user:");
-          console.log(user);
-          self.memberMap[uid] = null;
-        }
-      });
+        });
     }
   }
 
   scrollToBottom() {
-    console.log("Scrolling to bottom!");
+    console.log("scrolling to bottom");
     let dimensions = this.content.getContentDimensions();
     if (this.content.getContentDimensions()) {
       this.content.scrollToBottom(300);
       // this.content.scrollTo(0, dimensions.scrollHeight, 250); //x, y, ms animation speed
     } else {
-      console.log("Content not loaded");
+      console.log("content not loaded");
     }
   }
 
@@ -207,14 +194,10 @@ export class ChatPage {
   }
 
   fileChanged(event) {
-    const self = this;
-    console.log("file changed:");
-    console.log(event.target.files[0]);
+    console.log("file changed:", event.target.files[0]);
     this.imageService.uploadFile(event.target.files[0], this.project)
-    .then(data => {
-      console.log("chat component received data:");
-      console.log(data);
-      if (!data['exception']) {
+      .then(data => {
+        console.log("chat component received data:", data);
         const msgData = {
           message: {
             fileEntryId: data['fileEntryId'],
@@ -225,15 +208,14 @@ export class ChatPage {
           room: this.project.projectId
         }
         this.chatService.send(msgData, (savedToLocal) => {
-          self.message = {
+          this.message = {
               text: '',
               id: null,
               senderId: this.userService.currentUser.userId,
               createdAt: null
             };
         });
-      }
-    });
+      });
   }
 
   // showImage(url) {
@@ -317,15 +299,15 @@ export class ChatPage {
   // }
 
   getTimeStringFrom(timestamp) {
-    let date = new Date(timestamp);
+    const date = new Date(timestamp);
     date.setDate(date.getDate());
-    var string = date.toString();
-    var stringArr = string.split(" ");
-    var time = this.tConvert(stringArr[4]);
+    const string = date.toString();
+    const stringArr = string.split(" ");
+    const time = this.tConvert(stringArr[4]);
 
-    let now = new Date();
-    var seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    var interval = Math.floor(seconds / 31536000);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    let interval = Math.floor(seconds / 31536000);
 
     if (interval > 1) {
       return interval + " years ago";
@@ -343,10 +325,10 @@ export class ChatPage {
       if (interval < 5) {
         let daysAgo = new Date(now);
         daysAgo.setDate(daysAgo.getDate() - interval);
-        var string = daysAgo.toString();
-        var stringArr = string.split(" ");
-        var day = stringArr[0];
-        var time = this.tConvert(stringArr[4]);
+        const string = daysAgo.toString();
+        const stringArr = string.split(" ");
+        const day = stringArr[0];
+        const time = this.tConvert(stringArr[4]);
         return day + ' ' + time;
       } else {
         return interval + " days ago";
