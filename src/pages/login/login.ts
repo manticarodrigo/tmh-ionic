@@ -67,8 +67,8 @@ export class LoginPage {
       this.userService.login(
         this.username,
         this.password,
-        (user) => {
-          this.userService.setCurrentUser(user)
+        (res) => {
+          console.log(res);
           this.navCtrl.setRoot('dashboard');
           this.username = '';
           this.password = '';
@@ -104,7 +104,6 @@ export class LoginPage {
         .then(
           res => {
             console.log(res);
-            this.userService.setCurrentUser(res);
             this.username = '';
             this.firstName = '';
             this.lastName = '';
@@ -131,8 +130,8 @@ export class LoginPage {
         if (token) {
           this.userService.facebookAuth(token)
             .then(
-              user => {
-                this.userService.setCurrentUser(user);
+              res => {
+                console.log(res);
                 this.firstName = '';
                 this.lastName = '';
                 this.email = '';

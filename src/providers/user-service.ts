@@ -20,7 +20,7 @@ export class UserService {
 
   getHeaders() {
     const headers = new Headers();
-    const authHeader = `Token ${this.currentUser.token}`;
+    const authHeader = `Token ${this.currentUser.key}`;
     headers.append('Authorization', authHeader);
     return headers;
   }
@@ -59,7 +59,7 @@ export class UserService {
 
   login(username, password, callback) {
     this.http.post(
-      `${ENV.backendUrl}/api-token-auth/`,
+      `${ENV.backendUrl}/rest-auth/login/`,
       {
         username,
         password
@@ -69,7 +69,14 @@ export class UserService {
       .subscribe(
         res => {
           console.log(res);
-          callback(res);
+          if (res.user && res.key) {
+            const user = res.user
+            user.key = res.key
+            this.setCurrentUser(user)
+            callback(user);
+          } else {
+            callback(null);
+          }
         },
         err => {
           console.log(err);
@@ -94,7 +101,14 @@ export class UserService {
         .subscribe(
           res => {
             console.log(res);
-            resolve(res);
+            if (res.user && res.key) {
+              const user = res.user
+              user.key = res.key
+              this.setCurrentUser(user)
+              resolve(user);
+            } else {
+              reject(null);
+            }
           },
           err => {
             console.log(err);
@@ -115,7 +129,14 @@ export class UserService {
         .subscribe(
           res => {
             console.log(res);
-            resolve(res);
+            if (res.user && res.key) {
+              const user = res.user
+              user.key = res.key
+              this.setCurrentUser(user)
+              resolve(user);
+            } else {
+              reject(null);
+            }
           },
           err => {
             console.log(err);

@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, PopoverController, Platform } from 'ionic-angular';
+
+import {
+  IonicPage,
+  NavController,
+  PopoverController
+} from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 
@@ -16,27 +21,27 @@ export class ProfilePage {
   oldPassword = '';
   newPassword1 = '';
   newPassword2 = '';
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private popoverCtrl: PopoverController,
-              private platform: Platform,
-              private userService: UserService) {
+  constructor(
+    private navCtrl: NavController,
+    private popoverCtrl: PopoverController,
+    private userService: UserService
+  ) {
     this.userService.fetchCurrentUser()
       .subscribe(user => {
         if (user) {
           this.user = user;
-          this.user.createDateReadable = this.getDateStringFrom(this.user.createDate);
+          this.user.createDateReadable = this.getDateStringFrom(this.user.date_joined);
         }
       });
   }
 
   homePressed() {
-    console.log("logo pressed");
+    console.log('logo pressed');
     this.navCtrl.setRoot('dashboard');
   }
 
   editToggled() {
-    console.log("edit toggled");
+    console.log('edit toggled');
     if (this.editing) {
       this.savePressed();
     } else {
@@ -48,34 +53,23 @@ export class ProfilePage {
     const date = new Date(timestamp);
     date.setDate(date.getDate());
     const string = date.toDateString();
-    const stringArr = string.split(" ");
+    const stringArr = string.split(' ');
     const month = stringArr[1];
     const day = stringArr[2];
     const year = stringArr[3];
-    var dateStr = month + ' ' + day + ', ' + year;
+    const dateStr = month + ' ' + day + ', ' + year;
     return dateStr;
-    ;
   }
 
   fileChanged(event) {
-    const self = this;
-    console.log("file changed:");
+    const self = this
     const file = event.target.files[0];
-    console.log(file);
-    var reader = new FileReader();
-    reader.onload = function() {
-      var arrayBuffer = this.result,
-      array = new Uint8Array(arrayBuffer);
-      self.userService.updatePortrait(self.user, array, (data) => {
-        console.log("profile component received portrait data:");
-        console.log(data);
-      });
-    }
-    reader.readAsArrayBuffer(file);
+    console.log('file changed:', file);
+    // update user
   }
 
   selectGender() {
-    console.log("select gender pressed");
+    console.log('select gender pressed');
     let popover = this.popoverCtrl.create('Dropdown', {
       items: ['Male', 'Female']
     });
@@ -92,18 +86,14 @@ export class ProfilePage {
   }
 
   savePressed() {
-    const self = this;
-    console.log("save pressed");
+    console.log('save pressed');
     this.userService.updateUser(this.user)
-    .then(data => {
-      console.log("profile component received data:");
-      console.log(data);
-      self.editing = false;
-      if (!data['exception']) {
-        self.user = data;
-        self.userService.setCurrentUser(data)
-      }
-    });
+      .then(data => {
+        console.log('profile component received data:', data);
+        this.editing = false;
+        this.user = data;
+        this.userService.setCurrentUser(data)
+      });
   }
 
 }

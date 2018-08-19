@@ -8,8 +8,8 @@
     <ion-title>User Profile</ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
-        <img *ngIf="user && user.photoURL" [src]="user.photoURL">
-        <img *ngIf="!user || !user.photoURL" src="assets/user-placeholder.png">
+        <img *ngIf="user && user.image" [src]="user.image">
+        <img *ngIf="!user || !user.image" src="assets/user-placeholder.png">
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -18,15 +18,15 @@
 <ion-content text-center>
   <div class="profile-header">
     <input class="img-input" *ngIf="editing" type="file" accept="image/*" #file (change)="fileChanged($event)" />
-    <img *ngIf="user && user.photoURL" [src]="user.photoURL">
-    <img *ngIf="!user || !user.photoURL" src="assets/user-placeholder.png">
+    <img *ngIf="user && user.image" [src]="user.image">
+    <img *ngIf="!user || !user.image" src="assets/user-placeholder.png">
     <button ion-button type="button" (click)="editToggled()">{{ editing ? 'SAVE' : 'EDIT' }}</button>
-    <h1 *ngIf="user">{{ user.firstName }} {{ user.lastName }}</h1>
+    <h1 *ngIf="user">{{ user.first_name }} {{ user.last_name }}</h1>
     <h1 *ngIf="!user">Unknown User</h1>
     <h3 *ngIf="user && user.city && user.state">{{ user.city }}, {{ user.state }}</h3>
-    <!--<h3 *ngIf="!user || !user.city || !user.state">City, State</h3>-->
-    <h4 *ngIf="user && user.emailAddress">{{ user.emailAddress }}</h4>
-    <h4 *ngIf="!user || !user.emailAddress">email@email.com</h4>
+    <h3 *ngIf="!user || !user.city || !user.state">City, State</h3>
+    <h4 *ngIf="user && user.email">{{ user.email }}</h4>
+    <h4 *ngIf="!user || !user.email">email@email.com</h4>
     <h4 *ngIf="user && user.createDateReadable">Joined: {{ user.createDateReadable }}</h4>
     <h4 *ngIf="!user || !user.createDateReadable">Joined: January 17, 2017</h4>
   </div>
@@ -35,41 +35,32 @@
       <h1>Personal Information</h1>
       <div *ngIf="!editing" class="profile-details-content">
         <h2>NAME</h2>
-        <p>{{ user.firstName }} {{ user.lastName }}</p>
+        <p>{{ user.first_name }} {{ user.last_name }}</p>
         <h2>EMAIL</h2>
-        <p>{{ user.emailAddress }}</p>
+        <p>{{ user.email }}</p>
         <h2 *ngIf="user.city && user.state">LOCATION</h2>
         <p *ngIf="user.city && user.state">{{ user.city }}, {{ user.state }}</p>
-        <h2 *ngIf="user.male">GENDER</h2>
-        <p *ngIf="user.male">{{ user.male ? 'Male' : 'Female' }}</p>
       </div>
       <div *ngIf="editing" class="profile-details-edit">
         <ion-item>
           <ion-label stacked>First Name</ion-label>
-          <ion-input [(ngModel)]="user.firstName" placeholder="FIRST NAME"></ion-input>
+          <ion-input [(ngModel)]="user.first_name" placeholder="FIRST NAME"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>Last Name</ion-label>
-          <ion-input [(ngModel)]="user.lastName" placeholder="LAST NAME"></ion-input>
+          <ion-input [(ngModel)]="user.last_name" placeholder="LAST NAME"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>City</ion-label>
-          <ion-input [(ngModel)]="user.city" disabled placeholder="CITY"></ion-input>
+          <ion-input [(ngModel)]="user.city" placeholder="CITY"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>State</ion-label>
-          <ion-input [(ngModel)]="user.state" disabled placeholder="STATE"></ion-input>
-        </ion-item>
-        <ion-item class="gender-item">
-          <p>Gender</p>
-          <button full ion-button type="button" (click)="selectGender()">
-            {{ user.male ? 'Male' : 'Female'}}
-            <img src="assets/down-arrow.png">
-          </button>
+          <ion-input [(ngModel)]="user.state" placeholder="STATE"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label stacked>Email</ion-label>
-          <ion-input [(ngModel)]="user.emailAddress" placeholder="EMAIL"></ion-input>
+          <ion-input [(ngModel)]="user.email" placeholder="EMAIL"></ion-input>
         </ion-item>
         <h1>Change Password</h1>
         <ion-item>
