@@ -85,16 +85,17 @@ export class UserService {
     );
   }
 
-  register(username, password, first_name, last_name, email) {
+  register(username, first_name, last_name, email, password1, password2, ) {
     return new Promise((resolve, reject) => {
       this.http.post(
-        `${ENV.backendUrl}/api/v1/users/`,
+        `${ENV.backendUrl}/rest-auth/registration/`,
         {
           username,
-          password,
           first_name,
           last_name,
-          email
+          email,
+          password1,
+          password2
         }
       )
         .map(res => res.json())

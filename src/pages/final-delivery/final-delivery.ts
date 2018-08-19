@@ -9,7 +9,6 @@ import {
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
-import { ImageService } from '../../providers/image-service';
 
 @IonicPage({
   name: 'final-delivery',
@@ -51,17 +50,13 @@ export class FinalDeliveryPage {
     private navParams: NavParams,
     private userService: UserService,
     private projectService: ProjectService,
-    private imageService: ImageService,
     private popoverCtrl: PopoverController
   ) {
     this.userService.fetchCurrentUser()
       .subscribe(user => {
         if (user) {
           this.user = user;
-          if (this.user.designer) {
-            this.viewMode = 'DESIGNER';
-          }
-          if (this.user.admin) {
+          if (this.user.is_staff) {
             this.viewMode = 'DESIGNER';
           }
           this.fetchProject();
@@ -80,13 +75,11 @@ export class FinalDeliveryPage {
       const id = this.navParams.get('id');
       this.projectService.findByProjectId(id)
       .then(project => {
-        if (!project['exception']) {
-          this.project = project;
-          if (this.project && this.project.designerNote != '') {
-            this.designerNote = this.project.designerNote;
-          }
-          this.fetchDetails();
+        this.project = project;
+        if (this.project && this.project.designerNote != '') {
+          this.designerNote = this.project.designerNote;
         }
+        this.fetchDetails();
       });
     }
   }

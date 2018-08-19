@@ -82,7 +82,7 @@
         <div class="details">
           <p class="title">
             <b>
-            {{ project.user.first_name }}  {{ project.user.last_name[0] }} - {{ project.room }} Project
+            {{ project.client.first_name }}  {{ project.client.last_name[0] }} - {{ project.room }} Project
             </b>
           </p>
           <div class="section">
@@ -104,7 +104,7 @@
           <img src="assets/{{ project.room }}.png">
         </div>
         <div class="section">
-          <p class="info">{{ project.user.first_name }} {{ project.user.last_name[0] }}</p>
+          <p class="info">{{ project.client.first_name }} {{ project.client.last_name[0] }}</p>
         </div>
         <div class="section">
           <p class="info">{{ project.room }}</p>

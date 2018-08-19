@@ -72,12 +72,8 @@ export class DesignPage {
       .subscribe(user => {
         if (user) {
           this.user = user;
-          if (this.user.designer) {
-            console.log('current user is a designer');
-            this.viewMode = 'DESIGNER';
-          }
-          if (this.user.admin) {
-            console.log('current user is an admin');
+          if (this.user.is_staff) {
+            console.log('current user is staff');
             this.viewMode = 'DESIGNER';
           }
           this.fetchProject();

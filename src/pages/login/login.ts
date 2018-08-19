@@ -96,10 +96,11 @@ export class LoginPage {
     } else {
       this.userService.register(
         this.username,
-        this.password,
         this.firstName,
         this.lastName,
-        this.email
+        this.email,
+        this.password,
+        this.password2
       )
         .then(
           res => {
@@ -109,6 +110,7 @@ export class LoginPage {
             this.lastName = '';
             this.email = '';
             this.password = '';
+            this.password2 = '';
             this.loading = false;
             this.navCtrl.setRoot('dashboard');
           },

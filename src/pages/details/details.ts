@@ -1,9 +1,15 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+
+import {
+  IonicPage,
+  NavController,
+  NavParams,
+  PopoverController,
+  ModalController
+} from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
-import { ImageService } from '../../providers/image-service';
 
 @IonicPage({
   name: 'details',
@@ -50,11 +56,8 @@ export class DetailsPage {
     private navParams: NavParams,
     private userService: UserService,
     private projectService: ProjectService,
-    private imageService: ImageService,
-    private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private modalCtrl: ModalController,
-    private platform: Platform
   ) {
     const self = this;
     // Fetch current user
@@ -62,13 +65,9 @@ export class DetailsPage {
       .subscribe(user => {
         if (user) {
           self.user = user;
-          if (self.user.designer) {
-            console.log("current user is a designer");
-            self.viewMode = "DESIGNER";
-          }
-          if (self.user.admin) {
-            console.log("current user is an admin");
-            self.viewMode = "DESIGNER";
+          if (self.user.is_staff) {
+            console.log('current user is a designer');
+            self.viewMode = 'DESIGNER';
           }
           self.fetchProject();
         }
@@ -76,7 +75,7 @@ export class DetailsPage {
   }
 
   fetchProject() {
-    console.log("fetching projects");
+    console.log('fetching projects');
     if (this.navParams.get('project')) {
       this.project = this.navParams.get('project');
       this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.end_date);
@@ -93,7 +92,7 @@ export class DetailsPage {
   }
 
   fetchDetails() {
-    console.log("fetching details");
+    console.log('fetching details');
     this.projectService.fetchProjectDetails(this.project.id)
       .then(data => {
         let drawings = [];
@@ -151,12 +150,12 @@ export class DetailsPage {
 
   getDaysLeftStringFrom(timestamp) {
     if (timestamp) {
-      let date = new Date(timestamp);
+      const date = new Date(timestamp);
       date.setDate(date.getDate());
-      let now = new Date();
-      var seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-      var interval = Math.floor(seconds / 86400); // days
-      var abs = Math.abs(interval);
+      const now = new Date();
+      const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+      const interval = Math.floor(seconds / 86400); // days
+      const abs = Math.abs(interval);
       if (interval < 0 && abs == 1)
         return '1 day left';
       if (interval <=0 && abs >= 0 && abs < 15)
@@ -168,19 +167,17 @@ export class DetailsPage {
   }
 
   homePressed() {
-    console.log("logo pressed");
+    console.log('logo pressed');
     this.navCtrl.setRoot('dashboard');
   }
 
   selectTab() {
     const self = this;
-    console.log("toggling tab dropdown");
-    let popover = this.popoverCtrl.create('dropdown', {
-      items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
-    }, 
-    {
-      cssClass: 'tab-popover'
-    });
+    console.log('toggling tab dropdown');
+    let popover = this.popoverCtrl.create(
+      'dropdown',
+    { items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY'] }, 
+    { cssClass: 'tab-popover' });
     popover.onDidDismiss(data => {
       if (data) {
         var page: any;
@@ -200,9 +197,8 @@ export class DetailsPage {
 
   selectTabLink(link) {
     const self = this;
-    console.log("selected tab link:");
-    console.log(link);
-    var page: any;
+    console.log('selected tab link:', link);
+    let page: any;
     if (link == 'DESIGN')
       page = 'design';
     if (link == 'FINAL_DELIVERY')
@@ -215,36 +211,32 @@ export class DetailsPage {
   }
 
   selectDrawing(drawing) {
-    console.log("thumb pressed for drawing:");
-    console.log(drawing);
+    console.log('thumb pressed for drawing:', drawing);
     this.selectedDrawing = drawing;
   }
 
   selectInspiration(inspiration) {
-    console.log("thumb pressed for inspiration:");
-    console.log(inspiration);
+    console.log('thumb pressed for inspiration:', inspiration);
     this.selectedInspiration = inspiration;
   }
 
   selectFurniture(furniture) {
-    console.log("thumb pressed for furniture:");
-    console.log(furniture);
+    console.log('thumb pressed for furniture:', furniture);
     this.selectedFurniture = furniture;
   }
 
   selectMenuItem(item) {
-    console.log("menu item pressed:");
-    console.log(item);
+    console.log('menu item pressed:', item);
     this.view = item;
   }
 
   maximizeChat() {
-    console.log("chat fab pressed for project");
+    console.log('chat fab pressed for project');
     this.maximized = !this.maximized;
   }
 
   chatToggled() {
-    console.log("chat toggled");
+    console.log('chat toggled');
     this.minimized = !this.minimized;
     if (this.maximized) {
       this.maximized = !this.maximized;
@@ -253,7 +245,7 @@ export class DetailsPage {
 
   submitToDesigner() {
     const self = this;
-    console.log("submit to designer pressed");
+    console.log('submit to designer pressed');
     let modal = this.modalCtrl.create('confirm', {
       message: 'Ready to connect with your designer? By selecting the confimation below, your details will be submitted so your designer can begin on your concept boards.'
     });
@@ -273,8 +265,7 @@ export class DetailsPage {
   }
 
   fileChanged(event) {
-    console.log("file changed:");
-    console.log(event.target.files[0]);
+    console.log('file changed:', event.target.files[0]);
     const file = event.target.files[0];
     switch (this.view) {
       case 'DRAWING':
@@ -304,7 +295,7 @@ export class DetailsPage {
   }
 
   deleteDetail(detail) {
-    console.log("deleting detail:", detail);
+    console.log('deleting detail:', detail);
     this.projectService.deleteDetail(this.project, detail)
       .then(data => {
         console.log(data);

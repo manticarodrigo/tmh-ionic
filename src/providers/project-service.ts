@@ -80,7 +80,7 @@ export class ProjectService {
     return new Promise((resolve, reject) => {
       console.log('updating project status/revisionCount:');
       console.log(status);
-      var endpoint = this.api + '/tmh-project-portlet.project//update-project-revision-count/projectId/' + project.projectId + '/userId/' + project.userId + '/projectStatus/' + status + '/revisionCount/' + Number(project.revisionCount) + 1;
+      var endpoint = this.api + '/tmh-project-portlet.project//update-project-revision-count/projectId/' + project.projectId + '/userId/' + project.clientId + '/projectStatus/' + status + '/revisionCount/' + Number(project.revisionCount) + 1;
       self.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
@@ -114,7 +114,7 @@ export class ProjectService {
       const map = {
         '$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-in-progress': {
           '$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id': {
-            '@userId': '$project.userId'
+            '@userId': '$project.clientId'
           }
         }
       }
@@ -135,7 +135,7 @@ export class ProjectService {
       const map = {
         '$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-complete': {
           '$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id': {
-            '@userId': '$project.userId'
+            '@userId': '$project.clientId'
           }
         }
       }
@@ -156,7 +156,7 @@ export class ProjectService {
       const map = {
         '$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-archived': {
           // '$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id': {
-          //   '@userId': '$project.userId'
+          //   '@userId': '$project.clientId'
           // }
         }
       }
@@ -177,7 +177,7 @@ export class ProjectService {
       const map = {
         '$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-up-next': {
           '$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id': {
-            '@userId': '$project.userId'
+            '@userId': '$project.clientId'
           }
         }
       }
