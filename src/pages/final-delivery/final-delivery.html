@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.firstName }}'s </span><span *ngIf="project">{{ types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.photoURL" [src]="user.photoURL">
@@ -28,7 +28,7 @@
 
 <ion-content>
   <div class="collab-final-delivery" *ngIf="project">
-    <ion-segment *ngIf="user.admin && project.projectStatus == 'SHOPPING_CART' || project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || project.projectStatus == 'ARCHIVED'" [(ngModel)]="viewMode" class="admin-segment">
+    <ion-segment *ngIf="user.is_staff && project.status == 'SHOPPING_CART' || project.status == 'ESTIMATE_SHIPPING_AND_TAX' || project.status == 'ARCHIVED'" [(ngModel)]="viewMode" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
       </ion-segment-button>
@@ -41,8 +41,8 @@
     </button>
     <div *ngIf="view == 'DESIGNER_NOTE' && viewMode == 'CLIENT'" class="designer-note">
       <h4 *ngIf="client">Hi {{ client.firstName }}!</h4>
-      <p *ngIf="project.designerNote != ''">{{ project.designerNote }}</p>
-      <p *ngIf="project.designerNote == ''">Your designer is hard at work putting together the Final Delivery of your room! It will be uploaded within the next 48-72 hours!</p>
+      <p *ngIf="project.designer_note != ''">{{ project.designer_note }}</p>
+      <p *ngIf="project.designer_note == ''">Your designer is hard at work putting together the Final Delivery of your room! It will be uploaded within the next 48-72 hours!</p>
     </div>
     <div *ngIf="view == 'DESIGNER_NOTE' && viewMode == 'DESIGNER'" class="designer-note">
       <h6>Leave a kind note for your client.</h6>
@@ -74,10 +74,10 @@
       <button ion-button type="button" (click)="uploadConceptBoard()">UPLOAD</button>
     </div>
     <div *ngIf="view == '3D_MODEL' && viewMode == 'CLIENT'" class="final-video">
-      <video *ngIf="project.videoUrl != ''" controls><source src="{{ project.videoUrl }}"></video>
+      <video *ngIf="project.video_url != ''" controls><source src="{{ project.video_url }}"></video>
     </div>
     <div *ngIf="view == '3D_MODEL' && viewMode == 'DESIGNER'" class="final-video">
-      <video *ngIf="project.videoUrl != ''" controls><source src="{{ project.videoUrl }}"></video>
+      <video *ngIf="project.video_url != ''" controls><source src="{{ project.video_url }}"></video>
       <div class="form">
         <h1>Link Final 3D Model Video</h1>
         <ion-input [(ngModel)]="videoUrl" name="video-url" placeholder="PASTE LINK HERE"></ion-input>
@@ -115,7 +115,7 @@
     </div>
     <div *ngIf="view == 'FINAL_NOTES' && viewMode == 'CLIENT'" class="designer-note">
       <h1>FINAL NOTES</h1>
-      <p *ngIf="project.finalNote != ''">{{ project.finalNote }}</p>
+      <p *ngIf="project.final_note != ''">{{ project.final_note }}</p>
     </div>
     <div *ngIf="view == 'FINAL_NOTES' && viewMode == 'DESIGNER'" class="designer-note">
       <h6>Leave detailed notes about the design.</h6>
@@ -126,7 +126,7 @@
 </ion-content>
 
 <ion-footer *ngIf="project">
-  <div class="footer" *ngIf="viewMode == 'CLIENT' && project.projectStatus == 'SHOPPING_CART' || project.projectStatus == 'ESTIMATE_SHIPPING_AND_TAX' || project.projectStatus == 'ARCHIVED'">
+  <div class="footer" *ngIf="viewMode == 'CLIENT' && project.status == 'SHOPPING_CART' || project.status == 'ESTIMATE_SHIPPING_AND_TAX' || project.status == 'ARCHIVED'">
     <div class="desktop footer-menu">
       <div class="button" (click)="selectFooterTabLink('DESIGNER_NOTE')">
         <img src="assets/list.png">

@@ -51,13 +51,16 @@ export class DashboardPage {
       .subscribe(user => {
         if (user) {
           this.user = user;
+          if (this.user.is_staff) {
+            this.viewMode = 'DESIGNER';
+          }
           this.loadProjects();
         }
       });
   }
 
   homePressed() {
-    let alert = this.alertCtrl.create({
+    const alert = this.alertCtrl.create({
       title: 'NEW PROJECT',
       message: 'Press start to begin a new project.',
       buttons: 
@@ -84,19 +87,19 @@ export class DashboardPage {
   }
 
   selectTab() {
-    var tabs = [];
+    const tabs = [];
     for (let key in this.tabsMap) {
       const tab = this.tabsMap[key];
       tabs.push(tab);
     }
-    let popover = this.popoverCtrl.create(
+    const popover = this.popoverCtrl.create(
       'dropdown',
       { items: tabs },
       { cssClass: 'tab-popover'
     });
     popover.onDidDismiss(data => {
       if (data) {
-        this.selectedTab = data.replace(" ", "_");
+        this.selectedTab = data.replace(' ', '_');
         this.loadProjects();
       }
     });
@@ -104,21 +107,17 @@ export class DashboardPage {
   }
 
   loadProjects() {
-    const self = this;
-    if (this.viewMode == 'CLIENT') {
-      self.fetchClientProjects()
-      .then(data => {
-        self.processProjects(data);
-      });
+    if (this.viewMode === 'CLIENT') {
+      this.fetchClientProjects()
+        .then(data => {
+          this.processProjects(data);
+        });
     }
-    if (this.viewMode == "DESIGNER") {
-      console.log("no designer project assigment logic yet");
-    }
-    if (this.viewMode == "ADMIN") {
-      self.fetchProjects()
-      .then(data => {
-        self.processProjects(data);
-      });
+    if (this.viewMode === 'DESIGNER') {
+      this.fetchProjects()
+        .then(data => {
+          this.processProjects(data);
+        });
     }
   }
 
@@ -126,52 +125,45 @@ export class DashboardPage {
     return new Promise((resolve, reject) => {
       this.projectService.fetchUserProjects()
         .then(data => {
-          if (this.selectedTab == 'IN_PROGRESS') {
-            var projects = [];
-            for (var key in data) {
-              const project = data[key];
-              const status = project.status;
-              if (status != 'ARCHIVED') {
-                projects.push(project);
-              }
-            }
-            resolve(projects);
-        }
-        if (this.selectedTab == 'COMPLETED') {
-          var projects = [];
-          for (var key in data) {
+          const projects = [];
+          for (const key in data) {
             const project = data[key];
-            const status = project.status;
-            if (status == 'ARCHIVED') {
+            if (
+              this.selectedTab === 'IN_PROGRESS' &&
+              project.status !== 'ARCHIVED'
+            ) {
+              projects.push(project);
+            } else if (
+              this.selectedTab === 'COMPLETED' &&
+              project.status === 'ARCHIVED'
+            ) {
               projects.push(project);
             }
           }
           resolve(projects);
-        }
-      });
+        });
     });
   }
 
-  // TODO: implement designer project assignment in mongodb/express
-  // fetchDesignerProjects() {
-  //  return this.projectService.findByDesignerId(this.userService.currentUser.userId);
-
-
   fetchProjects() {
-    if (this.selectedTab == 'IN_PROGRESS')
-      return this.projectService.findByInProgress();
-    if (this.selectedTab == 'COMPLETED')
-      return this.projectService.findByComplete();
-    if (this.selectedTab == 'UP_NEXT')
-      return this.projectService.findByUpNext();
-    if (this.selectedTab == 'ARCHIVED')
-      return this.projectService.findByArchived();
+    switch (this.selectedTab) {
+      case 'IN_PROGRESS':
+        return this.projectService.findByInProgress();
+      case 'COMPLETED':
+        return this.projectService.findByComplete();
+      case 'UP_NEXT':
+        return this.projectService.findByUpNext();
+      case 'ARCHIVED':
+        return this.projectService.findByArchived();
+      default:
+        return this.projectService.findByInProgress();
+    };
   }
 
   processProjects(data) {
     const self = this;
-    var projects = [];
-    for (var key in data) {
+    const projects = [];
+    for (const key in data) {
       const project = data[key];
       project.modifiedDateReadable = self.getDateStringFrom(project.modified_date);
       project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
@@ -186,21 +178,21 @@ export class DashboardPage {
   }
 
   getDateStringFrom(timestamp) {
-    var todate = new Date(timestamp).getDate();
-    var tomonth = new Date(timestamp).getMonth() + 1;
-    var toyear = new Date(timestamp).getFullYear();
-    var shortyear = toyear.toString().slice(2);
+    const todate = new Date(timestamp).getDate();
+    const tomonth = new Date(timestamp).getMonth() + 1;
+    const toyear = new Date(timestamp).getFullYear();
+    const shortyear = toyear.toString().slice(2);
     return `${tomonth}/${todate}/${shortyear}`;
   }
 
   getDaysLeftStringFrom(timestamp) {
     if (timestamp) {
-      let date = new Date(timestamp);
+      const date = new Date(timestamp);
       date.setDate(date.getDate());
-      let now = new Date();
-      var seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-      var interval = Math.floor(seconds / 86400); // days
-      var abs = Math.abs(interval);
+      const now = new Date();
+      const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+      const interval = Math.floor(seconds / 86400); // days
+      const abs = Math.abs(interval);
       if (interval <= 0 && abs >= 0 && abs < 15)
         return abs;
       return 'N/A';
@@ -210,12 +202,12 @@ export class DashboardPage {
   }
 
   startProject() {
-    console.log("Start proj pressed");
+    console.log('start project pressed');
     this.navCtrl.setRoot('onboarding');
   }
 
   selectedProject(project) {
-    var page: any;
+    let page: any;
     switch (project.status) {
       case ('DETAILS'):
         page = 'details'

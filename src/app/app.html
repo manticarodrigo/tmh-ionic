@@ -1,13 +1,13 @@
 <ion-menu side="right" [content]="content">
   <ion-content>
     <div class="header">
-     <img *ngIf="this.userService.currentUser && this.userService.currentUser.photoURL" [src]="this.userService.currentUser.photoURL">
-     <img *ngIf="!this.userService.currentUser || !this.userService.currentUser.photoURL" src="assets/user-placeholder.png">
+     <img *ngIf="this.userService.currentUser && this.userService.currentUser.image" [src]="this.userService.currentUser.image">
+     <img *ngIf="!this.userService.currentUser || !this.userService.currentUser.image" src="assets/user-placeholder.png">
      <h4 *ngIf="this.userService.currentUser">
-      {{ this.userService.currentUser.firstName }} {{ this.userService.currentUser.lastName }}
+      {{ this.userService.currentUser.first_name }} {{ this.userService.currentUser.last_name }}
      </h4>
      <p *ngIf="this.userService.currentUser">
-      {{ this.userService.currentUser.emailAddress }}
+      {{ this.userService.currentUser.email }}
      </p>
      <h4 *ngIf="!this.userService.currentUser">
       User

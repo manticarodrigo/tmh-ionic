@@ -73,7 +73,6 @@ export class DesignPage {
         if (user) {
           this.user = user;
           if (this.user.is_staff) {
-            console.log('current user is staff');
             this.viewMode = 'DESIGNER';
           }
           this.fetchProject();
@@ -529,7 +528,7 @@ export class DesignPage {
               console.log(data);
               conceptCount += 1;
               if (conceptCount === this.concepts.length) {
-                this.projectService.updateStatus(this.project, 'CONCEPT')
+                this.projectService.updateStatus(this.project, 'CONCEPTS')
                   .then(data => {
                     console.log(data);
                     this.fetchProject();

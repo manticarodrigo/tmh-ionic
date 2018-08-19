@@ -66,7 +66,6 @@ export class DetailsPage {
         if (user) {
           self.user = user;
           if (self.user.is_staff) {
-            console.log('current user is a designer');
             self.viewMode = 'DESIGNER';
           }
           self.fetchProject();

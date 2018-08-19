@@ -33,7 +33,7 @@
   <div class="collab-workzone" *ngIf="project">
     <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
     <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-    <ion-segment *ngIf="user.admin" [(ngModel)]="viewMode" class="admin-segment">
+    <ion-segment *ngIf="user.is_staff" [(ngModel)]="viewMode" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
       </ion-segment-button>

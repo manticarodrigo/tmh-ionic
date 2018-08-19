@@ -19,18 +19,19 @@ export class ProjectService {
     return new Promise((resolve, reject) => {
       this.http.get(
         `${ENV.backendUrl}/api/v1/projects/me/`,
-        { headers: this.userService.getHeaders() })
-      .map(res => res.json())
-      .subscribe(
-        res => {
-          console.log(res);
-          resolve(res);
-        },
-        err => {
-          console.log(err);
-          reject(err);
-        }
-      );
+        { headers: this.userService.getHeaders() }
+      )
+        .map(res => res.json())
+        .subscribe(
+          res => {
+            console.log(res);
+            resolve(res);
+          },
+          err => {
+            console.log(err);
+            reject(err);
+          }
+        );
     });
   }
 
@@ -38,12 +39,13 @@ export class ProjectService {
     return new Promise((resolve, reject) => {
       this.http.get(
         `${ENV.backendUrl}/api/v1/projects/${id}/`,
-        { headers: this.userService.getHeaders() })
-      .map(res => res.json())
-      .subscribe(res => {
-        console.log('found project:', res);
-        resolve(res);
-      });
+        { headers: this.userService.getHeaders() }
+      )
+        .map(res => res.json())
+        .subscribe(res => {
+          console.log('found project:', res);
+          resolve(res);
+        });
     });
   }
 
@@ -51,7 +53,8 @@ export class ProjectService {
     return new Promise((resolve, reject) => {
       this.http.get(
         `${ENV.backendUrl}/api/v1/details/project/?project=${projectId}`,
-        { headers: this.userService.getHeaders() })
+        { headers: this.userService.getHeaders() }
+      )
         .map(res => res.json())
         .subscribe(res => {
           console.log('found project details:', res);
@@ -66,7 +69,8 @@ export class ProjectService {
       this.http.patch(
         `${ENV.backendUrl}/api/v1/projects/${project.id}/`,
         { status },
-        { headers: this.userService.getHeaders() })
+        { headers: this.userService.getHeaders() }
+      )
         .map(res => res.json())
         .subscribe(res => {
           console.log('status update returned response:', res);
@@ -92,40 +96,32 @@ export class ProjectService {
   }
 
   updateDetailStatus(detail, status) {
-    const self = this;
     return new Promise((resolve, reject) => {
-      console.log('updating detail status:');
-      console.log(status);
-      var endpoint = this.api + '/tmh-project-portlet.projectdetail/update-project-detail/projectDetailId/' + detail.projectDetailId + '/projectDetailStatus/' + status;
-      console.log(endpoint);
-      self.http.get(endpoint, {headers: self.userService.headers})
-      .map(res => res.json())
-      .subscribe(data => {
-        console.log('detail update returned response:');
-        console.log(data);
-        resolve(data);
-      });
+      console.log('updating detail status:', status);
+      this.http.patch(
+        `${ENV.backendUrl}/api/v1/details/${detail.id}/`,
+        { status },
+        { headers: this.userService.getHeaders() }
+      )
+        .map(res => res.json())
+        .subscribe(data => {
+          console.log('detail update returned response:', data);
+          resolve(data);
+        });
     });
   }
 
   findByInProgress() {
-    const self = this;
     return new Promise((resolve, reject) => {
-      const map = {
-        '$project[projectId,createDate,endDate,modifiedDate,startDate,stripeChargeId,style,userId,videoUrl,zip,projectStatus,projectType,revisionCount,designerNote,finalNote] = /tmh-project-portlet.project/find-by-in-progress': {
-          '$client[firstName,lastName,emailAddress,portraitId,userId,createDate] = /user/get-user-by-id': {
-            '@userId': '$project.clientId'
-          }
-        }
-      }
-      const endpoint = this.api + '/invoke?cmd=' + JSON.stringify(map);
-      self.http.get(endpoint, {headers: self.userService.headers})
-      .map(res => res.json())
-      .subscribe(projects => {
-        console.log('found projects:');
-        console.log(projects);
-        resolve(projects);
-      });
+      this.http.get(
+        `${ENV.backendUrl}/api/v1/projects/`,
+        { headers: this.userService.getHeaders() }
+      )
+        .map(res => res.json())
+        .subscribe(projects => {
+          console.log('found projects:', projects);
+          resolve(projects);
+        });
     });
   }
 
