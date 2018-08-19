@@ -41,8 +41,7 @@ export class ProjectService {
         { headers: this.userService.getHeaders() })
       .map(res => res.json())
       .subscribe(res => {
-        console.log('found project:');
-        console.log(res);
+        console.log('found project:', res);
         resolve(res);
       });
     });
@@ -55,8 +54,7 @@ export class ProjectService {
         { headers: this.userService.getHeaders() })
         .map(res => res.json())
         .subscribe(res => {
-          console.log('found project details:');
-          console.log(res);
+          console.log('found project details:', res);
           resolve(res);
         });
     });

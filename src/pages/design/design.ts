@@ -128,17 +128,19 @@ export class DesignPage {
         const floorplans = [];
         for (const key in data) {
           const detail = data[key];
-          if (detail && (detail.type === 'CONCEPT' && detail.status === 'APPROVED')) {
-            console.log('approved concept:', detail);
-            this.conceptboard = detail;
-            this.view = 'APPROVE_FLOOR_PLAN';
+          if (detail && detail.type === 'CONCEPT') {
+            if (detail.status === 'APPROVED') {
+              console.log('approved concept:', detail);
+              this.conceptboard = detail;
+              this.view = 'APPROVE_FLOOR_PLAN';
+            }
+            concepts.push(detail);
           }
-          concepts.push(detail);
           if (detail && detail.type === 'FLOOR_PLAN') {
             console.log('floor plan:', detail);
             this.view = 'APPROVE_FLOOR_PLAN';
+            floorplans.push(detail);
           }
-          floorplans.push(detail);
         }
         if (concepts.length > 0) {
           this.concepts = concepts;
@@ -493,7 +495,13 @@ export class DesignPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
-    this.drawFloorplan();
+    if (
+      this.approvedItems ||
+      this.modifiedItems ||
+      this.pendingItems
+    ) {
+      this.drawFloorplan();
+    }
   }
 
   selectFloorplan() {

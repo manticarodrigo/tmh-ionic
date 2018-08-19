@@ -33,6 +33,12 @@ export class LoginPage {
         appId: '245954362655647',
         version: 'v2.8'
     });
+    this.userService.fetchCurrentUser()
+      .subscribe(user => {
+        if (user) {
+          this.navCtrl.setRoot('dashboard');
+        }
+      });
   }
 
   toggleType() {

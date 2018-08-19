@@ -31,19 +31,8 @@ export class TheManHome {
 
     this.userService.fetchCurrentUser()
       .subscribe(user => {
-        let view = this.nav.getActive();
-        if (view) {
-          switch (view.component.name) {
-            case !user:
-              this.nav.setRoot('login');
-              break;
-            case user && 'LoginPage':
-              this.nav.setRoot('dashboard');
-              break;
-            default:
-              return;
-          }
-        } else if (!user) {
+        if (!user) {
+          console.log('no user');
           this.nav.setRoot('login');
         }
       });

@@ -1,5 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, PopoverController, ModalController, Platform } from 'ionic-angular';
+
+import {
+  IonicPage,
+  NavController,
+  AlertController,
+  PopoverController
+} from 'ionic-angular';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
@@ -36,18 +42,17 @@ export class DashboardPage {
   };
   constructor(
     private navCtrl: NavController,
-    private navParams: NavParams,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
-    private modalCtrl: ModalController,
-    private platform: Platform,
     private userService: UserService,
     private projectService: ProjectService
   ) {
     this.userService.fetchCurrentUser()
       .subscribe(user => {
-        this.user = user;
-        this.loadProjects();
+        if (user) {
+          this.user = user;
+          this.loadProjects();
+        }
       });
   }
 
