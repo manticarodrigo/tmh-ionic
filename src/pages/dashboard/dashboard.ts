@@ -212,22 +212,18 @@ export class DashboardPage {
       case ('DETAILS'):
         page = 'details'
         break;
-      case (
-        'DESIGN' ||
-        'CONCEPTS' ||
-        'FLOOR_PLAN' ||
-        'REQUEST_ALTERNATIVES' ||
-        'ALTERNATIVES_READY'
-      ):
+      case 'DESIGN':
+      case 'CONCEPTS':
+      case 'FLOOR_PLAN':
+      case 'REQUEST_ALTERNATIVES':
+      case 'ALTERNATIVES_READY':
         page = 'design'
         break;
-      case (
-        'FINAL_DELIVERY' ||
-        'SHOPPING_CART' ||
-        'ESTIMATE_SHIPPING_AND_TAX' ||
-        'CHECKOUT' ||
-        'ARCHIVED'
-      ):
+      case 'FINAL_DELIVERY':
+      case 'SHOPPING_CART':
+      case 'ESTIMATE_SHIPPING_AND_TAX':
+      case 'CHECKOUT':
+      case 'ARCHIVED':
         page = 'final-delivery'
         break;
       default:

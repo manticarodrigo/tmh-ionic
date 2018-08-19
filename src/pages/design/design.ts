@@ -146,6 +146,7 @@ export class DesignPage {
         }
         if (concepts.length > 0 && floorplans.length > 0) {
           this.view = 'FLOOR_PLAN';
+          this.drawFloorplan();
         }
         this.loading = false;
       });
@@ -266,88 +267,87 @@ export class DesignPage {
   }
 
   drawFloorplan() {
-    console.log('drawing floorplan with marker map in 2 seconds');
+    console.log('drawing marker map');
     this.loading = true;
     if (this.floorplanMap) {
       this.floorplanMap.remove();
     }
-    if (this.view == 'FLOOR_PLAN') {
-      setTimeout(() => {
-        // create the floorplan map
-        this.floorplanMap = Leaflet.map('floorplan-map', {
-          attributionControl: false,
-          scrollWheelZoom: false,
-          minZoom: 1,
-          maxZoom: 4,
-          center: [0, 0],
-          zoom: 1,
-          crs: Leaflet.CRS.Simple
-        });
-        // dimensions of the image
-        const w = this.floorplanMap.getSize().x,
-            h = this.floorplanMap.getSize().y,
-            url = this.floorplan.url;
-        console.log('map dimensions:');
-        console.log(w);
-        console.log(h);
+    setTimeout(() => {
+      // create the floorplan map
+      this.floorplanMap = Leaflet.map('floorplan-map', {
+        attributionControl: false,
+        scrollWheelZoom: false,
+        minZoom: 1,
+        maxZoom: 4,
+        center: [0, 0],
+        zoom: 1,
+        crs: Leaflet.CRS.Simple
+      });
+      // dimensions of the image
+      const w = this.floorplanMap.getSize().x,
+          h = this.floorplanMap.getSize().y,
+          url = this.floorplan.image;
+      console.log('map dimensions:', w, h);
+      // calculate the edges of the image, in coordinate space
+      const southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
+      const northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
+      const bounds = new Leaflet.LatLngBounds(southWest, northEast);
+      
+      // add the image overlay, 
+      // so that it covers the entire map
+      Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
+      this.floorplanMap.fitBounds(bounds);
 
-        // calculate the edges of the image, in coordinate space
-        const southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
-        const northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
-        const bounds = new Leaflet.LatLngBounds(southWest, northEast);
-        
-        // add the image overlay, 
-        // so that it covers the entire map
-        Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
-        
-        this.floorplanMap.fitBounds(bounds);
+      // disable interactions
+      this.floorplanMap.doubleClickZoom.disable();
+      this.floorplanMap.dragging.disable();
 
-        // draw markers
-        if (this.itemsViewMode == 'PENDING' && this.pendingItems) {
-          this.createMarkers(this.pendingItems, w, h);
-        } else if (this.itemsViewMode == 'MODIFIED' && this.modifiedItems) {
-          this.createMarkers(this.modifiedItems, w, h);
-        } else if (this.approvedItems) {
-          this.createMarkers(this.approvedItems, w, h);
+      // draw markers
+      if (this.itemsViewMode == 'PENDING' && this.pendingItems) {
+        this.createMarkers(this.pendingItems, w, h);
+      } else if (this.itemsViewMode == 'MODIFIED' && this.modifiedItems) {
+        this.createMarkers(this.modifiedItems, w, h);
+      } else if (this.approvedItems) {
+        this.createMarkers(this.approvedItems, w, h);
+      }
+      // listen for new marker event
+      const self = this;
+      this.floorplanMap.on('dblclick', function(e) {
+        console.log('clicked map', e, self.viewMode);
+        if (self.viewMode === 'DESIGNER') {
+          const numberIcon = Leaflet.divIcon({
+            className: 'number-icon',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30],
+            html: '*'       
+          });
+          const marker = new Leaflet.Marker(
+            e.latlng,
+            { icon: numberIcon }
+          );
+          marker.addTo(self.floorplanMap);
+          const popover = self.popoverCtrl.create('edit-item');
+          popover.onDidDismiss(data => {
+            console.log(data);
+            if (data) {
+              data.YCoordinate = e.latlng.lat / -h * 8 ;
+              data.XCoordinate = e.latlng.lng / w * 8;
+              self.projectService.addItem(self.project, data)
+              .then(itemData => {
+                self.fetchItems();
+              });
+            } else {
+              marker.remove();
+            }
+          });
+          popover.present();
         }
-        // listen for new marker event
-        this.floorplanMap.on('dblclick', function(e) {
-          console.log(e);
-          if (this.viewMode == 'DESIGNER') {
-            const numberIcon = Leaflet.divIcon({
-              className: 'number-icon',
-              iconSize: [30, 30],
-              iconAnchor: [15, 30],
-              popupAnchor: [0, -30],
-              html: '*'       
-            });
-            const marker = new Leaflet.Marker(e.latlng, {
-                icon: numberIcon
-            });
-            marker.addTo(this.floorplanMap);
-            const popover = this.popoverCtrl.create('edit-item');
-            popover.onDidDismiss(data => {
-              console.log(data);
-              if (data) {
-                data.YCoordinate = e.latlng.lat / -h * 8 ;
-                data.XCoordinate = e.latlng.lng / w * 8;
-                this.projectService.addItem(this.project, data)
-                .then(itemData => {
-                  if (!itemData['exception']) {
-                    this.fetchItems();
-                  }
-                });
-              } else {
-                marker.remove();
-              }
-            });
-            popover.present();
-          }
-        });
+      });
 
-        this.loading = false;
-      }, 2000);
-    }
+      this.loading = false;
+
+    }, 2000)
   }
 
   createMarkers(items, w, h) {
@@ -490,20 +490,20 @@ export class DesignPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
-    if (
-      this.approvedItems ||
-      this.modifiedItems ||
-      this.pendingItems
-    ) {
-      this.drawFloorplan();
-    }
+    // if (
+    //   this.approvedItems ||
+    //   this.modifiedItems ||
+    //   this.pendingItems
+    // ) {
+    //   this.drawFloorplan();
+    // }
   }
 
   selectFloorplan() {
     console.log('selected switcher floorplan link');
     if (this.view !== 'FLOOR_PLAN') {
       this.view = 'FLOOR_PLAN';
-      this.drawFloorplan();
+      // this.drawFloorplan();
     }
   }
 
@@ -701,42 +701,31 @@ export class DesignPage {
   }
 
   viewAlternatives(item, i) {
-    
-    console.log('view alternatives pressed:');
-    console.log(item);
+    console.log('view alternatives pressed:', item);
     item.number = i + 1;
     const modal = this.modalCtrl.create('alternatives', {
       item: item,
-      alts: this.alternateItemsMap[item.projectItemId]
+      alts: this.alternateItemsMap[item.id]
     });
     modal.onDidDismiss(data => {
       console.log(data);
-      if (data) {
-        
-      }
     });
     modal.present();
   }
 
   requestAlternative(item) {
-    
     console.log('request alternative pressed');
     this.projectService.updateItemStatus(item, 'REQUEST_ALTERNATIVE')
     .then(data => {
-      if (!data['exception']) {
-        this.fetchItems();
-      }
+      this.fetchItems();
     });
   }
 
   undoAlternative(item) {
-    
     console.log('undo alternative pressed');
     this.projectService.updateItemStatus(item, 'SUBMITTED')
     .then(data => {
-      if (!data['exception']) {
-        this.fetchItems();
-      }
+      this.fetchItems();
     });
   }
 

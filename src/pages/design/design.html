@@ -89,7 +89,7 @@
       <p>Using the floor plan provided by the client, create and upload a floor plan to begin the design process.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
-    <div *ngIf="view == 'FLOOR_PLAN' && floorplan" class="collab-image" id="floorplan-map">
+    <div *ngIf="floorplan" [hidden]="view !== 'FLOOR_PLAN'" class="collab-image" id="floorplan-map">
       <img [src]="floorplan.image" id="floorplan-img">
     </div>
     <div *ngIf="view == 'CONCEPT_BOARD' && conceptboard" class="collab-image">
