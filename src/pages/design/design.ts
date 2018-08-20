@@ -164,13 +164,12 @@ export class DesignPage {
 
           for (const key in data) {
             const item = data[key];
-            if (item.project !== 0) {
-              if (!this.alternateItemsMap[item.project]) {
-                this.alternateItemsMap[item.project] = [];
+            if (item.parent) {
+              if (!this.alternateItemsMap[item.parent]) {
+                this.alternateItemsMap[item.parent] = [];
               }
-              this.alternateItemsMap[item.project].push(item);
-            } 
-            if (this.project.status == 'REQUEST_ALTERNATIVES' || this.project.status == 'ALTERNATIVES_READY') {
+              this.alternateItemsMap[item.parent].push(item);
+            } else if (this.project.status == 'REQUEST_ALTERNATIVES' || this.project.status == 'ALTERNATIVES_READY') {
               if (item.status === 'PENDING' || item.status === 'SUBMITTED') {
                 modifiedItems.push(item);
                 modifiedCollectionTotal += item.price;
