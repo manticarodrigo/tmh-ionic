@@ -52,9 +52,6 @@ export class DesignPage {
   pendingItems: any;
   modifiedItems: any;
   approvedItems: any;
-  pendingItemsMap = {};
-  modifiedItemsMap = {};
-  approvedItemsMap = {};
   pendingCollectionTotal = 0;
   modifiedCollectionTotal = 0;
   approvedCollectionTotal = 0;
@@ -161,67 +158,36 @@ export class DesignPage {
           const modifiedItems = [];
           const approvedItems = [];
 
-          let pendingCollectionTotal = 0;
-          let modifiedCollectionTotal = 0;
-          let approvedCollectionTotal = 0;
+          let pendingCollectionTotal: number = 0;
+          let modifiedCollectionTotal: number = 0;
+          let approvedCollectionTotal: number = 0;
 
           for (const key in data) {
             const item = data[key];
-            if (item.parentProjectItemId != 0) {
-              if (!this.alternateItemsMap[item.parentProjectItemId]) {
-                this.alternateItemsMap[item.parentProjectItemId] = [];
+            if (item.project !== 0) {
+              if (!this.alternateItemsMap[item.project]) {
+                this.alternateItemsMap[item.project] = [];
               }
-              this.alternateItemsMap[item.parentProjectItemId].push(item);
-            } else {
-              if (this.project.status == 'REQUEST_ALTERNATIVES' || this.project.status == 'ALTERNATIVES_READY') {
-                if (item.projectItemStatus == 'PENDING' || item.projectItemStatus == 'SUBMITTED') {
-                  modifiedItems.push(item);
-                  modifiedCollectionTotal += item.itemPrice;
-                  this.imageService.getFileEntry(item.fileEntryId)
-                  .then(data => {
-                    if (!data['exception']) {
-                      this.modifiedItemsMap[data['fileEntryId']] = data;
-                    }
-                  });
-                } else if (item.projectItemStatus == 'APPROVED') {
-                  approvedItems.push(item);
-                  approvedCollectionTotal += item.itemPrice;
-                  this.imageService.getFileEntry(item.fileEntryId)
-                  .then(data => {
-                    if (!data['exception']) {
-                      this.approvedItemsMap[data['fileEntryId']] = data;
-                    }
-                  });
-                } else {
-                  pendingItems.push(item);
-                  pendingCollectionTotal += item.itemPrice;
-                  this.imageService.getFileEntry(item.fileEntryId)
-                  .then(data => {
-                    if (!data['exception']) {
-                      this.pendingItemsMap[data['fileEntryId']] = data;
-                    }
-                  });
-                }
+              this.alternateItemsMap[item.project].push(item);
+            } 
+            if (this.project.status == 'REQUEST_ALTERNATIVES' || this.project.status == 'ALTERNATIVES_READY') {
+              if (item.status === 'PENDING' || item.status === 'SUBMITTED') {
+                modifiedItems.push(item);
+                modifiedCollectionTotal += item.price;
+              } else if (item.projectItemStatus == 'APPROVED') {
+                approvedItems.push(item);
+                approvedCollectionTotal += parseInt(item.price) * 100;
               } else {
-                if (item.projectItemStatus == 'APPROVED') {
-                  approvedItems.push(item);
-                  approvedCollectionTotal += item.itemPrice;
-                  this.imageService.getFileEntry(item.fileEntryId)
-                  .then(data => {
-                    if (!data['exception']) {
-                      this.pendingItemsMap[data['fileEntryId']] = data;
-                    }
-                  });
-                } else {
-                  pendingItems.push(item);
-                  pendingCollectionTotal += item.itemPrice;
-                  this.imageService.getFileEntry(item.fileEntryId)
-                  .then(data => {
-                    if (!data['exception']) {
-                      this.pendingItemsMap[data['fileEntryId']] = data;
-                    }
-                  });
-                }
+                pendingItems.push(item);
+                pendingCollectionTotal += parseInt(item.price) * 100;
+              }
+            } else {
+              if (item.status == 'APPROVED') {
+                approvedItems.push(item);
+                approvedCollectionTotal += parseInt(item.price) * 100;
+              } else {
+                pendingItems.push(item);
+                pendingCollectionTotal += parseInt(item.price) * 100;
               }
             }
           }
@@ -269,10 +235,10 @@ export class DesignPage {
   drawFloorplan() {
     console.log('drawing marker map');
     this.loading = true;
-    if (this.floorplanMap) {
-      this.floorplanMap.remove();
-    }
     setTimeout(() => {
+      if (this.floorplanMap) {
+        this.floorplanMap.remove();
+      }
       // create the floorplan map
       this.floorplanMap = Leaflet.map('floorplan-map', {
         attributionControl: false,
@@ -329,14 +295,14 @@ export class DesignPage {
           marker.addTo(self.floorplanMap);
           const popover = self.popoverCtrl.create('edit-item');
           popover.onDidDismiss(data => {
-            console.log(data);
+            console.log('adding item:', data);
             if (data) {
-              data.YCoordinate = e.latlng.lat / -h * 8 ;
-              data.XCoordinate = e.latlng.lng / w * 8;
+              data.lat = e.latlng.lat / -h;
+              data.lng = e.latlng.lng / w;
               self.projectService.addItem(self.project, data)
-              .then(itemData => {
-                self.fetchItems();
-              });
+                .then(itemData => {
+                  self.fetchItems();
+                });
             } else {
               marker.remove();
             }
@@ -354,11 +320,10 @@ export class DesignPage {
     let validItemCount = 0;
     for (const key in items) {
       const item = items[key];
-      if (item.YCoordinate && item.XCoordinate) {
+      if (item.lat && item.lng) {
         validItemCount += 1;
-        const latlng = new Leaflet.LatLng(item.YCoordinate * -h/8, item.XCoordinate * w/8);
-        console.log('adding marker at coordinates:');
-        console.log(latlng);
+        const latlng = new Leaflet.LatLng(item.lat * -h, item.lng * w);
+        console.log('adding marker at coordinates:', latlng);
         // The text could also be constters instead of numbers if that's more appropriate
         const numberIcon = Leaflet.divIcon({
           className: 'number-icon',
@@ -367,13 +332,13 @@ export class DesignPage {
           popupAnchor: [0, -30],
           html: String(validItemCount)       
         });
-        // Add the each marker to the marker map with projectItemId as key
-        this.markers[item.projectItemId] = new Leaflet.Marker(latlng, {
+        // Add the each marker to the marker map with id as key
+        this.markers[item.id] = new Leaflet.Marker(latlng, {
             draggable: true,
             icon: numberIcon
         });
         // Add popups
-        this.markers[item.projectItemId].addTo(this.floorplanMap)
+        this.markers[item.id].addTo(this.floorplanMap)
           .bindPopup(this.createPopup(item));
       }
     }
@@ -381,23 +346,23 @@ export class DesignPage {
 
   createPopup(item) {
     let popup = '';
-    if (this.itemsViewMode == 'PENDING' && this.pendingItemsMap[item.fileEntryId]) {
-      popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.pendingItemsMap[item.fileEntryId] + "'>";
+    if (this.itemsViewMode === 'PENDING') {
+      popup += `<img src='${item.image}'>`;
     }
-    if (this.itemsViewMode == 'MODIFIED' && this.modifiedItemsMap[item.fileEntryId]) {
-      popup += "<img style='width:150px;height:150px;object-fit:cover; src='" + this.modifiedItemsMap[item.fileEntryId] + "'>";
+    if (this.itemsViewMode === 'MODIFIED') {
+      popup += `<img src='${item.image}'>`;
     }
-    if (this.itemsViewMode == 'APPROVED' && this.approvedItemsMap[item.fileEntryId]) {
-      popup += "<img style='width:150px;height:150px;object-fit:cover;' src='" + this.approvedItemsMap[item.fileEntryId] + "'>";
+    if (this.itemsViewMode === 'APPROVED') {
+      popup += `<img src='${item.image}'>`;
     }
-    if (item.itemMake) {
-      popup += '<h3>' + item.itemMake + '</h3>';
+    if (item.make) {
+      popup += '<h3>' + item.make + '</h3>';
     }
-    if (item.itemType) {
-      popup += '<p>' + item.itemType + '</p>';
+    if (item.type) {
+      popup += '<p>' + item.type + '</p>';
     }
-    if (item.itemPrice) {
-      popup += '<h4>$' + item.itemPrice/100 + '</h4>';
+    if (item.price) {
+      popup += '<h4>$' + item.price/100 + '</h4>';
     }
     if (popup == '') {
       popup += '<h3>No item info.</h3>'
@@ -411,26 +376,22 @@ export class DesignPage {
       // Keep track of drag events
       for (const key in this.pendingItems) {
         const item = this.pendingItems[key];
-        console.log(key);
-        console.log(item);
+        console.log(key, item);
         this.markers[item.projectItemId].on('drag', function(e) {
-          console.log('moving marker');
           const marker = e.target;
           const position = marker.getLatLng();
-          console.log(position);
+          console.log('moving marker', position);
         });
       }
     } else {
       // Keep track of drag events
       for (const key in this.approvedItems) {
         const item = this.approvedItems[key];
-        console.log(key);
-        console.log(item);
+        console.log(key, item);
         this.markers[item.projectItemId].on('drag', function(e) {
-          console.log('moving marker');
           const marker = e.target;
           const position = marker.getLatLng();
-          console.log(position);
+          console.log('moving marker', position);
         });
       }
     }
@@ -490,20 +451,13 @@ export class DesignPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
-    // if (
-    //   this.approvedItems ||
-    //   this.modifiedItems ||
-    //   this.pendingItems
-    // ) {
-    //   this.drawFloorplan();
-    // }
+    this.drawFloorplan();
   }
 
   selectFloorplan() {
     console.log('selected switcher floorplan link');
     if (this.view !== 'FLOOR_PLAN') {
       this.view = 'FLOOR_PLAN';
-      // this.drawFloorplan();
     }
   }
 
@@ -588,6 +542,8 @@ export class DesignPage {
           this.fetchDetails();
         });
     }
+    // reset files
+    event.target.value = null;
   }
 
   editItem(item, i) {

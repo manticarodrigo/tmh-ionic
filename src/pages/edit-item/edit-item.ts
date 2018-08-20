@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angular';
+import { IonicPage, NavParams, ViewController } from 'ionic-angular';
 
 @IonicPage({
   name: 'edit-item'
@@ -11,37 +11,36 @@ import { IonicPage, NavController, NavParams, ViewController } from 'ionic-angul
 export class EditItemPage {
   item = {};
   selectedFile: any;
-  constructor(private navCtrl: NavController,
-              private navParams: NavParams,
-              private viewCtrl: ViewController) {
-    if (this.navParams.get('item')) {
-      this.item = this.navParams.get('item');
+  constructor(
+    private navParams: NavParams,
+    private viewCtrl: ViewController
+  ) {
+    const item = this.navParams.get('item');
+    if (item) {
+      this.item = item;
     }
   }
 
   savePressed() {
-    console.log("save pressed");
+    console.log('save pressed');
     if (this.selectedFile) {
-      this.item['file'] = this.selectedFile;
+      this.item.image = this.selectedFile;
     }
     this.viewCtrl.dismiss(this.item);
   }
 
   fileChanged(event) {
-    console.log("input file changed:");
-    const file = event.target.files[0];
-    console.log(file);
-    this.selectedFile = file;
+    console.log('input file changed:', event.target.files[0]);
+    this.selectedFile = event.target.files[0];
   }
 
   validatePrice() {
-    var num = this.item['itemPrice'];
-    if (num && num.match(/^[0-9]+$/) == null) {
-      console.log("num is not numeric");
-      console.log(num);
+    let num = this.item.price;
+    if (num && num.match(/^\d*\.?\d*$/) == null) {
+      console.log('num is not hundredths decimal', num);
       num = num.slice(0, -1);
     }
-    this.item['itemPrice'] = num;
+    this.item.price = num;
   }
 
 }

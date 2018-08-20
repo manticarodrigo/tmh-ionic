@@ -188,11 +188,11 @@
           ITEM {{ i + 1 }}
         </div>
         <div class="project-items-img">
-          <img *ngIf="pendingItemsMap[item.fileEntryId]" [src]="pendingItemsMap[item.fileEntryId].image">
+          <img *ngIf="item.image" [src]="item.image">
         </div>
-        <h6>{{ item.itemMake }}</h6>
-        <p>{{ item.itemType }}</p>
-        <h2>${{ item.itemPrice/100 }}</h2>
+        <h6>{{ item.make }}</h6>
+        <p>{{ item.type }}</p>
+        <h2>${{ item.price }}</h2>
         <div *ngIf="viewMode == 'CLIENT'">
           <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
             <button *ngIf="project.status == 'FLOOR_PLAN' || project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
@@ -219,11 +219,11 @@
           ITEM {{ i + 1 }}
         </div>
         <div class="project-items-img" (click)="editItem(item, i)">
-          <img *ngIf="modifiedItemsMap[item.fileEntryId]" [src]="modifiedItemsMap[item.fileEntryId].image">
+          <img *ngIf="item.image" [src]="item.image">
         </div>
-        <h6>{{ item.itemMake }}</h6>
-        <p>{{ item.itemType }}</p>
-        <h2>${{ item.itemPrice/100 }}</h2>
+        <h6>{{ item.make }}</h6>
+        <p>{{ item.type }}</p>
+        <h2>${{ item.price }}</h2>
         <div *ngIf="viewMode == 'CLIENT'">
           <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
             <button *ngIf="project.status == 'FLOOR_PLAN' || project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
@@ -250,11 +250,11 @@
           ITEM {{ i + 1 }}
         </div>
         <div class="project-items-img" (click)="editItem(item, i)">
-          <img *ngIf="approvedItemsMap[item.fileEntryId]" [src]="approvedItemsMap[item.fileEntryId].image">
+          <img *ngIf="item.image" [src]="item.image">
         </div>
-        <h6>{{ item.itemMake }}</h6>
-        <p>{{ item.itemType }}</p>
-        <h2>${{ item.itemPrice/100 }}</h2>
+        <h6>{{ item.make }}</h6>
+        <p>{{ item.type }}</p>
+        <h2>${{ item.price }}</h2>
         <div *ngIf="viewMode == 'CLIENT'">
           <div *ngIf="item.projectItemStatus == 'SUBMITTED' || item.projectItemStatus == 'PENDING'">
             <button *ngIf="project.status == 'FLOOR_PLAN' || project.status == 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>

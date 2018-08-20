@@ -191,22 +191,22 @@ export class ProjectService {
   fetchItems(project) {
     return new Promise((resolve, reject) => {
       console.log('fetching items for project:', project.id);
-      resolve(null);
-      // this.http.get('', {headers: self.userService.headers})
-      // .map(res => res.json())
-      // .subscribe(data => {
-      //   console.log('found project items:');
-      //   console.log(data);
-      //   resolve(data);
-      // });
+      this.http.get(
+        `${ENV.backendUrl}/api/v1/items/project/?project=${project.id}`,
+        { headers: this.userService.getHeaders() }
+      )
+        .map(res => res.json())
+        .subscribe(data => {
+          console.log('found project items:', data);
+          resolve(data);
+        });
     });
   }
 
   addDetail(project, file, type, status) {
     return new Promise((resolve, reject) => {
-      var headers = this.userService.getHeaders();
-      // headers.append('enctype', 'multipart/form-data');
-      var formData = new FormData();
+      const headers = this.userService.getHeaders();
+      const formData = new FormData();
       formData.append('image', file);
       formData.append('type', type);
       formData.append('project', project.id);
@@ -225,51 +225,41 @@ export class ProjectService {
   }
 
   deleteDetail(project, detail) {
-    console.log('deleting detail:');
-    console.log(detail);
+    console.log('deleting detail:', detail);
     const self = this;
     return new Promise((resolve, reject) => {
       const endpoint = this.api + '/tmh-project-portlet.projectdetail/delete-project-detail/projectId/' + project.projectId + '/projectDetailId/' + detail.projectDetailId;
       this.http.get(endpoint, {headers: self.userService.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log('delete returned response:');
-        console.log(data);
+        console.log('delete returned response:', data);
         resolve(data);
       });
     });
   }
 
   addItem(project, item) {
-    const self = this;
     return new Promise((resolve, reject) => {
-      console.log('adding project item:');
-      console.log(item);
-      var headers = self.userService.headers;
-      headers.append('enctype', 'multipart/form-data');
-      const now = new Date().getTime();
-      const map = {
-        '/tmh-project-portlet.projectitem/add-project-item': {
-          'projectId': project.projectId,
-          'yCoordinate': item.YCoordinate,
-          'xCoordinate': item.XCoordinate,
-          'serviceContext': JSON.stringify({'userId':self.userService.currentUser.userId})
-        }
-      }
-      const endpoint = this.api + '/invoke?cmd=' + JSON.stringify(map);
-      self.http.post(endpoint, {}, {headers})
+      console.log('adding project item:', item);
+      const headers = this.userService.getHeaders();
+      const formData = new FormData();
+      formData.append('status', 'PENDING');
+      formData.append('image', item.image);
+      formData.append('make', item.make);
+      formData.append('type', item.type);
+      formData.append('price', item.price);
+      formData.append('inspiration', item.inspiration);
+      formData.append('lat', item.lat);
+      formData.append('lng', item.lng);
+      formData.append('project', project.id);
+      this.http.post(
+        `${ENV.backendUrl}/api/v1/items/`,
+        formData,
+        { headers })
       .map(res => res.json())
-      .subscribe(data => {
-        console.log('add item returned response:');
-        console.log(data);
-        if (!data.exception) {
-          self.updateItem(project, data, 'PENDING')
-          .then(data => {
-            resolve(data);
-          });
-        } else {
-          resolve(data);
-        }
+      .subscribe(res => {
+        console.log('add item returned response:', res);
+        resolve(res);
       });
     });
   }
@@ -277,9 +267,8 @@ export class ProjectService {
   updateItem(project, item, status) {
     const self = this;
     return new Promise((resolve, reject) => {
-      console.log('updating project item:');
-      console.log(item);
-      var headers = self.userService.headers;
+      console.log('updating project item:', item);
+      const headers = self.userService.headers;
       headers.append('enctype', 'multipart/form-data');
       const now = new Date().getTime();
       const map = {

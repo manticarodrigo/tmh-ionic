@@ -291,6 +291,8 @@ export class DetailsPage {
       default:
         console.log('view mismatch', this.view);
     }
+    // reset files
+    event.target.value = null;
   }
 
   deleteDetail(detail) {

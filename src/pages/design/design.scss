@@ -214,6 +214,11 @@ page-design {
       .leaflet-popup-content {
         text-align: center;
         min-width: 200px;
+        img {
+          width: 150px;
+          height: 150px;
+          object-fit:cover;
+        }
         h1, h2, p {
           margin: 0px 0px;
         }
