@@ -12,7 +12,6 @@ import {
 
 import { ChatService } from '../../../providers/chat-service';
 import { UserService } from '../../../providers/user-service';
-import { ImageService } from '../../../providers/image-service';
 
 @Component({
   selector: 'page-chat',
@@ -29,27 +28,27 @@ export class ChatPage {
     createdAt: null
   };
   memberMap = {};
-  fileMap = {};
-  constructor(private navParams: NavParams,
-              private viewCtrl: ViewController,
-              private chatService: ChatService,
-              private userService: UserService,
-              private imageService: ImageService) {
-    this.memberMap[this.userService.currentUser.userId] = {
-      firstName: this.userService.currentUser.firstName,
-      photoURL: this.userService.currentUser.photoURL,
+  constructor(
+    private navParams: NavParams,
+    private viewCtrl: ViewController,
+    private chatService: ChatService,
+    private userService: UserService
+  ) {
+    this.memberMap[this.userService.currentUser.id] = {
+      first_name: this.userService.currentUser.first_name,
+      image: this.userService.currentUser.image,
       loading: false
     }
     if (this.navParams.get('project')) {
       this.project = this.navParams.get('project');
-      console.log("found project for chat:", this.project);
+      console.log('found project for chat:', this.project);
       this.chatService.join(this.project.id);
       this.fetchMessages();
       this.observeMessages();
     }
   }
 
-  ionViewWillLeave() {
+  ngOnDestroy() {
     if (this.project) {
       this.chatService.leave(this.project.id);
     }
@@ -58,8 +57,7 @@ export class ChatPage {
   fetchMessages() {
     this.chatService.fetchMessages()
     .then(data => {
-      console.log("chat component received messages:");
-      console.log(data);
+      console.log('chat component received messages:', data);
       if (data) {
         let messageArr = [];
         for (const key in data[0]) {
@@ -70,9 +68,6 @@ export class ChatPage {
             }
             if (message.createdAt) {
               message.createdAtReadable = this.getTimeStringFrom(message.createdAt);
-            }
-            if (message.fileEntryId) {
-              this.fetchImage(message.fileEntryId);
             }
             messageArr.push(message);
           }
@@ -90,26 +85,14 @@ export class ChatPage {
     })
   }
 
-  fetchImage(fileEntryId) {
-    this.imageService.getFileEntry(fileEntryId)
-      .then(data => {
-        console.log("chat component received file:");
-        console.log(data);
-        this.fileMap[fileEntryId] = data;
-      });
-  }
-
   observeMessages() {
     this.chatService.observeMessages(data => {
-      console.log("chat component received message:", data);
+      console.log('chat component received message:', data);
       if (!this.memberMap[data['senderId']]) {
        this.addMemberData(data['senderId']);
       }
       if (data['createdAt']) {
         data['createdAtReadable'] = this.getTimeStringFrom(data['createdAt']);
-      }
-      if (data['fileEntryId']) {
-        this.fetchImage(data['fileEntryId']);
       }
       this.messages.push(data);
       this.scrollToBottom();
@@ -118,49 +101,26 @@ export class ChatPage {
 
   addMemberData(uid) {
     if (!this.memberMap[uid]) {
-      this.memberMap[uid] = {
-        loading: true
-      }
+      this.memberMap[uid] = { loading: true };
       this.userService.fetchUser(uid)
-        .then(user => {
-          if (!user['exception'] && user['portraitId']) {
-            if (user['file']) {
-              this.memberMap[uid] = {
-                firstName: user['firstName'],
-                photoURL: this.imageService.createFileUrl(user['file']),
-                loading: false
-              }
-            } else {
-              this.imageService.imageForUser(user)
-                .then(url => {
-                  if (url) {
-                    this.memberMap[uid] = {
-                      firstName: user['firstName'],
-                      photoURL: url,
-                      loading: false
-                    }
-                  } else {
-                    console.log("no image found");
-                    this.memberMap[uid] = null;
-                  }
-                });
-            }
-          } else {
-            console.log("got back object instead of valid user:", user);
-            this.memberMap[uid] = null;
+        .then((user: any) => {
+          this.memberMap[uid] = {
+            first_name: user.first_name,
+            image: user.image,
+            loading: false
           }
         });
     }
   }
 
   scrollToBottom() {
-    console.log("scrolling to bottom");
+    console.log('scrolling to bottom');
     let dimensions = this.content.getContentDimensions();
     if (this.content.getContentDimensions()) {
       this.content.scrollToBottom(300);
       // this.content.scrollTo(0, dimensions.scrollHeight, 250); //x, y, ms animation speed
     } else {
-      console.log("content not loaded");
+      console.log('content not loaded');
     }
   }
 
@@ -177,7 +137,7 @@ export class ChatPage {
           message: {
             text: self.message.text,
             id: this.message.id ? this.message.id : Math.ceil(Math.random() * 1000),
-            senderId: this.userService.currentUser.userId,
+            senderId: this.userService.currentUser.id,
             createdAt: new Date().getTime()
           },
           room: this.project.projectId
@@ -194,28 +154,28 @@ export class ChatPage {
   }
 
   fileChanged(event) {
-    console.log("file changed:", event.target.files[0]);
-    this.imageService.uploadFile(event.target.files[0], this.project)
-      .then(data => {
-        console.log("chat component received data:", data);
-        const msgData = {
-          message: {
-            fileEntryId: data['fileEntryId'],
-            id: this.message.id ? this.message.id : Math.ceil(Math.random() * 1000),
-            senderId: this.userService.currentUser.userId,
-            createdAt: new Date().getTime()
-          },
-          room: this.project.projectId
-        }
-        this.chatService.send(msgData, (savedToLocal) => {
-          this.message = {
-              text: '',
-              id: null,
-              senderId: this.userService.currentUser.userId,
-              createdAt: null
-            };
-        });
-      });
+    console.log('file changed:', event.target.files[0]);
+    // this.imageService.uploadFile(event.target.files[0], this.project)
+    //   .then(data => {
+    //     console.log('chat component received data:', data);
+    //     const msgData = {
+    //       message: {
+    //         fileEntryId: data['fileEntryId'],
+    //         id: this.message.id ? this.message.id : Math.ceil(Math.random() * 1000),
+    //         senderId: this.userService.currentUser.userId,
+    //         createdAt: new Date().getTime()
+    //       },
+    //       room: this.project.projectId
+    //     }
+    //     this.chatService.send(msgData, (savedToLocal) => {
+    //       this.message = {
+    //           text: '',
+    //           id: null,
+    //           senderId: this.userService.currentUser.userId,
+    //           createdAt: null
+    //         };
+    //     });
+    //   });
   }
 
   // showImage(url) {
@@ -282,7 +242,7 @@ export class ChatPage {
   //           if (this.user.pushId) {
   //               this.settingsS.fetchUserSettings(this.user).then(settings => {
   //                   if (settings.messages) {
-  //                       this.pushS.push(this.userS.user.firstName + " sent an image.", this.user, 'attachment');
+  //                       this.pushS.push(this.userS.user.firstName + ' sent an image.', this.user, 'attachment');
   //                   }
   //               }).catch(error => {
   //                   console.log(error);
@@ -302,7 +262,7 @@ export class ChatPage {
     const date = new Date(timestamp);
     date.setDate(date.getDate());
     const string = date.toString();
-    const stringArr = string.split(" ");
+    const stringArr = string.split(' ');
     const time = this.tConvert(stringArr[4]);
 
     const now = new Date();
@@ -310,15 +270,15 @@ export class ChatPage {
     let interval = Math.floor(seconds / 31536000);
 
     if (interval > 1) {
-      return interval + " years ago";
+      return interval + ' years ago';
     } else if (interval == 1) {
-      return interval + " year ago";
+      return interval + ' year ago';
     }
     interval = Math.floor(seconds / 2592000);
     if (interval > 1) {
-      return interval + " months ago";
+      return interval + ' months ago';
     } else if (interval == 1) {
-      return interval + " month ago";
+      return interval + ' month ago';
     }
     interval = Math.floor(seconds / 86400);
     if (interval >= 1) {
@@ -326,12 +286,12 @@ export class ChatPage {
         let daysAgo = new Date(now);
         daysAgo.setDate(daysAgo.getDate() - interval);
         const string = daysAgo.toString();
-        const stringArr = string.split(" ");
+        const stringArr = string.split(' ');
         const day = stringArr[0];
         const time = this.tConvert(stringArr[4]);
         return day + ' ' + time;
       } else {
-        return interval + " days ago";
+        return interval + ' days ago';
       }
     }
     interval = Math.floor(seconds / 3600);
@@ -340,7 +300,7 @@ export class ChatPage {
     }
     // interval = Math.floor(seconds / 60);
     // if (interval >= 1) {
-    //   return interval + " minutes ago";
+    //   return interval + ' minutes ago';
     // }
     return time;
   }

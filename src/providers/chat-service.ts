@@ -11,15 +11,15 @@ export class ChatService {
 
   join(projectId) {
     this.socketService.pubData('messages', 'join', projectId, (savedToLocal) => {
-      console.log('savedToLocal : ', savedToLocal);
-      console.log("Joined chat for project with id:", projectId);
+      console.log('savedToLocal:', savedToLocal);
+      console.log('joined chat for project:', projectId);
     });
   }
 
   leave(projectId) {
     this.socketService.pubData('messages', 'leave', projectId, (savedToLocal) => {
-      console.log('savedToLocal : ', savedToLocal);
-      console.log("Left chat for project with id:", projectId);
+      console.log('savedToLocal:', savedToLocal);
+      console.log('left chat for project:', projectId);
     });
   }
 
@@ -27,7 +27,7 @@ export class ChatService {
     return new Promise((resolve, reject) => {
       this.socketService.addSubscription('messages', 'messages')
       .subscribe(data => {
-        console.log("chat service received messages:", data);
+        console.log('chat service received messages:', data);
         resolve(data);
       });
     });
@@ -36,14 +36,14 @@ export class ChatService {
   observeMessages(callback) {
     this.socketService.addSubscription('messages', 'new message')
     .subscribe(data => {
-      console.log("chat service received message:", data);
+      console.log('chat service received message:', data);
       callback(data);
     });
   }
 
   send(data, callback) {
     this.socketService.pubData('messages', 'addMessage', data, function(savedToLocal) {
-        console.log('savedToLocal : ', savedToLocal);
+        console.log('savedToLocal:', savedToLocal);
     });
   }
 

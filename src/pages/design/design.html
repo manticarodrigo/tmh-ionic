@@ -185,7 +185,7 @@
     <ion-row class="project-items-wrapper">
       <ion-col col-12 col-sm *ngFor="let item of pendingItems; let i = index" class="project-items-box" [class.hidden]="itemsViewMode != 'PENDING'">
         <div class="project-items-label">
-          ITEM {{ i + 1 }}
+          ITEM {{ item.id }}
         </div>
         <div class="project-items-img">
           <img *ngIf="item.image" [src]="item.image">
@@ -216,7 +216,7 @@
       </ion-col>
       <ion-col col-12 col-sm *ngFor="let item of modifiedItems; let i = index" class="project-items-box" [class.hidden]="itemsViewMode != 'MODIFIED'">
         <div class="project-items-label" (click)="editItem(item, i)">
-          ITEM {{ i + 1 }}
+          ITEM {{ item.id }}
         </div>
         <div class="project-items-img" (click)="editItem(item, i)">
           <img *ngIf="item.image" [src]="item.image">
@@ -247,7 +247,7 @@
       </ion-col>
       <ion-col col-12 col-sm *ngFor="let item of approvedItems; let i = index" class="project-items-box" [class.hidden]="itemsViewMode != 'APPROVED'">
         <div class="project-items-label" (click)="editItem(item, i)">
-          ITEM {{ i + 1 }}
+          ITEM {{ item.id }}
         </div>
         <div class="project-items-img" (click)="editItem(item, i)">
           <img *ngIf="item.image" [src]="item.image">

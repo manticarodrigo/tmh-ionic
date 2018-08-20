@@ -323,13 +323,11 @@ export class DesignPage {
         default:
           items = this.approvedItems;
       }
-      let validItemCount = 0;
       // clear existing layers
       this.markers.clearLayers();
       for (const key in items) {
         const item = items[key];
         if (item.lat && item.lng) {
-          validItemCount += 1;
           const latlng = new Leaflet.LatLng(item.lat * -h, item.lng * w);
           console.log('adding marker at coordinates:', latlng);
           // the text could also be letters instead of numbers if that's more appropriate
@@ -338,7 +336,7 @@ export class DesignPage {
             iconSize: [30, 30],
             iconAnchor: [15, 30],
             popupAnchor: [0, -30],
-            html: String(validItemCount)       
+            html: item.id       
           });
           // add the each marker to the marker map with id as key
           const marker = new Leaflet.Marker(latlng, {
@@ -360,16 +358,7 @@ export class DesignPage {
   }
 
   createPopup(item) {
-    let popup = '';
-    if (this.itemsViewMode === 'PENDING') {
-      popup += `<img src='${item.image}'>`;
-    }
-    if (this.itemsViewMode === 'MODIFIED') {
-      popup += `<img src='${item.image}'>`;
-    }
-    if (this.itemsViewMode === 'APPROVED') {
-      popup += `<img src='${item.image}'>`;
-    }
+    let popup = `<img src='${item.image}'>`;
     if (item.make) {
       popup += `<h3>${item.make}</h3>`;
     }
@@ -377,7 +366,7 @@ export class DesignPage {
       popup += `<p>${item.type}</p>`;
     }
     if (item.price) {
-      popup += `<h4>$${item.price/100}</h4>`;
+      popup += `<h4>$${item.price}</h4>`;
     }
     if (popup === '') {
       popup += '<h3>No item info.</h3>'
@@ -536,14 +525,18 @@ export class DesignPage {
 
   editItem(item, i) {
     console.log('edit item pressed:', item);
-    item.number = i + 1;
-    const popover = this.popoverCtrl.create('edit-item', {
-      item: item
-    });
+    const popover = this.popoverCtrl.create(
+      'edit-item', 
+      { item: item }
+    );
     popover.onDidDismiss(data => {
       console.log(data);
       if (data) {
-        this.projectService.updateItem(this.project, data, 'PENDING')
+        this.projectService.updateItem(
+          this.project,
+          data,
+          'PENDING'
+        )
           .then(itemData => {
             console.log(itemData);
             this.fetchItems();

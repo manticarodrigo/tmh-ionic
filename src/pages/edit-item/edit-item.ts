@@ -17,6 +17,7 @@ export class EditItemPage {
   ) {
     const item = this.navParams.get('item');
     if (item) {
+      console.log('editing item:', item);
       this.item = item;
     }
   }
