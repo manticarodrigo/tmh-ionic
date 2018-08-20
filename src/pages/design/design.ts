@@ -268,7 +268,7 @@ export class DesignPage {
       // draw markers
       this.drawMarkers();
       this.loading = false;
-      // listen for new marker event
+      // listen for map double click event
       const self = this;
       this.map.on('dblclick', function(e) {
         console.log('clicked map', e, self.viewMode);
@@ -313,12 +313,15 @@ export class DesignPage {
       const w = this.map.getSize().x,
             h = this.map.getSize().y;
       // choose marker items
-      if (this.itemsViewMode == 'PENDING' && this.pendingItems) {
-        items = this.pendingItems;
-      } else if (this.itemsViewMode == 'MODIFIED' && this.modifiedItems) {
-        items = this.modifiedItems;
-      } else if (this.approvedItems) {
-        items = this.approvedItems;
+      switch (this.itemsViewMode) {
+        case 'PENDING':
+          items = this.pendingItems;
+          break;
+        case 'MODIFIED':
+          items = this.modifiedItems;
+          break;
+        default:
+          items = this.approvedItems;
       }
       let validItemCount = 0;
       // clear existing layers
@@ -329,7 +332,7 @@ export class DesignPage {
           validItemCount += 1;
           const latlng = new Leaflet.LatLng(item.lat * -h, item.lng * w);
           console.log('adding marker at coordinates:', latlng);
-          // The text could also be constters instead of numbers if that's more appropriate
+          // the text could also be letters instead of numbers if that's more appropriate
           const numberIcon = Leaflet.divIcon({
             className: 'number-icon',
             iconSize: [30, 30],
@@ -337,14 +340,20 @@ export class DesignPage {
             popupAnchor: [0, -30],
             html: String(validItemCount)       
           });
-          // Add the each marker to the marker map with id as key
+          // add the each marker to the marker map with id as key
           const marker = new Leaflet.Marker(latlng, {
               draggable: true,
               icon: numberIcon
           });
-          // Add popups
+          // add popups
           marker.addTo(this.markers)
             .bindPopup(this.createPopup(item));
+          // listen for marker drag event
+          marker.on('drag', function(e) {
+            const point = e.target;
+            const latlng = point.getLatLng();
+            console.log('moving marker', item.id, latlng);
+          });
         }
       }
     }
@@ -374,33 +383,6 @@ export class DesignPage {
       popup += '<h3>No item info.</h3>'
     }
     return popup;
-  }
-
-  editMarkerLocations() {
-    console.log('edit marker location activated');
-    if (this.itemsViewMode == 'PENDING') {
-      // Keep track of drag events
-      for (const key in this.pendingItems) {
-        const item = this.pendingItems[key];
-        console.log(key, item);
-        this.markers[item.projectItemId].on('drag', function(e) {
-          const marker = e.target;
-          const position = marker.getLatLng();
-          console.log('moving marker', position);
-        });
-      }
-    } else {
-      // Keep track of drag events
-      for (const key in this.approvedItems) {
-        const item = this.approvedItems[key];
-        console.log(key, item);
-        this.markers[item.projectItemId].on('drag', function(e) {
-          const marker = e.target;
-          const position = marker.getLatLng();
-          console.log('moving marker', position);
-        });
-      }
-    }
   }
 
   homePressed() {
