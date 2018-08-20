@@ -11,7 +11,6 @@ import * as Leaflet from 'leaflet';
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
-import { ImageService } from '../../providers/image-service';
 
 @IonicPage({
   name: 'design',
@@ -45,9 +44,11 @@ export class DesignPage {
   concepts: any;
   selectedConcept: any;
   conceptboard: any;
-  markers = {};
   floorplan: any;
-  floorplanMap: any;
+  // Leaflet
+  map: any;
+  markers: any;
+  // Items
   alternateItemsMap = {};
   pendingItems: any;
   modifiedItems: any;
@@ -60,7 +61,6 @@ export class DesignPage {
     private navParams: NavParams,
     private userService: UserService,
     private projectService: ProjectService,
-    private imageService: ImageService,
     private popoverCtrl: PopoverController,
     private modalCtrl: ModalController
   ) {
@@ -140,10 +140,10 @@ export class DesignPage {
         }
         if (floorplans.length > 0) {
           this.floorplan = floorplans[0];
+          this.drawFloorplan();
         }
         if (concepts.length > 0 && floorplans.length > 0) {
           this.view = 'FLOOR_PLAN';
-          this.drawFloorplan();
         }
         this.loading = false;
       });
@@ -208,7 +208,7 @@ export class DesignPage {
           this.pendingCollectionTotal = pendingCollectionTotal;
           this.modifiedCollectionTotal = modifiedCollectionTotal;
           this.approvedCollectionTotal = approvedCollectionTotal;
-          this.drawFloorplan();
+          this.drawMarkers();
         }
       });
   }
@@ -232,16 +232,18 @@ export class DesignPage {
   }
 
   drawFloorplan() {
-    console.log('drawing marker map');
+    console.log('drawing map');
     this.loading = true;
     setTimeout(() => {
-      if (this.floorplanMap) {
-        this.floorplanMap.remove();
-      }
       // create the floorplan map
-      this.floorplanMap = Leaflet.map('floorplan-map', {
+      this.map = Leaflet.map('floorplan-map', {
         attributionControl: false,
+        dragging: false,
+        zoomControl: false,
         scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        touchZoom: false,
         minZoom: 1,
         maxZoom: 4,
         center: [0, 0],
@@ -249,35 +251,26 @@ export class DesignPage {
         crs: Leaflet.CRS.Simple
       });
       // dimensions of the image
-      const w = this.floorplanMap.getSize().x,
-          h = this.floorplanMap.getSize().y,
+      const w = this.map.getSize().x,
+          h = this.map.getSize().y,
           url = this.floorplan.image;
       console.log('map dimensions:', w, h);
       // calculate the edges of the image, in coordinate space
-      const southWest = this.floorplanMap.unproject([0, h], this.floorplanMap.getMaxZoom()-1);
-      const northEast = this.floorplanMap.unproject([w, 0], this.floorplanMap.getMaxZoom()-1);
+      const southWest = this.map.unproject([0, h], this.map.getMaxZoom()-1);
+      const northEast = this.map.unproject([w, 0], this.map.getMaxZoom()-1);
       const bounds = new Leaflet.LatLngBounds(southWest, northEast);
-      
       // add the image overlay, 
       // so that it covers the entire map
-      Leaflet.imageOverlay(url, bounds).addTo(this.floorplanMap);
-      this.floorplanMap.fitBounds(bounds);
-
-      // disable interactions
-      this.floorplanMap.doubleClickZoom.disable();
-      this.floorplanMap.dragging.disable();
-
+      Leaflet.imageOverlay(url, bounds).addTo(this.map);
+      this.map.fitBounds(bounds);
+      // create the markers layer
+      this.markers = new Leaflet.LayerGroup().addTo(this.map);
       // draw markers
-      if (this.itemsViewMode == 'PENDING' && this.pendingItems) {
-        this.createMarkers(this.pendingItems, w, h);
-      } else if (this.itemsViewMode == 'MODIFIED' && this.modifiedItems) {
-        this.createMarkers(this.modifiedItems, w, h);
-      } else if (this.approvedItems) {
-        this.createMarkers(this.approvedItems, w, h);
-      }
+      this.drawMarkers();
+      this.loading = false;
       // listen for new marker event
       const self = this;
-      this.floorplanMap.on('dblclick', function(e) {
+      this.map.on('dblclick', function(e) {
         console.log('clicked map', e, self.viewMode);
         if (self.viewMode === 'DESIGNER') {
           const numberIcon = Leaflet.divIcon({
@@ -291,7 +284,7 @@ export class DesignPage {
             e.latlng,
             { icon: numberIcon }
           );
-          marker.addTo(self.floorplanMap);
+          marker.addTo(self.markers);
           const popover = self.popoverCtrl.create('edit-item');
           popover.onDidDismiss(data => {
             console.log('adding item:', data);
@@ -299,7 +292,8 @@ export class DesignPage {
               data.lat = e.latlng.lat / -h;
               data.lng = e.latlng.lng / w;
               self.projectService.addItem(self.project, data)
-                .then(itemData => {
+                .then(data => {
+                  console.log('design page received item:', data)
                   self.fetchItems();
                 });
             } else {
@@ -309,36 +303,49 @@ export class DesignPage {
           popover.present();
         }
       });
-
-      this.loading = false;
-
     }, 2000)
   }
 
-  createMarkers(items, w, h) {
-    let validItemCount = 0;
-    for (const key in items) {
-      const item = items[key];
-      if (item.lat && item.lng) {
-        validItemCount += 1;
-        const latlng = new Leaflet.LatLng(item.lat * -h, item.lng * w);
-        console.log('adding marker at coordinates:', latlng);
-        // The text could also be constters instead of numbers if that's more appropriate
-        const numberIcon = Leaflet.divIcon({
-          className: 'number-icon',
-          iconSize: [30, 30],
-          iconAnchor: [15, 30],
-          popupAnchor: [0, -30],
-          html: String(validItemCount)       
-        });
-        // Add the each marker to the marker map with id as key
-        this.markers[item.id] = new Leaflet.Marker(latlng, {
-            draggable: true,
-            icon: numberIcon
-        });
-        // Add popups
-        this.markers[item.id].addTo(this.floorplanMap)
-          .bindPopup(this.createPopup(item));
+  drawMarkers() {
+    console.log('drawing markers');
+    if (this.map) {
+      let items: any;
+      const w = this.map.getSize().x,
+            h = this.map.getSize().y;
+      // choose marker items
+      if (this.itemsViewMode == 'PENDING' && this.pendingItems) {
+        items = this.pendingItems;
+      } else if (this.itemsViewMode == 'MODIFIED' && this.modifiedItems) {
+        items = this.modifiedItems;
+      } else if (this.approvedItems) {
+        items = this.approvedItems;
+      }
+      let validItemCount = 0;
+      // clear existing layers
+      this.markers.clearLayers();
+      for (const key in items) {
+        const item = items[key];
+        if (item.lat && item.lng) {
+          validItemCount += 1;
+          const latlng = new Leaflet.LatLng(item.lat * -h, item.lng * w);
+          console.log('adding marker at coordinates:', latlng);
+          // The text could also be constters instead of numbers if that's more appropriate
+          const numberIcon = Leaflet.divIcon({
+            className: 'number-icon',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -30],
+            html: String(validItemCount)       
+          });
+          // Add the each marker to the marker map with id as key
+          const marker = new Leaflet.Marker(latlng, {
+              draggable: true,
+              icon: numberIcon
+          });
+          // Add popups
+          marker.addTo(this.markers)
+            .bindPopup(this.createPopup(item));
+        }
       }
     }
   }
@@ -355,15 +362,15 @@ export class DesignPage {
       popup += `<img src='${item.image}'>`;
     }
     if (item.make) {
-      popup += '<h3>' + item.make + '</h3>';
+      popup += `<h3>${item.make}</h3>`;
     }
     if (item.type) {
-      popup += '<p>' + item.type + '</p>';
+      popup += `<p>${item.type}</p>`;
     }
     if (item.price) {
-      popup += '<h4>$' + item.price/100 + '</h4>';
+      popup += `<h4>$${item.price/100}</h4>`;
     }
-    if (popup == '') {
+    if (popup === '') {
       popup += '<h3>No item info.</h3>'
     }
     return popup;
@@ -450,7 +457,7 @@ export class DesignPage {
     if (this.maximized) {
       this.maximized = !this.maximized;
     }
-    this.drawFloorplan();
+    this.drawMarkers();
   }
 
   selectFloorplan() {
@@ -521,7 +528,7 @@ export class DesignPage {
 
   itemViewSwitched() {
     console.log('item view switched');
-    this.drawFloorplan();
+    this.drawMarkers();
   }
 
   fileChanged(event) {

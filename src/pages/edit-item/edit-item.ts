@@ -9,7 +9,7 @@ import { IonicPage, NavParams, ViewController } from 'ionic-angular';
   templateUrl: 'edit-item.html',
 })
 export class EditItemPage {
-  item = {};
+  item: any = {};
   selectedFile: any;
   constructor(
     private navParams: NavParams,
