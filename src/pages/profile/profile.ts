@@ -30,7 +30,6 @@ export class ProfilePage {
       .subscribe(user => {
         if (user) {
           this.user = user;
-          this.user.createDateReadable = this.getDateStringFrom(this.user.date_joined);
         }
       });
   }
@@ -47,18 +46,6 @@ export class ProfilePage {
     } else {
       this.editing = !this.editing;
     }
-  }
-
-  getDateStringFrom(timestamp) {
-    const date = new Date(timestamp);
-    date.setDate(date.getDate());
-    const string = date.toDateString();
-    const stringArr = string.split(' ');
-    const month = stringArr[1];
-    const day = stringArr[2];
-    const year = stringArr[3];
-    const dateStr = month + ' ' + day + ', ' + year;
-    return dateStr;
   }
 
   fileChanged(event) {

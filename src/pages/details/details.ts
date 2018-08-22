@@ -29,14 +29,6 @@ export class DetailsPage {
   project: any;
   client: any;
   // Step flow
-  types = {
-    BEDROOM: 'Bedroom',
-    LIVING_ROOM: 'Living Room',
-    MULTIPURPOSE_ROOM: 'Multipurpose Room',
-    STUDIO: 'Studio',
-    DINING_ROOM: 'Dining Room',
-    HOME_OFFICE: 'Office'
-  }
   status = {
     UPLOADED_DRAWING: false,
     UPLOADED_INSPIRATION: false,
@@ -77,14 +69,12 @@ export class DetailsPage {
     console.log('fetching projects');
     if (this.navParams.get('project')) {
       this.project = this.navParams.get('project');
-      this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.end_date);
       this.fetchDetails();
     } else if (this.navParams.get('id')) {
       const id = this.navParams.get('id');
       this.projectService.findByProjectId(id)
       .then(project => {
         this.project = project;
-        this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.end_date);
         this.fetchDetails();
       });
     }
@@ -145,24 +135,6 @@ export class DetailsPage {
           this.furnitures = null;
         }
       });
-  }
-
-  getDaysLeftStringFrom(timestamp) {
-    if (timestamp) {
-      const date = new Date(timestamp);
-      date.setDate(date.getDate());
-      const now = new Date();
-      const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-      const interval = Math.floor(seconds / 86400); // days
-      const abs = Math.abs(interval);
-      if (interval < 0 && abs == 1)
-        return '1 day left';
-      if (interval <=0 && abs >= 0 && abs < 15)
-        return abs + ' days left';
-      return '';
-    } else {
-      return '';
-    }
   }
 
   homePressed() {

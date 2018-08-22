@@ -27,8 +27,8 @@
     <h3 *ngIf="!user || !user.city || !user.state">City, State</h3>
     <h4 *ngIf="user && user.email">{{ user.email }}</h4>
     <h4 *ngIf="!user || !user.email">email@email.com</h4>
-    <h4 *ngIf="user && user.createDateReadable">Joined: {{ user.createDateReadable }}</h4>
-    <h4 *ngIf="!user || !user.createDateReadable">Joined: January 17, 2017</h4>
+    <h4 *ngIf="user && user.date_joined">Joined: {{ user.date_joined | date:shortDate }}</h4>
+    <h4 *ngIf="!user || !user.date_joined">Joined: January 17, 2017</h4>
   </div>
   <div class="profile-wrapper">
     <div *ngIf="user" class="profile-details">

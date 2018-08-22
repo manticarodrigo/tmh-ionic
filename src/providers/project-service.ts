@@ -9,6 +9,27 @@ import { UserService } from './user-service';
 @Injectable()
 export class ProjectService {
   api: any;
+  types = {
+    BEDROOM: 'Bedroom',
+    LIVING_ROOM: 'Living Room',
+    MULTIPURPOSE_ROOM: 'Multipurpose Room',
+    STUDIO: 'Studio',
+    DINING_ROOM: 'Dining Room',
+    HOME_OFFICE: 'Office'
+  };
+  statuses = {
+    DETAILS: 'Details',
+    DESIGN: 'Design',
+    CONCEPTS: 'Concepts',
+    FLOOR_PLAN: 'Floor Plan',
+    REQUEST_ALTERNATIVES: 'Request Alternatives',
+    ALTERNATIVES_READY: 'Alternatives Ready',
+    FINAL_DELIVERY: 'Final Delivery',
+    SHOPPING_CART: 'Shopping Cart',
+    ESTIMATE_SHIPPING_AND_TAX: 'Estimate Shipping & Tax',
+    CHECKOUT: 'Checkout',
+    ARCHIVED: 'Archived'
+  };
 
   constructor(private http: Http,
               private userService: UserService) {

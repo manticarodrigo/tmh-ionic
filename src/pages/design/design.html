@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ this.projectService.types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.photoURL" [src]="user.photoURL">
@@ -24,7 +24,7 @@
       <img src="assets/down.png">
     </button>
     <div *ngIf="project" class="days-left">
-      {{ project.endDateReadable }}
+      {{ project.end_date | daysLeft }} day(s) left
     </div>
   </div>
 </ion-header>
@@ -142,11 +142,11 @@
     <p>Please wait for your designer to add furniture items to the floorplan before you approve or request alternatives.</p>
   </div>
   <div *ngIf="viewMode == 'DESIGNER' && !pendingItems && !approvedItems && concepts && floorplan && itemsViewMode == 'PENDING'" class="collection-box">
-    <h1>{{ types[project.room] }} COLLECTION</h1>
+    <h1>{{ this.projectService.types[project.room] }} COLLECTION</h1>
     <p>Add furniture to fill the space. Double tap at a location on the floorplan to add a new item.</p>
   </div>
   <div *ngIf="viewMode == 'DESIGNER' && pendingItems && project.status == 'CONCEPTS' && project.status != 'FLOOR_PLAN' && itemsViewMode == 'PENDING'" class="collection-box">
-    <h1>{{ types[project.room] }} COLLECTION</h1>
+    <h1>{{ this.projectService.types[project.room] }} COLLECTION</h1>
     <p>Continue adding furniture to fill the space. When you're satisfied with the collection, go ahead and submit it to your client.</p>
     <button ion-button type="button" (click)="submitCollection()">SUBMIT COLLECTION</button>
   </div>

@@ -27,19 +27,6 @@ export class DashboardPage {
     IN_PROGRESS: 'IN PROGRESS',
     COMPLETED: 'COMPLETED'
   };
-  phases = {
-    DETAILS: 'Details',
-    DESIGN: 'Design',
-    CONCEPTS: 'Concepts',
-    FLOOR_PLAN: 'Floor Plan',
-    REQUEST_ALTERNATIVES: 'Request Alternatives',
-    ALTERNATIVES_READY: 'Alternatives Ready',
-    FINAL_DELIVERY: 'Final Delivery',
-    SHOPPING_CART: 'Shopping Cart',
-    ESTIMATE_SHIPPING_AND_TAX: 'Estimate Shipping & Tax',
-    CHECKOUT: 'Checkout',
-    ARCHIVED: 'Archived'
-  };
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
@@ -109,14 +96,16 @@ export class DashboardPage {
   loadProjects() {
     if (this.viewMode === 'CLIENT') {
       this.fetchClientProjects()
-        .then(data => {
-          this.processProjects(data);
+        .then((data: Array<any>) => {
+          console.log('dashboard received client projects', data);
+          this.projects = data;
         });
     }
     if (this.viewMode === 'DESIGNER') {
       this.fetchProjects()
-        .then(data => {
-          this.processProjects(data);
+        .then((data: Array<any>) => {
+          console.log('dashboard received designer projects', data);
+          this.projects = data;
         });
     }
   }
@@ -159,48 +148,7 @@ export class DashboardPage {
         return this.projectService.findByInProgress();
     };
   }
-
-  processProjects(data) {
-    const self = this;
-    const projects = [];
-    for (const key in data) {
-      const project = data[key];
-      project.modifiedDateReadable = self.getDateStringFrom(project.modified_date);
-      project.endDateReadable = self.getDaysLeftStringFrom(project.endDate);
-      projects.push(project);
-    }
-
-    if (projects.length > 0) {
-      self.projects = projects;
-    } else {
-      self.projects = null;
-    }
-  }
-
-  getDateStringFrom(timestamp) {
-    const todate = new Date(timestamp).getDate();
-    const tomonth = new Date(timestamp).getMonth() + 1;
-    const toyear = new Date(timestamp).getFullYear();
-    const shortyear = toyear.toString().slice(2);
-    return `${tomonth}/${todate}/${shortyear}`;
-  }
-
-  getDaysLeftStringFrom(timestamp) {
-    if (timestamp) {
-      const date = new Date(timestamp);
-      date.setDate(date.getDate());
-      const now = new Date();
-      const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-      const interval = Math.floor(seconds / 86400); // days
-      const abs = Math.abs(interval);
-      if (interval <= 0 && abs >= 0 && abs < 15)
-        return abs;
-      return 'N/A';
-    } else {
-      return 'N/A';
-    }
-  }
-
+  
   startProject() {
     console.log('start project pressed');
     this.navCtrl.setRoot('onboarding');

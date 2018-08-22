@@ -29,14 +29,6 @@ export class DesignPage {
   user: any;
   project: any;
   // Step flow
-  types = {
-    BEDROOM: 'Bedroom',
-    LIVING_ROOM: 'Living Room',
-    MULTIPURPOSE_ROOM: 'Multipurpose Room',
-    STUDIO: 'Studio',
-    DINING_ROOM: 'Dining Room',
-    HOME_OFFICE: 'Office'
-  }
   loading = true;
   view = 'APPROVE_CONCEPT';
   viewMode = 'CLIENT';
@@ -81,7 +73,6 @@ export class DesignPage {
     console.log('fetching project');
     if (this.navParams.get('project')) {
       this.project = this.navParams.get('project');
-      this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.end_date);
       if (
         this.project.status == 'FINAL_DELIVERY' ||
         this.project.status == 'SHOPPING_CART' ||
@@ -97,7 +88,6 @@ export class DesignPage {
       this.projectService.findByProjectId(id)
         .then(project => {
           this.project = project;
-          this.project.endDateReadable = this.getDaysLeftStringFrom(this.project.end_date);
           if (
             this.project.status == 'FINAL_DELIVERY' ||
             this.project.status == 'SHOPPING_CART' ||
@@ -211,24 +201,6 @@ export class DesignPage {
           this.drawMarkers();
         }
       });
-  }
-
-  getDaysLeftStringFrom(timestamp) {
-    if (timestamp) {
-      const date = new Date(timestamp);
-      date.setDate(date.getDate());
-      const now = new Date();
-      const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-      const interval = Math.floor(seconds / 86400); // days
-      const abs = Math.abs(interval);
-      if (interval < 0 && abs == 1)
-        return '1 day left';
-      if (interval <=0 && abs >= 0 && abs < 15)
-        return abs + ' days left';
-      return '';
-    } else {
-      return '';
-    }
   }
 
   drawFloorplan() {
@@ -358,18 +330,18 @@ export class DesignPage {
   }
 
   createPopup(item) {
-    let popup = `<img src='${item.image}'>`;
-    if (item.make) {
-      popup += `<h3>${item.make}</h3>`;
-    }
-    if (item.type) {
-      popup += `<p>${item.type}</p>`;
-    }
-    if (item.price) {
-      popup += `<h4>$${item.price}</h4>`;
-    }
-    if (popup === '') {
-      popup += '<h3>No item info.</h3>'
+    let popup = '';
+    switch (true) {
+      case Boolean(item.image):
+        popup += `<img src='${item.image}'>`;
+      case Boolean(item.make):
+        popup += `<h3>${item.make}</h3>`;
+      case Boolean(item.type):
+        popup += `<p>${item.type}</p>`;
+      case Boolean(item.price):
+        popup += `<h4>$${item.price}</h4>`;
+      default:
+        popup === '' ? popup += '<h3>No item info.</h3>' : null;
     }
     return popup;
   }
