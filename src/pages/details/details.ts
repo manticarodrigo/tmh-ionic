@@ -269,7 +269,7 @@ export class DetailsPage {
 
   deleteDetail(detail) {
     console.log('deleting detail:', detail);
-    this.projectService.deleteDetail(this.project, detail)
+    this.projectService.deleteDetail(detail)
       .then(data => {
         console.log(data);
         this.fetchDetails();

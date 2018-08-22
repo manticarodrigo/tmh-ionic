@@ -1,6 +1,6 @@
 <ion-content padding>
   <h1 *ngIf="!item">NEW ITEM</h1>
-  <h1 *ngIf="item">ITEM {{ item.id }}</h1>
+  <h1 *ngIf="item">ITEM {{ item.number }}</h1>
   <p>Please enter the required details.</p>
   <ion-input [(ngModel)]="item.make" type="text" placeholder="ITEM MAKE"></ion-input>
   <ion-input [(ngModel)]="item.type" type="text" placeholder="ITEM TYPE"></ion-input>

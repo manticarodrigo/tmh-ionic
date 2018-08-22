@@ -497,6 +497,7 @@ export class DesignPage {
 
   editItem(item, i) {
     console.log('edit item pressed:', item);
+    item.number = i + 1;
     const popover = this.popoverCtrl.create(
       'edit-item', 
       { item: item }
@@ -527,16 +528,16 @@ export class DesignPage {
       console.log(data);
       if (data) {
         let status = '';
-        if (this.project.status == 'CONCEPTS') {
+        if (this.project.status === 'CONCEPTS') {
           status = 'FLOOR_PLAN';
         }
-        if (this.project.status == 'FLOOR_PLAN') {
+        if (this.project.status === 'FLOOR_PLAN') {
           status = 'ALTERNATIVES_READY';
         }
-        if (this.project.status == 'REQUEST_ALTERNATIVES') {
+        if (this.project.status === 'REQUEST_ALTERNATIVES') {
           status = 'ALTERNATIVES_READY';
         }
-        if (this.project.revisionCount == 3) {
+        if (this.project.revision_count === 3) {
           status = 'FINAL_DELIVERY';
         }
         this.projectService.updateRevisionCount(this.project, status)
@@ -572,33 +573,33 @@ export class DesignPage {
     item.number = i + 1;
     const modal = this.modalCtrl.create('alternatives', {
       item: item,
-      alts: this.alternateItemsMap[item.projectItemId]
+      alts: this.alternateItemsMap[item.id]
     });
     modal.onDidDismiss(data => {
       console.log(data);
       if (data) {
         const alts = data[0];
-        const files = data[1];
+        const images = data[1];
         let altCount = 0;
         for (const key in alts) {
           const alt = alts[key];
-          const file = files[key];
-          if (alt.projectItemId) {
-            alt.file = file;
+          const image = images[key];
+          if (alt.id) {
+            alt.image = image;
             this.projectService.updateItem(this.project, alt, 'ALTERNATE')
             .then(itemData => {
               console.log(itemData);
               altCount++;
-              if (altCount == alts.length) {
+              if (altCount === alts.length) {
                 this.fetchItems();
               }
             });
           } else {
-            this.projectService.addAlternative(this.project, alt, file, item)
+            this.projectService.addAlternative(this.project, alt, image, item)
             .then(itemData => {
               console.log(itemData);
               altCount++;
-              if (altCount == alts.length) {
+              if (altCount === alts.length) {
                 this.fetchItems();
               }
             });
@@ -625,17 +626,19 @@ export class DesignPage {
   requestAlternative(item) {
     console.log('request alternative pressed');
     this.projectService.updateItemStatus(item, 'REQUEST_ALTERNATIVE')
-    .then(data => {
-      this.fetchItems();
-    });
+      .then(data => {
+        console.log(data);
+        this.fetchItems();
+      });
   }
 
   undoAlternative(item) {
     console.log('undo alternative pressed');
     this.projectService.updateItemStatus(item, 'SUBMITTED')
-    .then(data => {
-      this.fetchItems();
-    });
+      .then(data => {
+        console.log(data);
+        this.fetchItems();
+      });
   }
 
 }

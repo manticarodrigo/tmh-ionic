@@ -7,10 +7,10 @@
       <ion-col class="alt-container" *ngFor="let alt of alts; let i = index;" ion-col col-12 col-sm>
         <h3>ALTERNATIVE {{ i + 1 }}</h3>
         <p>Please enter the required details.</p>
-        <ion-input [(ngModel)]="alt.itemMake" type="text" placeholder="ITEM MAKE"></ion-input>
-        <ion-input [(ngModel)]="alt.itemType" type="text" placeholder="ITEM TYPE"></ion-input>
-        <ion-input [(ngModel)]="alt.itemPrice" (input)="validatePrice()" type="text" placeholder="PRICE"></ion-input>
-        <ion-input [(ngModel)]="alt.itemInspiration" type="text" placeholder="INSPIRATION FOR ITEM?"></ion-input>
+        <ion-input [(ngModel)]="alt.make" type="text" placeholder="ITEM MAKE"></ion-input>
+        <ion-input [(ngModel)]="alt.type" type="text" placeholder="ITEM TYPE"></ion-input>
+        <ion-input [(ngModel)]="alt.price" (input)="validatePrice()" type="text" placeholder="PRICE"></ion-input>
+        <ion-input [(ngModel)]="alt.inspiration" type="text" placeholder="INSPIRATION FOR ITEM?"></ion-input>
         <button ion-button type="button" (click)="clickFile(i)">{{ files[i] ? files[i].name : 'UPLOAD IMAGE' }}</button>
       </ion-col>
     </ion-row>
