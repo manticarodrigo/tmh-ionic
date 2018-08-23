@@ -5,11 +5,11 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ this.projectService.types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
-        <img *ngIf="user && user.photoURL" [src]="user.photoURL">
-        <img *ngIf="!user || !user.photoURL" src="assets/user-placeholder.png">
+        <img *ngIf="user && user.image" [src]="user.image">
+        <img *ngIf="!user || !user.image" src="assets/user-placeholder.png">
       </button>
     </ion-buttons>
   </ion-navbar>

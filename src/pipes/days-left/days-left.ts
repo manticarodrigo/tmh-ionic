@@ -20,7 +20,8 @@ export class DaysLeftPipe implements PipeTransform {
       const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
       const interval = Math.floor(seconds / 86400); // days
       const abs = Math.abs(interval);
-      if (interval <= 0 && abs >= 0 && abs < 15)
+      console.log(value, abs);
+      if (interval <= 0 && abs >= 0)
         return abs;
       return 'N/A';
     }

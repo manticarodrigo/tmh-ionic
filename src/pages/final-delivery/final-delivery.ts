@@ -24,14 +24,6 @@ export class FinalDeliveryPage {
   project: any;
   client: any;
   // Step flow
-  types = {
-    BEDROOM: 'Bedroom',
-    LIVING_ROOM: 'Living Room',
-    MULTIPURPOSE_ROOM: 'Multipurpose Room',
-    STUDIO: 'Studio',
-    DINING_ROOM: 'Dining Room',
-    HOME_OFFICE: 'Office'
-  }
   status = {
     UPLOADED_DRAWING: false,
     UPLOADED_INSPIRATION: false,

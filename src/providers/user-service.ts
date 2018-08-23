@@ -250,7 +250,7 @@ export class UserService {
           }
           var photoURL = 'http://stage.themanhome.com/image/user_male_portrait?img_id=' + user.portraitId;
           if (user.image) {
-            user.photoURL = photoURL + '&t=' + user.image.modifiedDate;
+            user.image = photoURL + '&t=' + user.image.modifiedDate;
           }
           delete user.image;
           for (var key in user.roles) {

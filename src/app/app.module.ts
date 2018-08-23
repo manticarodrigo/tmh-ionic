@@ -4,7 +4,6 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { TheManHome } from './app.component';
 
 import { UserService } from '../providers/user-service';
-import { ImageService } from '../providers/image-service';
 import { ProjectService } from '../providers/project-service';
 import { SocketService } from '../providers/socket-service';
 import { ChatService } from '../providers/chat-service';
@@ -40,7 +39,6 @@ import { FacebookService } from 'ngx-facebook';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     UserService,
-    ImageService,
     ProjectService,
     SocketService,
     ChatService,

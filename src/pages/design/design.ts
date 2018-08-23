@@ -42,9 +42,9 @@ export class DesignPage {
   markers: any;
   // Items
   alternateItemsMap = {};
-  pendingItems: any;
-  modifiedItems: any;
-  approvedItems: any;
+  pendingItems: Array<any>;
+  modifiedItems: Array<any>;
+  approvedItems: Array<any>;
   pendingCollectionTotal = 0;
   modifiedCollectionTotal = 0;
   approvedCollectionTotal = 0;
@@ -159,11 +159,11 @@ export class DesignPage {
                 this.alternateItemsMap[item.parent] = [];
               }
               this.alternateItemsMap[item.parent].push(item);
-            } else if (this.project.status == 'REQUEST_ALTERNATIVES' || this.project.status == 'ALTERNATIVES_READY') {
+            } else if (this.project.status === 'REQUEST_ALTERNATIVES' || this.project.status === 'ALTERNATIVES_READY') {
               if (item.status === 'PENDING' || item.status === 'SUBMITTED') {
                 modifiedItems.push(item);
                 modifiedCollectionTotal += item.price;
-              } else if (item.projectItemStatus == 'APPROVED') {
+              } else if (item.status === 'APPROVED') {
                 approvedItems.push(item);
                 approvedCollectionTotal += parseInt(item.price) * 100;
               } else {
@@ -171,7 +171,7 @@ export class DesignPage {
                 pendingCollectionTotal += parseInt(item.price) * 100;
               }
             } else {
-              if (item.status == 'APPROVED') {
+              if (item.status === 'APPROVED') {
                 approvedItems.push(item);
                 approvedCollectionTotal += parseInt(item.price) * 100;
               } else {
@@ -187,6 +187,7 @@ export class DesignPage {
           }
           if (modifiedItems.length > 0) {
             this.modifiedItems = modifiedItems;
+            this.itemsViewMode = 'MODIFIED';
           } else {
             this.modifiedItems = null;
           }
@@ -279,9 +280,8 @@ export class DesignPage {
   }
 
   drawMarkers() {
-    console.log('drawing markers');
     if (this.map) {
-      let items: any;
+      let items = [];
       const w = this.map.getSize().x,
             h = this.map.getSize().y;
       // choose marker items
@@ -295,36 +295,38 @@ export class DesignPage {
         default:
           items = this.approvedItems;
       }
+      console.log('drawing markers', this.itemsViewMode, items);
       // clear existing layers
       this.markers.clearLayers();
-      for (const key in items) {
-        const item = items[key];
-        if (item.lat && item.lng) {
-          const latlng = new Leaflet.LatLng(item.lat * -h, item.lng * w);
-          console.log('adding marker at coordinates:', latlng);
-          // the text could also be letters instead of numbers if that's more appropriate
-          const numberIcon = Leaflet.divIcon({
-            className: 'number-icon',
-            iconSize: [30, 30],
-            iconAnchor: [15, 30],
-            popupAnchor: [0, -30],
-            html: item.id       
-          });
-          // add the each marker to the marker map with id as key
-          const marker = new Leaflet.Marker(latlng, {
-              draggable: true,
-              icon: numberIcon
-          });
-          // add popups
-          marker.addTo(this.markers)
-            .bindPopup(this.createPopup(item));
-          // listen for marker drag event
-          marker.on('drag', function(e) {
-            const point = e.target;
-            const latlng = point.getLatLng();
-            console.log('moving marker', item.id, latlng);
-          });
-        }
+      if (items) {
+        items.forEach((item, i) => {
+          if (item.lat && item.lng) {
+            const latlng = new Leaflet.LatLng(item.lat * -h, item.lng * w);
+            console.log('adding marker at coordinates:', latlng);
+            // the text could also be letters instead of numbers if that's more appropriate
+            const numberIcon = Leaflet.divIcon({
+              className: 'number-icon',
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+              popupAnchor: [0, -30],
+              html: i + 1      
+            });
+            // add the each marker to the marker map with id as key
+            const marker = new Leaflet.Marker(latlng, {
+                draggable: true,
+                icon: numberIcon
+            });
+            // add popups
+            marker.addTo(this.markers)
+              .bindPopup(this.createPopup(item));
+            // listen for marker drag event
+            marker.on('drag', function(e) {
+              const point = e.target;
+              const latlng = point.getLatLng();
+              console.log('moving marker', item.id, latlng);
+            });
+          }
+        });
       }
     }
   }

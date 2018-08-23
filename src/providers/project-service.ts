@@ -36,6 +36,28 @@ export class ProjectService {
     this.api = this.userService.api;
   }
 
+  createProject(project) {
+    console.log('creating project:', project)
+    return new Promise((resolve, reject) => {
+      this.http.post(
+        `${ENV.backendUrl}/api/v1/projects/`,
+        project,
+        { headers: this.userService.getHeaders() }
+      )
+        .map(res => res.json())
+        .subscribe(
+          res => {
+            console.log('create project received response:', res);
+            resolve(res);
+          },
+          err => {
+            console.log(err);
+            reject(err);
+          }
+        );
+    });
+  }
+
   fetchUserProjects() {
     return new Promise((resolve, reject) => {
       this.http.get(

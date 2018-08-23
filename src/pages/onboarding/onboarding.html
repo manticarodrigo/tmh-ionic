@@ -7,8 +7,8 @@
     </ion-buttons>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
-        <img *ngIf="user && user.photoURL" [src]="user.photoURL">
-        <img *ngIf="!user || !user.photoURL" src="assets/user-placeholder.png">
+        <img *ngIf="user && user.image" [src]="user.image">
+        <img *ngIf="!user || !user.image" src="assets/user-placeholder.png">
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -211,10 +211,10 @@
       <div class="shares-button-content">
         <h1>2/5</h1>
         <h4>Who do you share your space with?</h4>
-        <button ion-button full (click)="sharesWith('myself')">Myself<img class="check" src="assets/simple-check.png"></button>
-        <button ion-button full (click)="sharesWith('partner')">Partner<img class="check" src="assets/simple-check.png"></button>
-        <button ion-button full (click)="sharesWith('roomate')">Roomate(s)<img class="check" src="assets/simple-check.png"></button>
-        <button ion-button full (click)="sharesWith('family')">Family<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="sharesWith('MYSELF')">Myself<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="sharesWith('PARTNER')">Partner<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="sharesWith('ROOMMATE')">Roommate(s)<img class="check" src="assets/simple-check.png"></button>
+        <button ion-button full (click)="sharesWith('FAMILY')">Family<img class="check" src="assets/simple-check.png"></button>
       </div>
     </div>
     <div *ngIf="finalQuestion == 3" class="pet-button final-question">
