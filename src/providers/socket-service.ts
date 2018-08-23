@@ -7,7 +7,7 @@ import * as io from 'socket.io-client';
 export class SocketService {
   observables: any;
   collections: any;
-  port = 'http://themanhome.herokuapp.com';
+  port = 'https://themanhome.herokuapp.com';
   socket: any;
   isConnectionAlive = false;
 
