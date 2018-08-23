@@ -11,6 +11,7 @@ export class SocketService {
   socket: any;
   isConnectionAlive = false;
 
+  
   constructor() {
     this.collections = {};
   }
