@@ -6,8 +6,7 @@
 	"description": "An Ionic project for TMH.",
 	"private": true,
 	"scripts": {
-		"start": "node server.js",
-		"dev": "ionic-app-scripts serve",
+		"start": "ionic-app-scripts serve",
 		"clean": "ionic-app-scripts clean",
 		"build": "ionic-app-scripts build",
 		"lint": "ionic-app-scripts lint"
