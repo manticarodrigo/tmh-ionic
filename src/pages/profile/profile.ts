@@ -21,6 +21,7 @@ export class ProfilePage {
   oldPassword = '';
   newPassword1 = '';
   newPassword2 = '';
+  file = null;
   constructor(
     private navCtrl: NavController,
     private popoverCtrl: PopoverController,
@@ -49,10 +50,9 @@ export class ProfilePage {
   }
 
   fileChanged(event) {
-    const self = this
     const file = event.target.files[0];
     console.log('file changed:', file);
-    // update user
+    this.file = file;
   }
 
   selectGender() {
@@ -73,8 +73,8 @@ export class ProfilePage {
   }
 
   savePressed() {
-    console.log('save pressed');
-    this.userService.updateUser(this.user)
+    console.log('save pressed', this.user, this.file);
+    this.userService.updateUser(this.user, this.file)
       .then(data => {
         console.log('profile component received data:', data);
         this.editing = false;
