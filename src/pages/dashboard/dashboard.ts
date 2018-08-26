@@ -19,7 +19,7 @@ import { ProjectService } from '../../providers/project-service';
 })
 export class DashboardPage {
   user: any;
-  viewMode = 'CLIENT';
+  roleView = 'CLIENT';
   projects: Array<any>;
   selectedTab = 'IN_PROGRESS';
   tabs: ['IN_PROGRESS', 'COMPLETED'];
@@ -39,7 +39,7 @@ export class DashboardPage {
         if (user) {
           this.user = user;
           if (this.user.is_staff) {
-            this.viewMode = 'DESIGNER';
+            this.roleView = 'DESIGNER';
           }
           this.loadProjects();
         }
@@ -94,14 +94,14 @@ export class DashboardPage {
   }
 
   loadProjects() {
-    if (this.viewMode === 'CLIENT') {
+    if (this.roleView === 'CLIENT') {
       this.fetchClientProjects()
         .then((data: Array<any>) => {
           console.log('dashboard received client projects', data);
           this.projects = data;
         });
     }
-    if (this.viewMode === 'DESIGNER') {
+    if (this.roleView === 'DESIGNER') {
       this.fetchProjects()
         .then((data: Array<any>) => {
           console.log('dashboard received designer projects', data);

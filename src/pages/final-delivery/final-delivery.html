@@ -28,7 +28,7 @@
 
 <ion-content>
   <div class="collab-final-delivery" *ngIf="project">
-    <ion-segment *ngIf="user.is_staff && project.status == 'SHOPPING_CART' || project.status == 'ESTIMATE_SHIPPING_AND_TAX' || project.status == 'ARCHIVED'" [(ngModel)]="viewMode" class="admin-segment">
+    <ion-segment *ngIf="user.is_staff && project.status == 'SHOPPING_CART' || project.status == 'ESTIMATE_SHIPPING_AND_TAX' || project.status == 'ARCHIVED'" [(ngModel)]="roleView" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
       </ion-segment-button>
@@ -39,44 +39,44 @@
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
-    <div *ngIf="view == 'DESIGNER_NOTE' && viewMode == 'CLIENT'" class="designer-note">
+    <div *ngIf="view == 'DESIGNER_NOTE' && roleView == 'CLIENT'" class="designer-note">
       <h4 *ngIf="client">Hi {{ client.firstName }}!</h4>
       <p *ngIf="project.designer_note != ''">{{ project.designer_note }}</p>
       <p *ngIf="project.designer_note == ''">Your designer is hard at work putting together the Final Delivery of your room! It will be uploaded within the next 48-72 hours!</p>
     </div>
-    <div *ngIf="view == 'DESIGNER_NOTE' && viewMode == 'DESIGNER'" class="designer-note">
+    <div *ngIf="view == 'DESIGNER_NOTE' && roleView == 'DESIGNER'" class="designer-note">
       <h6>Leave a kind note for your client.</h6>
       <ion-textarea [(ngModel)]="designerNote" name="designer-note"></ion-textarea>
       <button ion-button type="button" (click)="saveDesignerNote()">SAVE</button>
     </div>
-    <div *ngIf="view == 'FLOOR_PLAN' && viewMode == 'CLIENT'" class="collab-image">
+    <div *ngIf="view == 'FLOOR_PLAN' && roleView == 'CLIENT'" class="collab-image">
       <img class="selected-img" [src]="floorplan.url">
     </div>
-    <div *ngIf="view == 'FLOOR_PLAN' && floorplan && viewMode == 'DESIGNER'" class="collab-image">
+    <div *ngIf="view == 'FLOOR_PLAN' && floorplan && roleView == 'DESIGNER'" class="collab-image">
       <img class="selected-img" [src]="floorplan.url">
       <button ion-button type="button" (click)="uploadFloorPlan()">UPLOAD NEW</button>
     </div>
-    <div *ngIf="view == 'FLOOR_PLAN' && !floorplan && viewMode == 'DESIGNER'" class="collab-alert">
+    <div *ngIf="view == 'FLOOR_PLAN' && !floorplan && roleView == 'DESIGNER'" class="collab-alert">
       <h1>UPLOAD FINAL FLOOR PLAN</h1>
       <p>Send your client a final image of their Floor Plan.</p>
       <button ion-button type="button" (click)="uploadFloorPlan()">UPLOAD</button>
     </div>
-    <div *ngIf="view == 'CONCEPT_BOARD' && viewMode == 'CLIENT'" class="collab-image">
+    <div *ngIf="view == 'CONCEPT_BOARD' && roleView == 'CLIENT'" class="collab-image">
       <img class="selected-img" [src]="conceptboard.url">
     </div>
-    <div *ngIf="view == 'CONCEPT_BOARD' && conceptboard && viewMode == 'DESIGNER'" class="collab-image">
+    <div *ngIf="view == 'CONCEPT_BOARD' && conceptboard && roleView == 'DESIGNER'" class="collab-image">
       <img class="selected-img" [src]="conceptboard.url">
       <button ion-button type="button" (click)="uploadConceptBoard()">UPLOAD NEW</button>
     </div>
-    <div *ngIf="view == 'CONCEPT_BOARD' && !conceptboard && viewMode == 'DESIGNER'" class="collab-alert">
+    <div *ngIf="view == 'CONCEPT_BOARD' && !conceptboard && roleView == 'DESIGNER'" class="collab-alert">
       <h1>UPLOAD FINAL CONCEPT BOARD</h1>
       <p>Send your client a final image of their Concept Board.</p>
       <button ion-button type="button" (click)="uploadConceptBoard()">UPLOAD</button>
     </div>
-    <div *ngIf="view == '3D_MODEL' && viewMode == 'CLIENT'" class="final-video">
+    <div *ngIf="view == '3D_MODEL' && roleView == 'CLIENT'" class="final-video">
       <video *ngIf="project.video_url != ''" controls><source src="{{ project.video_url }}"></video>
     </div>
-    <div *ngIf="view == '3D_MODEL' && viewMode == 'DESIGNER'" class="final-video">
+    <div *ngIf="view == '3D_MODEL' && roleView == 'DESIGNER'" class="final-video">
       <video *ngIf="project.video_url != ''" controls><source src="{{ project.video_url }}"></video>
       <div class="form">
         <h1>Link Final 3D Model Video</h1>
@@ -84,7 +84,7 @@
         <button ion-button type="button" (click)="saveVideoUrl()">SAVE</button>
       </div>
     </div>
-    <div *ngIf="view == 'SNAPSHOTS' && viewMode == 'CLIENT'" class="snapshots">
+    <div *ngIf="view == 'SNAPSHOTS' && roleView == 'CLIENT'" class="snapshots">
       <ion-slides class="mobile">
         <ion-slide *ngFor="let snapshot of snapshots" autoplay="2000">
           <img [src]="snapshot.url">
@@ -96,7 +96,7 @@
         </ion-slide>
       </ion-slides>
     </div>
-    <div *ngIf="view == 'SNAPSHOTS' && viewMode == 'DESIGNER'" class="snapshots">
+    <div *ngIf="view == 'SNAPSHOTS' && roleView == 'DESIGNER'" class="snapshots">
       <ion-slides class="mobile">
         <ion-slide *ngFor="let snapshot of snapshots" autoplay="2000">
           <img [src]="snapshot.url">
@@ -113,11 +113,11 @@
         <button (click)="uploadSnapshot()" ion-button full type="button">UPLOAD</button>
       </div>
     </div>
-    <div *ngIf="view == 'FINAL_NOTES' && viewMode == 'CLIENT'" class="designer-note">
+    <div *ngIf="view == 'FINAL_NOTES' && roleView == 'CLIENT'" class="designer-note">
       <h1>FINAL NOTES</h1>
       <p *ngIf="project.final_note != ''">{{ project.final_note }}</p>
     </div>
-    <div *ngIf="view == 'FINAL_NOTES' && viewMode == 'DESIGNER'" class="designer-note">
+    <div *ngIf="view == 'FINAL_NOTES' && roleView == 'DESIGNER'" class="designer-note">
       <h6>Leave detailed notes about the design.</h6>
       <ion-textarea [(ngModel)]="finalNote" name="final-note"></ion-textarea>
       <button ion-button type="button" (click)="saveFinalNote()">SAVE</button>
@@ -126,7 +126,7 @@
 </ion-content>
 
 <ion-footer *ngIf="project">
-  <div class="footer" *ngIf="viewMode == 'CLIENT' && project.status == 'SHOPPING_CART' || project.status == 'ESTIMATE_SHIPPING_AND_TAX' || project.status == 'ARCHIVED'">
+  <div class="footer" *ngIf="roleView == 'CLIENT' && project.status == 'SHOPPING_CART' || project.status == 'ESTIMATE_SHIPPING_AND_TAX' || project.status == 'ARCHIVED'">
     <div class="desktop footer-menu">
       <div class="button" (click)="selectFooterTabLink('DESIGNER_NOTE')">
         <img src="assets/list.png">
@@ -162,7 +162,7 @@
       <img src="assets/down.png">
     </button>
   </div>
-  <div class="footer" *ngIf="viewMode == 'DESIGNER'">
+  <div class="footer" *ngIf="roleView == 'DESIGNER'">
     <div class="desktop footer-menu">
       <div class="button" (click)="selectFooterTabLink('DESIGNER_NOTE')">
         <img src="assets/list.png">

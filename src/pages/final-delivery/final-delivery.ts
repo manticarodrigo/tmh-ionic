@@ -30,7 +30,7 @@ export class FinalDeliveryPage {
     UPLOADED_FURNITURE: false
   };
   view = 'DESIGNER_NOTE';
-  viewMode = 'CLIENT';
+  roleView = 'CLIENT';
   designerNote = '';
   floorplan: any;
   conceptboard: any;
@@ -49,7 +49,7 @@ export class FinalDeliveryPage {
         if (user) {
           this.user = user;
           if (this.user.is_staff) {
-            this.viewMode = 'DESIGNER';
+            this.roleView = 'DESIGNER';
           }
           this.fetchProject();
         }

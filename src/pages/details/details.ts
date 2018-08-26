@@ -36,7 +36,7 @@ export class DetailsPage {
   };
   loading = true;
   view = 'DRAWING';
-  viewMode = 'CLIENT';
+  roleView = 'CLIENT';
   selectedDrawing: any;
   selectedInspiration: any;
   selectedFurniture: any;
@@ -58,7 +58,7 @@ export class DetailsPage {
         if (user) {
           self.user = user;
           if (self.user.is_staff) {
-            self.viewMode = 'DESIGNER';
+            self.roleView = 'DESIGNER';
           }
           self.fetchProject();
         }

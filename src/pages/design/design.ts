@@ -31,8 +31,8 @@ export class DesignPage {
   // Step flow
   loading = true;
   view = 'APPROVE_CONCEPT';
-  viewMode = 'CLIENT';
-  itemsViewMode = 'PENDING';
+  roleView = 'CLIENT';
+  itemsView = 'PENDING';
   concepts: any;
   selectedConcept: any;
   conceptboard: any;
@@ -56,7 +56,7 @@ export class DesignPage {
         if (user) {
           this.user = user;
           if (this.user.is_staff) {
-            this.viewMode = 'DESIGNER';
+            this.roleView = 'DESIGNER';
           }
           this.fetchProject();
         }
@@ -73,7 +73,7 @@ export class DesignPage {
         this.project.status == 'ESTIMATE_SHIPPING_AND_TAX' ||
         this.project.status == 'ARCHIVED'
       ) {
-        this.itemsViewMode = 'APPROVED';
+        this.itemsView = 'APPROVED';
       }
       this.fetchDetails();
       this.fetchItems();
@@ -88,7 +88,7 @@ export class DesignPage {
             this.project.status == 'ESTIMATE_SHIPPING_AND_TAX' ||
             this.project.status == 'ARCHIVED'
           ) {
-              this.itemsViewMode = 'APPROVED';
+              this.itemsView = 'APPROVED';
           }
           this.fetchDetails();
           this.fetchItems();
@@ -140,20 +140,23 @@ export class DesignPage {
         if (data && Array(data).length > 0) {
           const items = data.reduce((items, item) => {
             if (item.parent) {
-              const cat = items['ALTERNATE']
-              const parent = cat[item.parent]
-              items['ALTERNATE'][item.parent] = parent ? [...items['ALTERNATE'], item] : [item]
+              const alts = items['ALTERNATE']
+              const parent = alts[item.parent]
+              items['ALTERNATE'][item.parent] = parent ? [...parent, item] : [item]
             } else {
-              const status = item.status;
-              const cat = items[status];
-              items[status] = cat ? [...cat, item] : [item];
+              items[item.status] = [...items[item.status], item];
             }
             return items;
-          }, {});
+          }, {
+            'PENDING': [],
+            'MODIFIED': [],
+            'APPROVED': [],
+            'ALTERNATE': []
+          });
           console.log('reduced items:', items);
           this.items = items;
-          if (items['MODIFIED']) {
-            this.itemsViewMode = 'MODIFIED';
+          if (items['MODIFIED'].length > 0) {
+            this.itemsView = 'MODIFIED';
           }
           this.drawMarkers();
         } else {
@@ -202,8 +205,8 @@ export class DesignPage {
       // listen for map double click event
       const self = this;
       this.map.on('dblclick', function(e) {
-        console.log('clicked map', e, self.viewMode);
-        if (self.viewMode === 'DESIGNER') {
+        console.log('clicked map', e, self.roleView);
+        if (self.roleView === 'DESIGNER') {
           const numberIcon = Leaflet.divIcon({
             className: 'number-icon',
             iconSize: [30, 30],
@@ -243,7 +246,7 @@ export class DesignPage {
       const w = this.map.getSize().x,
             h = this.map.getSize().y;
       // choose marker items
-      switch (this.itemsViewMode) {
+      switch (this.itemsView) {
         case 'PENDING':
           items = this.items['PENDING'];
           break;
@@ -253,7 +256,7 @@ export class DesignPage {
         default:
           items = this.items['APPROVED'];
       }
-      console.log('drawing markers', this.itemsViewMode, items);
+      console.log('drawing markers', this.itemsView, items);
       // clear existing layers
       this.markers.clearLayers();
       if (items) {
