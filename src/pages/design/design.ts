@@ -41,13 +41,7 @@ export class DesignPage {
   map: any;
   markers: any;
   // Items
-  alternateItemsMap = {};
-  pendingItems: Array<any>;
-  modifiedItems: Array<any>;
-  approvedItems: Array<any>;
-  pendingCollectionTotal = 0;
-  modifiedCollectionTotal = 0;
-  approvedCollectionTotal = 0;
+  items: any = {};
   constructor(
     private navCtrl: NavController,
     private navParams: NavParams,
@@ -141,65 +135,29 @@ export class DesignPage {
 
   fetchItems() {
     this.projectService.fetchItems(this.project)
-      .then(data => {
+      .then((data: Array<any>) => {
         console.log('design page received item data:', data);
         if (data && Array(data).length > 0) {
-          const pendingItems = [];
-          const modifiedItems = [];
-          const approvedItems = [];
-
-          let pendingCollectionTotal: number = 0;
-          let modifiedCollectionTotal: number = 0;
-          let approvedCollectionTotal: number = 0;
-
-          for (const key in data) {
-            const item = data[key];
+          const items = data.reduce((items, item) => {
             if (item.parent) {
-              if (!this.alternateItemsMap[item.parent]) {
-                this.alternateItemsMap[item.parent] = [];
-              }
-              this.alternateItemsMap[item.parent].push(item);
-            } else if (this.project.status === 'REQUEST_ALTERNATIVES' || this.project.status === 'ALTERNATIVES_READY') {
-              if (item.status === 'PENDING' || item.status === 'SUBMITTED') {
-                modifiedItems.push(item);
-                modifiedCollectionTotal += item.price;
-              } else if (item.status === 'APPROVED') {
-                approvedItems.push(item);
-                approvedCollectionTotal += parseInt(item.price) * 100;
-              } else {
-                pendingItems.push(item);
-                pendingCollectionTotal += parseInt(item.price) * 100;
-              }
+              const cat = items['ALTERNATE']
+              const parent = cat[item.parent]
+              items['ALTERNATE'][item.parent] = parent ? [...items['ALTERNATE'], item] : [item]
             } else {
-              if (item.status === 'APPROVED') {
-                approvedItems.push(item);
-                approvedCollectionTotal += parseInt(item.price) * 100;
-              } else {
-                pendingItems.push(item);
-                pendingCollectionTotal += parseInt(item.price) * 100;
-              }
+              const status = item.status;
+              const cat = items[status];
+              items[status] = cat ? [...cat, item] : [item];
             }
-          }
-          if (pendingItems.length > 0) {
-            this.pendingItems = pendingItems;
-          } else {
-            this.pendingItems = null;
-          }
-          if (modifiedItems.length > 0) {
-            this.modifiedItems = modifiedItems;
+            return items;
+          }, {});
+          console.log('reduced items:', items);
+          this.items = items;
+          if (items['MODIFIED']) {
             this.itemsViewMode = 'MODIFIED';
-          } else {
-            this.modifiedItems = null;
           }
-          if (approvedItems.length > 0) {
-            this.approvedItems = approvedItems;
-          } else {
-            this.approvedItems = null;
-          }
-          this.pendingCollectionTotal = pendingCollectionTotal;
-          this.modifiedCollectionTotal = modifiedCollectionTotal;
-          this.approvedCollectionTotal = approvedCollectionTotal;
           this.drawMarkers();
+        } else {
+          this.items = null;
         }
       });
   }
@@ -287,13 +245,13 @@ export class DesignPage {
       // choose marker items
       switch (this.itemsViewMode) {
         case 'PENDING':
-          items = this.pendingItems;
+          items = this.items['PENDING'];
           break;
         case 'MODIFIED':
-          items = this.modifiedItems;
+          items = this.items['MODIFIED'];
           break;
         default:
-          items = this.approvedItems;
+          items = this.items['APPROVED'];
       }
       console.log('drawing markers', this.itemsViewMode, items);
       // clear existing layers
@@ -575,7 +533,7 @@ export class DesignPage {
     item.number = i + 1;
     const modal = this.modalCtrl.create('alternatives', {
       item: item,
-      alts: this.alternateItemsMap[item.id]
+      alts: this.items['ALTERNATE'][item.id]
     });
     modal.onDidDismiss(data => {
       console.log(data);
@@ -617,7 +575,7 @@ export class DesignPage {
     item.number = i + 1;
     const modal = this.modalCtrl.create('alternatives', {
       item: item,
-      alts: this.alternateItemsMap[item.id]
+      alts: this.items['ALTERNATE'][item.id]
     });
     modal.onDidDismiss(data => {
       console.log(data);

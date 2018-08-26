@@ -61,8 +61,8 @@
     <ion-item class="item-container" *ngFor="let item of items">
       <div class="item-wrapper">
         <div class="section main">
-          <ion-checkbox [(ngModel)]="itemMap[item.projectItemId].selected" (ionChange)="selectedItem(item)"></ion-checkbox>
-          <img src="{{ itemMap[item.projectItemId].url }}">
+          <ion-checkbox [(ngModel)]="itemMap[item.id].selected" (ionChange)="selectedItem(item)"></ion-checkbox>
+          <img src="{{ itemMap[item.id].url }}">
         </div>
         <div class="section">
           <p class="info">{{ item.itemMake }}</p>
@@ -74,7 +74,7 @@
         </div>
         <div class="section">
           <button class="quantity" ion-button type="button" (click)="selectQuantity(item)" full>
-            {{ itemMap[item.projectItemId].quantity }}
+            {{ itemMap[item.id].quantity }}
             <img src="assets/down.png">
           </button>
         </div>
