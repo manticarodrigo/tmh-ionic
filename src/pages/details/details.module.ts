@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { DetailsPage } from './details';
-import { ChatPageModule } from '../../components/chat/chat.module';
+import { ComponentsModule } from '../../components/components.module';
 import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
@@ -11,7 +11,7 @@ import { PipesModule } from '../../pipes/pipes.module';
   imports: [
     IonicPageModule.forChild(DetailsPage),
     PipesModule,
-    ChatPageModule
+    ComponentsModule
   ],
   exports: [
     DetailsPage

@@ -3,7 +3,7 @@
     <ion-navbar>
         <img src="assets/chat.png">
         <ion-title class="title" *ngIf="user">
-            {{ user.firstName }}
+            {{ user.first_name }}
         </ion-title>
         <ion-title class="title" *ngIf="!user">
             Chat
@@ -21,9 +21,9 @@
     <ion-list no-lines>
         <ion-item *ngFor="let message of messages">
             <div class="message-header">
-                <img *ngIf="memberMap[message.senderId]" [src]="memberMap[message.senderId].photoURL">
+                <img *ngIf="memberMap[message.senderId]" [src]="memberMap[message.senderId].image">
                 <img *ngIf="!memberMap[message.senderId]" src="assets/tmh.png">
-                <h4 *ngIf="memberMap[message.senderId]">{{ memberMap[message.senderId].firstName }}</h4>
+                <h4 *ngIf="memberMap[message.senderId]">{{ memberMap[message.senderId].first_name }}</h4>
                 <h4 *ngIf="!memberMap[message.senderId]">TMH BOT</h4>
                 <p *ngIf="message.createdAtReadable">{{ message.createdAtReadable }}</p>
             </div>

@@ -14,10 +14,10 @@ import { ChatService } from '../../providers/chat-service';
 import { UserService } from '../../providers/user-service';
 
 @Component({
-  selector: 'page-chat',
+  selector: 'chat',
   templateUrl: 'chat.html',
 })
-export class ChatPage {
+export class ChatComponent {
   @ViewChild(Content) content: Content;
   @Input() project: any;
   messages: any;
@@ -115,7 +115,7 @@ export class ChatPage {
 
   scrollToBottom() {
     console.log('scrolling to bottom');
-    let dimensions = this.content.getContentDimensions();
+    // let dimensions = this.content.getContentDimensions();
     if (this.content.getContentDimensions()) {
       this.content.scrollToBottom(300);
       // this.content.scrollTo(0, dimensions.scrollHeight, 250); //x, y, ms animation speed

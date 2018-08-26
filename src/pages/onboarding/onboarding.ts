@@ -173,7 +173,7 @@ export class OnboardingPage {
 
   requestInternational() {
     console.log('international address pressed');
-    let modal = this.modalCtrl.create('IntlAddress');
+    let modal = this.modalCtrl.create('intl-address');
     modal.onDidDismiss(data => {
       console.log(data);
     });

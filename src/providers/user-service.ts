@@ -161,18 +161,6 @@ export class UserService {
     });
   }
 
-  fetchUsers(uids): Promise<any> {
-    console.log('getting users with ids: ' + JSON.stringify(uids));
-    const self = this;
-    var promises = [];
-    uids.forEach(uid => {
-        if (uid) {
-          promises.push(self.fetchUser(uid));
-        }
-    });
-    return Promise.all(promises);
-  }
-
   updateUser(user, file) {
     return new Promise((resolve, reject) => {
       console.log('updating user:', user, file);
@@ -210,8 +198,7 @@ export class UserService {
       self.http.get(endpoint, {headers: self.headers})
       .map(res => res.json())
       .subscribe(data => {
-        console.log('found user credit card:');
-        console.log(data);
+        console.log('found user credit card:', data);
         resolve(data);
       });
     });
