@@ -10,8 +10,8 @@ import {
   Content
 } from 'ionic-angular';
 
-import { ChatService } from '../../../providers/chat-service';
-import { UserService } from '../../../providers/user-service';
+import { ChatService } from '../../providers/chat-service';
+import { UserService } from '../../providers/user-service';
 
 @Component({
   selector: 'page-chat',
