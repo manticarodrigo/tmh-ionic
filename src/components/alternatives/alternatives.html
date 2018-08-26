@@ -1,0 +1,19 @@
+<ion-content padding>
+  <h1>ITEM {{ item.number }} ALTERNATIVES</h1>
+  <hr>
+  <ion-grid>
+    <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
+    <ion-row class="alt-wrapper">
+      <ion-col class="alt-container" *ngFor="let alt of alts; let i = index;" ion-col col-12 col-sm>
+        <h3>ALTERNATIVE {{ i + 1 }}</h3>
+        <p>Please enter the required details.</p>
+        <ion-input [(ngModel)]="alt.make" type="text" placeholder="ITEM MAKE"></ion-input>
+        <ion-input [(ngModel)]="alt.type" type="text" placeholder="ITEM TYPE"></ion-input>
+        <ion-input [(ngModel)]="alt.price" (input)="validatePrice()" type="text" placeholder="PRICE"></ion-input>
+        <ion-input [(ngModel)]="alt.inspiration" type="text" placeholder="INSPIRATION FOR ITEM?"></ion-input>
+        <button ion-button type="button" (click)="clickFile(i)">{{ files[i] ? files[i].name : 'UPLOAD IMAGE' }}</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <button class="add-button" ion-button type="button" (click)="addAlts()">ADD</button>
+</ion-content>

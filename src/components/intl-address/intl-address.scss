@@ -1,0 +1,78 @@
+page-intl-address {
+  position: relative;
+  .header-md:after {
+    background-image: none !important;
+  }
+  .toolbar-background {
+    background-color: #fff !important;
+  }
+  .scroll-content {
+    background-color: #fff;
+  }
+  .close {
+    img {
+      filter: brightness(0.1);
+      width: 15px;
+    }
+  }
+  .center {
+    max-width: 724px;
+    position: relative;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    margin: 20px auto;
+    padding: 20px;
+    @media only screen and (max-width: 724px) {
+      .close {
+        top: -45px !important;
+        right: -20px !important;
+      }
+    }
+    .button-inner {
+      position: relative;
+      justify-content:flex-start;
+      .check {
+        position: absolute;
+        top: 12.5px;
+        right: 0px;
+      }
+    }
+    .button {
+      background-color: #fff;
+      color: color($colors, primary);
+      border: 2px solid color($colors, primary);
+      margin: 10px 0 !important;
+      .check {
+        width: 15px;
+        display: none;
+      }
+    }
+    .button:hover {
+      color: #fff;
+      .check {
+        display: block;
+      }
+    }
+    .selected {
+      background-color: color($colors, primary) !important;
+      color: #fff;
+      .check {
+        display: block;
+      }
+    }
+    .continue {
+      margin-top: 30px !important;
+      background-color: color($colors, primary) !important;
+      color: #fff !important;
+      .button-inner {
+        justify-content: center !important;
+      }
+    }
+  }
+  .input {
+    border: 1px solid #C3C3C3;
+    background-color: #F8F5F5;
+  }
+}
