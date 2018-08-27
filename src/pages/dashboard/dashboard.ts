@@ -90,7 +90,7 @@ export class DashboardPage {
         this.loadProjects();
       }
     });
-    popover.present();
+    popover.present({animate: false});
   }
 
   loadProjects() {

@@ -128,7 +128,7 @@ export class FinalDeliveryPage {
           });
       }
     });
-    popover.present();
+    popover.present({animate: false});
   }
 
   selectTabLink(link) {

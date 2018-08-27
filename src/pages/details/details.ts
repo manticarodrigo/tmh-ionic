@@ -163,7 +163,7 @@ export class DetailsPage {
           });
       }
     });
-    popover.present();
+    popover.present({animate: false});
   }
 
   selectTabLink(link) {

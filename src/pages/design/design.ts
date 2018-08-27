@@ -338,7 +338,7 @@ export class DesignPage {
           });
       }
     });
-    popover.present();
+    popover.present({animate: false});
   }
 
   selectTabLink(link) {

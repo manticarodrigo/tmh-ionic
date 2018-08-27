@@ -13,6 +13,10 @@ export class PriceTotalPipe implements PipeTransform {
    * Takes a value and makes it lowercase.
    */
   transform(value: Array<any>, ...args) {
-    return value.map(item => parseInt(item.price)/100);
+    const total = value.reduce((total, item) => {
+      total += parseFloat(item.price);
+      return total;
+    }, 0.00);
+    return total.toFixed(2);
   }
 }
