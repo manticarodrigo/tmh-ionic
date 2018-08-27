@@ -5,11 +5,11 @@ import { ChatComponent } from './chat/chat';
 
 @NgModule({
 	declarations: [
-		ChatComponent,
+		ChatComponent
 	],
 	imports: [IonicModule],
 	exports: [
-		ChatComponent,
+		ChatComponent
 	]
 })
 export class ComponentsModule {}

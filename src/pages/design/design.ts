@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import {
   IonicPage,
   NavController,
@@ -234,6 +235,8 @@ export class DesignPage {
               marker.remove();
             }
           });
+          // const ev = e.originalEvent;
+          // popover.present({ev});
           popover.present();
         }
       });
@@ -458,11 +461,11 @@ export class DesignPage {
     event.target.value = null;
   }
 
-  editItem(item, i) {
-    console.log('edit item pressed:', item);
+  editItem(ev, item, i) {
+    console.log('edit item pressed:', ev, item, i);
     item.number = i + 1;
     const popover = this.popoverCtrl.create(
-      'edit-item', 
+      'edit-item',
       { item: item }
     );
     popover.onDidDismiss(data => {
@@ -479,6 +482,7 @@ export class DesignPage {
           });
       }
     });
+    // popover.present({ev});
     popover.present();
   }
 

@@ -200,10 +200,10 @@
           </div>
         </div>
         <div *ngIf="roleView === 'DESIGNER'">
-          <div class="project-items-label" (click)="editItem(item, i)">
+          <div class="project-items-label" (click)="editItem($event, item, i)">
             ITEM {{ i + 1 }}
           </div>
-          <div class="project-items-img" (click)="editItem(item, i)">
+          <div class="project-items-img" (click)="editItem($event, item, i)">
             <img *ngIf="item.image" [src]="item.image">
           </div>
           <h6>{{ item.make }}</h6>
@@ -212,7 +212,7 @@
           <div *ngIf="item.status === 'REQUEST_ALTERNATIVE'">
             <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
             <button *ngIf="project.status === 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-            <button *ngIf="project.status === 'FLOOR_PLAN'" ion-button type="button" (click)="editItem(item, i)">EDIT</button>
+            <button *ngIf="project.status === 'FLOOR_PLAN'" ion-button type="button" (click)="editItem($event, item, i)">EDIT</button>
           </div>
           <div *ngIf="item.status === 'ALTERNATE_READY'">
             <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
