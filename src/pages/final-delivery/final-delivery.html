@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ this.projectService.types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ project.room | readableRoom }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.image" [src]="user.image">

@@ -1,18 +1,5 @@
 <ion-header [class.maximized]="maximized">
-  <ion-navbar>
-    <ion-buttons left>
-      <button ion-button (click)="homePressed()">
-        <img style="width:54px;margin:5px;" src="assets/logo.png">
-      </button>
-    </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ this.projectService.types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
-    <ion-buttons end>
-      <button class="avatar" ion-button menuToggle>
-        <img *ngIf="user && user.image" [src]="user.image">
-        <img *ngIf="!user || !user.image" src="assets/user-placeholder.png">
-      </button>
-    </ion-buttons>
-  </ion-navbar>
+  <navbar title="Design Studio" [user]="user" [project]="project"></navbar>
   <div class="sub-nav">
     <div class="desktop menu">
       <div><a (click)="selectTabLink('DETAILS')">1. DETAILS</a></div>
@@ -30,9 +17,13 @@
 </ion-header>
 
 <ion-content [class.minimized]="minimized">
+
   <div class="collab-workzone" *ngIf="project">
+
     <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
+
     <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+
     <ion-segment *ngIf="user.is_staff" [(ngModel)]="roleView" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
@@ -41,9 +32,11 @@
         DESIGNER
       </ion-segment-button>
     </ion-segment>
+
     <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
+
     <div *ngIf="view === 'APPROVE_CONCEPT' && roleView === 'CLIENT' && !concepts && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
@@ -57,6 +50,15 @@
       <p>Please upload 2 concept boards based on your client's information and style. Once all boards have been uploaded and confirmed, submit to the client and the 10 business day timeline will begin.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
+    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && roleView === 'CLIENT' && !loading">
+      <h1>HANG TIGHT</h1>
+      <p>Your designer is hard at work putting together the Floor Plan of your room!</p>
+    </div>
+    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && roleView === 'DESIGNER' && !loading" class="collab-alert">
+      <p>Using the floor plan provided by the client, create and upload a floor plan to begin the design process.</p>
+      <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
+    </div>
+
     <div *ngIf="view === 'APPROVE_CONCEPT' && concepts && !conceptboard" class="collab-image">
       <div *ngIf="roleView === 'CLIENT' && concepts[0].status === 'SUBMITTED'">
         <img class="selected-img" [src]="selectedConcept.image">
@@ -81,31 +83,30 @@
         <button (click)="submitConcepts()" ion-button full type="button">{{ concepts[0].status === 'SUBMITTED' ? 'RESUBMIT CONCEPTS' : 'SUBMIT CONCEPTS'}}</button>
       </div>
     </div>
-    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && roleView === 'CLIENT' && !loading" class="collab-alert">
-      <h1>HANG TIGHT</h1>
-      <p>Your designer is hard at work putting together the Floor Plan of your room!</p>
-    </div>
-    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && roleView === 'DESIGNER' && !loading" class="collab-alert">
-      <p>Using the floor plan provided by the client, create and upload a floor plan to begin the design process.</p>
-      <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
-    </div>
+
     <div *ngIf="floorplan" [hidden]="view !== 'FLOOR_PLAN'" class="collab-image" id="floorplan-map">
       <img [src]="floorplan.image" id="floorplan-img">
     </div>
+
     <div *ngIf="view === 'CONCEPT_BOARD' && conceptboard" class="collab-image">
       <img [src]="conceptboard.image" class="selected-img">
     </div>
+
     <div *ngIf="view !== 'APPROVE_CONCEPT' && view !== 'APPROVE_FLOOR_PLAN'" class="collab-design-switcher">
       <a (click)="selectFloorplan()">FLOOR PLAN</a>
       <a (click)="selectConceptboard()">CONCEPT BOARD</a>
     </div>
+
     <div class="chat-header desktop" [class.header-minimized]="minimized" [class.header-maximized]="maximized" (click)="chatToggled()">
       <img class="chat-img" src="assets/chat.png">
       <h2 class="chat-title">Chat</h2>
       <img class="chat-minimize" src="assets/down-arrow.png">
     </div>
+
     <chat [project]="project" [class.wrapper-minimized]="minimized" [class.wrapper-maximized]="maximized" class="chat-wrapper desktop"></chat>
+  
   </div>
+  
   <div class="project-items-view-switcher" *ngIf="items['PENDING']|| items['APPROVED']">
     <ion-segment [(ngModel)]="itemsView" (ionChange)="itemViewSwitched()">
       <ion-segment-button value="PENDING" *ngIf="project.status !== 'FINAL_DELIVERY' && project.status !== 'SHOPPING_CART' && project.status !== 'ESTIMATE_SHIPPING_AND_TAX' && this.project.status !== 'ARCHIVED'">
@@ -120,6 +121,7 @@
       </ion-segment-button>
     </ion-segment>
   </div>
+
   <div *ngIf="roleView === 'CLIENT' && items['PENDING'] && project.status === 'CONCEPTS' && itemsView === 'PENDING'" class="collection-box">
     <h1>HANG TIGHT</h1>
     <p>Your designer is hard at work putting together the Floor Plan of your room!</p>
@@ -143,11 +145,11 @@
     <p>Please wait for your designer to add furniture items to the floorplan before you approve or request alternatives.</p>
   </div>
   <div *ngIf="roleView === 'DESIGNER' && !items['PENDING'] && !items['APPROVED'] && concepts && floorplan && itemsView === 'PENDING'" class="collection-box">
-    <h1>{{ this.projectService.types[project.room] }} COLLECTION</h1>
+    <h1>{{ project.room | readableRoom }} COLLECTION</h1>
     <p>Add furniture to fill the space. Double tap at a location on the floorplan to add a new item.</p>
   </div>
   <div *ngIf="roleView === 'DESIGNER' && items['PENDING'] && project.status === 'CONCEPTS' && project.status !== 'FLOOR_PLAN' && itemsView === 'PENDING'" class="collection-box">
-    <h1>{{ this.projectService.types[project.room] }} COLLECTION</h1>
+    <h1>{{ project.room | readableRoom }} COLLECTION</h1>
     <p>Continue adding furniture to fill the space. When you're satisfied with the collection, go ahead and submit it to your client.</p>
     <button ion-button type="button" (click)="submitCollection()">SUBMIT COLLECTION</button>
   </div>
@@ -176,6 +178,7 @@
     <p>The client has already approved the following items:</p>
     <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
   </div>
+
   <ion-grid *ngIf="items[itemsView]" class="project-items">
     <h4>{{ items[itemsView].length }} ITEMS</h4>
     <h5>Collection Total: ${{ items[itemsView] | priceTotal }}</h5>

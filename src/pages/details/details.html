@@ -5,7 +5,7 @@
         <img style="width:54px;margin:5px;" src="assets/logo.png">
       </button>
     </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ this.projectService.types[project.room] }} Project: </span><span class="page">Design Studio</span></ion-title>
+    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ project.room | readableRoom }} Project: </span><span class="page">Design Studio</span></ion-title>
     <ion-buttons end>
       <button class="avatar" ion-button menuToggle>
         <img *ngIf="user && user.image" [src]="user.image">
@@ -150,7 +150,7 @@
         <div class="project-img">
           <img src="assets/{{ project.room }}.png">
         </div>
-        <h1>{{ this.projectService.types[project.room] }}</h1>
+        <h1>{{ project.room | readableRoom }}</h1>
         <h1 *ngIf="project.budget">{{ project.budget }}</h1>
         <h4>Project Notes</h4>
         <p *ngIf="project.style">Style: {{ project.style }}</p>

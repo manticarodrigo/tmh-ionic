@@ -27,19 +27,6 @@ page-design {
       z-index: 1 !important;
     }
   }
-  .toolbar-title {
-    @media only screen and (max-width: 700px) {
-      font-size: 16px !important;
-      .page {
-        display: block;
-        font-size: 14px !important;
-      }
-    }
-    font-size: 26px;
-    .page {
-      font-size: 16px;
-    }
-  }
   .fixed-content {
     background-color: color($colors, secondary);
   }

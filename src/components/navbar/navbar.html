@@ -1,0 +1,18 @@
+<ion-navbar>
+  <ion-buttons left>
+    <button ion-button (click)="homePressed()">
+      <img class="nav-logo" src="assets/logo.png">
+    </button>
+  </ion-buttons>
+  <ion-title>
+    <span *ngIf="project">{{ project.client.first_name }}'s </span>
+    <span *ngIf="project">{{ project.room | readableRoom }} Project: </span>
+    <span class="page">{{ title }}</span>
+  </ion-title>
+  <ion-buttons end>
+    <button class="avatar" ion-button menuToggle>
+      <img *ngIf="user && user.image" [src]="user.image">
+      <img *ngIf="!user || !user.image" src="assets/user-placeholder.png">
+    </button>
+  </ion-buttons>
+</ion-navbar>

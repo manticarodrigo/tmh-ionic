@@ -9,14 +9,6 @@ import { UserService } from './user-service';
 @Injectable()
 export class ProjectService {
   api: any;
-  types = {
-    BEDROOM: 'Bedroom',
-    LIVING_ROOM: 'Living Room',
-    MULTIPURPOSE_ROOM: 'Multipurpose Room',
-    STUDIO: 'Studio',
-    DINING_ROOM: 'Dining Room',
-    HOME_OFFICE: 'Office'
-  };
   statuses = {
     DETAILS: 'Details',
     DESIGN: 'Design',
