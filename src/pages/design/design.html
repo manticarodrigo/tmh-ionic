@@ -1,19 +1,18 @@
 <ion-header [class.maximized]="maximized">
-  <navbar title="Design Studio" [user]="user" [project]="project"></navbar>
-  <div class="sub-nav">
-    <div class="desktop menu">
-      <div><a (click)="selectTabLink('DETAILS')">1. DETAILS</a></div>
-      <div><a class="active">2. DESIGN</a></div>
-      <div><a (click)="selectTabLink('FINAL_DELIVERY')">3. FINAL DELIVERY</a></div>
-    </div>
-    <button class="mobile" ion-button type="button" (click)="selectTab()" full>
-      2. DESIGN
-      <img src="assets/down.png">
-    </button>
-    <div *ngIf="project" class="days-left">
-      {{ project.end_date | daysLeft }} day(s) left
-    </div>
-  </div>
+    <navbar
+      [tabs]="['DETAILS', 'DESIGN', 'FINAL_DELIVERY']"
+      [selectedTab]="'DESIGN'"
+      [tabsMap]="{
+        DETAILS: '1. DETAILS',
+        DESIGN: '2. DESIGN',
+        FINAL_DELIVERY: '3. FINAL DELIVERY'
+      }"
+      [user]="user"
+      [project]="project"
+      (onHomePressed)="homePressed()"
+      (onSelectTab)="selectTabLink($event)"
+      (onSelectDropdown)="selectTab()"
+    ></navbar>
 </ion-header>
 
 <ion-content [class.minimized]="minimized">

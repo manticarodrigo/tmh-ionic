@@ -16,4 +16,85 @@ navbar {
     width: 54px;
     margin: 5px;
   }
+  // Remove padding for chat space from page when minimized on desktop
+  .minimized {
+    @media only screen and (min-width: 700px) {
+      .collab-workzone {
+        padding-right: 5px !important;
+        .collab-alert {
+          right: 0px;
+        }
+      }
+      ion-spinner {
+        right: 5px !important;
+      }
+    }
+  }
+  // Hide header for chat space from page when maximized on mobile
+  .maximized {
+    @media only screen and (max-width: 700px) {
+      z-index: 1 !important;
+    }
+  }
+  // Sub-navigation bar
+  .sub-nav {
+    padding: 10px 15px;
+    position: relative;
+    background-color: color($colors, primary);
+    .button {
+      position: relative;
+      width: 100%;
+      border: 1px solid #fff;
+      color: #fff !important;
+      .button-inner {
+        justify-content: left;
+      }
+      img {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        margin: auto;
+      }
+    }
+    img {
+      width: 15px;
+      margin: 10px;
+    }
+    .menu {
+      padding: 15px 0px 0px;
+      margin: auto;
+      width: 75%;
+      @media only screen and (min-width: 700px) {
+        display: table;
+      }
+      table-layout: fixed;
+      div {
+        display: table-cell;
+      }
+      a {
+        display: inline-block;
+        width: 95%;
+        height: 25px;
+        margin: auto;
+        text-align: center;
+        color: #fff;
+        border-bottom: 2px solid rgba(255,255,255,0.5);
+      }
+      .active {
+        border-bottom: 2px solid #fff;
+      }
+    }
+    @media only screen and (min-width: 700px) {
+      .days-left {
+        top: 22.5px !important;
+        font-size: 18px;
+      }
+    }
+    .days-left {
+      position: absolute;
+      top: -10px;
+      right: 15px;
+      color: #fff;
+    }
+  }
 }

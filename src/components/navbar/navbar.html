@@ -1,13 +1,14 @@
 <ion-navbar>
   <ion-buttons left>
-    <button ion-button (click)="homePressed()">
+    <button ion-button (click)="onHomePressed.emit()">
       <img class="nav-logo" src="assets/logo.png">
     </button>
   </ion-buttons>
   <ion-title>
     <span *ngIf="project">{{ project.client.first_name }}'s </span>
     <span *ngIf="project">{{ project.room | readableRoom }} Project: </span>
-    <span class="page">{{ title }}</span>
+    <span *ngIf="project" class="page">Design Studio</span>
+    {{ title }}
   </ion-title>
   <ion-buttons end>
     <button class="avatar" ion-button menuToggle>
@@ -16,3 +17,27 @@
     </button>
   </ion-buttons>
 </ion-navbar>
+<div class="sub-nav">
+  <div class="desktop menu">
+    <div *ngFor="let tab of tabs">
+      <a
+        [class.active]="tab === selectedTab"
+        (click)="onSelectTab.emit(tab)">
+        {{ tabsMap[tab] }}
+      </a>
+    </div>
+  </div>
+  <button 
+    full
+    ion-button
+    class="mobile"
+    type="button"
+    (click)="onSelectDropdown.emit()"
+  >
+    {{ tabsMap[selectedTab] }}
+    <img src="assets/down.png">
+  </button>
+  <div *ngIf="project" class="days-left">
+    {{ project.end_date | daysLeft }} day(s) left
+  </div>
+</div>

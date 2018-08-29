@@ -1,27 +1,14 @@
 <ion-header>
-  <ion-navbar>
-    <ion-buttons left>
-      <button ion-button (click)="homePressed()">
-        <img style="width:54px;margin:5px;" src="assets/logo.png">
-      </button>
-    </ion-buttons>
-    <ion-title>Dashboard</ion-title>
-    <ion-buttons end>
-      <button class="avatar" ion-button  menuToggle>
-        <img *ngIf="user && user.image" [src]="user.image">
-        <img *ngIf="!user || !user.image" src="assets/user-placeholder.png">
-      </button>
-    </ion-buttons>
-  </ion-navbar>
-  <div class="sub-nav">
-    <div class="desktop menu">
-      <div *ngFor="let tab of tabs"><a [class.active]="tab == selectedTab" (click)="selectedTabLink(tab)">{{ tabsMap[tab] }}</a></div>
-    </div>
-    <button class="mobile" ion-button type="button" (click)="selectTab()" full>
-      {{ tabsMap[selectedTab] }}
-      <img src="assets/down.png">
-    </button>
-  </div>
+  <navbar
+    [title]="'Dashboard'"
+    [tabs]="tabs"
+    [selectedTab]="selectedTab"
+    [tabsMap]="tabsMap"
+    [user]="user"
+    (onHomePressed)="homePressed()"
+    (onSelectTab)="selectTabLink($event)"
+    (onSelectDropdown)="selectTab()"
+  ></navbar>
 </ion-header>
 
 <ion-content padding>

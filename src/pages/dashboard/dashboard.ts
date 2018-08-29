@@ -21,12 +21,13 @@ export class DashboardPage {
   user: any;
   roleView = 'CLIENT';
   projects: Array<any>;
+  tabs = ['IN_PROGRESS', 'COMPLETED'];
   selectedTab = 'IN_PROGRESS';
-  tabs: ['IN_PROGRESS', 'COMPLETED'];
   tabsMap = {
     IN_PROGRESS: 'IN PROGRESS',
     COMPLETED: 'COMPLETED'
   };
+
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
@@ -68,7 +69,7 @@ export class DashboardPage {
     alert.present();
   }
 
-  selectedTabLink(tab) {
+  selectTabLink(tab) {
     this.selectedTab = tab;
     this.loadProjects();
   }

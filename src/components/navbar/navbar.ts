@@ -1,14 +1,22 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'navbar',
   templateUrl: 'navbar.html'
 })
 export class NavbarComponent {
+  @Input() title: string;
+  @Input() tabs: Array<any>;
+  @Input() selectedTab: string;
+  @Input() tabsMap: any;
   @Input() user: any;
   @Input() project: any;
-  @Input() title: string;
+  @Output() onHomePressed = new EventEmitter();
+  @Output() onSelectTab = new EventEmitter();
+  @Output() onSelectDropdown = new EventEmitter();
 
-  constructor() {}
+  constructor() {
+    console.log(this.tabs);
+  }
 
 }
