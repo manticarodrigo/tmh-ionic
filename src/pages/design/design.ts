@@ -69,10 +69,10 @@ export class DesignPage {
     if (this.navParams.get('project')) {
       this.project = this.navParams.get('project');
       if (
-        this.project.status == 'FINAL_DELIVERY' ||
-        this.project.status == 'SHOPPING_CART' ||
-        this.project.status == 'ESTIMATE_SHIPPING_AND_TAX' ||
-        this.project.status == 'ARCHIVED'
+        this.project.status === 'FINAL_DELIVERY' ||
+        this.project.status === 'SHOPPING_CART' ||
+        this.project.status === 'ESTIMATE_SHIPPING_AND_TAX' ||
+        this.project.status === 'ARCHIVED'
       ) {
         this.itemsView = 'APPROVED';
       }
@@ -84,10 +84,10 @@ export class DesignPage {
         .then(project => {
           this.project = project;
           if (
-            this.project.status == 'FINAL_DELIVERY' ||
-            this.project.status == 'SHOPPING_CART' ||
-            this.project.status == 'ESTIMATE_SHIPPING_AND_TAX' ||
-            this.project.status == 'ARCHIVED'
+            this.project.status === 'FINAL_DELIVERY' ||
+            this.project.status === 'SHOPPING_CART' ||
+            this.project.status === 'ESTIMATE_SHIPPING_AND_TAX' ||
+            this.project.status === 'ARCHIVED'
           ) {
               this.itemsView = 'APPROVED';
           }
@@ -327,9 +327,9 @@ export class DesignPage {
     popover.onDidDismiss(data => {
       if (data) {
         let page: any;
-        if (data == 'DETAILS')
+        if (data === 'DETAILS')
           page = 'details';
-        if (data == 'FINAL DELIVERY')
+        if (data === 'FINAL DELIVERY')
           page = 'final-delivery';
         if (page)
           this.navCtrl.setRoot(page, {
@@ -344,9 +344,9 @@ export class DesignPage {
   selectTabLink(link) {
     console.log('selected tab link:', link);
     let page: any;
-    if (link == 'DETAILS')
+    if (link === 'DETAILS')
       page = 'details';
-    if (link == 'FINAL_DELIVERY')
+    if (link === 'FINAL_DELIVERY')
       page = 'final-delivery';
     if (page)
       this.navCtrl.setRoot(page, {
@@ -425,7 +425,7 @@ export class DesignPage {
           .then(data => {
             console.log(data);
             conceptCount += 1;
-            if (conceptCount == this.concepts.length) {
+            if (conceptCount === this.concepts.length) {
               this.fetchProject();
             }
           });
@@ -443,14 +443,14 @@ export class DesignPage {
   fileChanged(event) {
     console.log('file changed:', event.target.files[0]);
     const file = event.target.files[0];
-    if (this.view == 'APPROVE_CONCEPT') {
+    if (this.view === 'APPROVE_CONCEPT') {
       this.projectService.addDetail(this.project, file, 'CONCEPT', 'PENDING')
         .then(data => {
           console.log(data);
           this.fetchDetails();
         });
     }
-    if (this.view == 'APPROVE_FLOOR_PLAN') {
+    if (this.view === 'APPROVE_FLOOR_PLAN') {
       this.projectService.addDetail(this.project, file, 'FLOOR_PLAN', 'PENDING')
         .then(data => {
           console.log(data);
@@ -495,21 +495,23 @@ export class DesignPage {
       console.log(data);
       if (data) {
         let status = '';
-        if (this.project.status === 'CONCEPTS') {
-          status = 'FLOOR_PLAN';
-        }
-        if (this.project.status === 'FLOOR_PLAN') {
-          status = 'ALTERNATIVES_READY';
-        }
-        if (this.project.status === 'REQUEST_ALTERNATIVES') {
-          status = 'ALTERNATIVES_READY';
+        switch (this.project.status) {
+          case 'CONCEPTS':
+            status = 'FLOOR_PLAN';
+            break;
+          case 'FLOOR_PLAN':
+          case 'REQUEST_ALTERNATIVES':
+            status = 'ALTERNATIVES_READY';
+            break;
+          default:
+            null
         }
         if (this.project.revision_count === 3) {
           status = 'FINAL_DELIVERY';
         }
         this.projectService.updateRevisionCount(this.project, status)
           .then(data => {
-            console.log(data);
+            console.log('update revision count returned:', data);
             this.fetchProject();
           });
       }
@@ -527,7 +529,7 @@ export class DesignPage {
       if (data) {
         this.projectService.updateStatus(this.project, 'REQUEST_ALTERNATIVES')
           .then(data => {
-            console.log(data);
+            console.log('update status returned:', data);
             this.fetchProject();
           });
       }

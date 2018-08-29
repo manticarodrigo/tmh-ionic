@@ -48,7 +48,7 @@ export class SocketService {
 
   addCollection(name) {
     // Create a "Sub-Socket" for each collection
-    var _s = io.connect(this.port + '/' + name);
+    const _s = io.connect(this.port + '/' + name);
     this.collections[name] = _s;
   }
 
@@ -78,8 +78,8 @@ export class SocketService {
   }
 
   saveToLocalStorage(collection, data) {
-      var savedData = this.getFromLocalStorage(collection);
-      var ls = savedData || [];
+      const savedData = this.getFromLocalStorage(collection);
+      const ls = savedData || [];
       ls.push(data);
       localStorage.setItem(collection, JSON.stringify(ls));
   }

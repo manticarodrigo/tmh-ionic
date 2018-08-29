@@ -21,12 +21,7 @@ export class DashboardPage {
   user: any;
   roleView = 'CLIENT';
   projects: Array<any>;
-  tabs = ['IN_PROGRESS', 'COMPLETED'];
   selectedTab = 'IN_PROGRESS';
-  tabsMap = {
-    IN_PROGRESS: 'IN PROGRESS',
-    COMPLETED: 'COMPLETED'
-  };
 
   constructor(
     private navCtrl: NavController,
@@ -51,20 +46,21 @@ export class DashboardPage {
     const alert = this.alertCtrl.create({
       title: 'NEW PROJECT',
       message: 'Press start to begin a new project.',
-      buttons: 
-      [{
-        text: 'CANCEL',
-        role: 'cancel',
-        handler: data => {
-          console.log('Cancel pressed');
+      buttons: [
+        {
+          text: 'CANCEL',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel pressed');
+          }
+        },
+        {
+          text: 'START',
+          handler: data => {
+            this.navCtrl.setRoot('onboarding')
+          }
         }
-      },
-      {
-        text: 'START',
-        handler: data => {
-          this.navCtrl.setRoot('onboarding')
-        }
-      }]
+      ]
     });
     alert.present();
   }
@@ -75,14 +71,9 @@ export class DashboardPage {
   }
 
   selectTab() {
-    const tabs = [];
-    for (let key in this.tabsMap) {
-      const tab = this.tabsMap[key];
-      tabs.push(tab);
-    }
     const popover = this.popoverCtrl.create(
       'dropdown',
-      { items: tabs },
+      { items: ['IN PROGRESS', 'COMPLETED'] },
       { cssClass: 'tab-popover'
     });
     popover.onDidDismiss(data => {

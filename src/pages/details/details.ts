@@ -151,7 +151,7 @@ export class DetailsPage {
     { cssClass: 'tab-popover' });
     popover.onDidDismiss(data => {
       if (data) {
-        var page: any;
+        let page: any;
         if (data == 'DESIGN')
           page = 'design';
         if (data == 'FINAL DELIVERY')

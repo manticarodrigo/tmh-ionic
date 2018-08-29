@@ -181,7 +181,7 @@ export class OnboardingPage {
   }
 
   validateZip() {
-    var num = this.zip.split('-').join(''); // remove hyphens
+    let num = this.zip.split('-').join(''); // remove hyphens
     if (num.match(/^[0-9]+$/) == null) {
       console.log('num is not numeric', num);
       num = num.slice(0, -1);
@@ -191,7 +191,7 @@ export class OnboardingPage {
 
   submittedZip() {
     console.log('zip submitted:', this.zip);
-    var isValidZip = /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(this.zip);
+    const isValidZip = /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(this.zip);
     if (isValidZip) {
       this.finalQuestion = 2;
     } else {
@@ -252,7 +252,7 @@ export class OnboardingPage {
   }
 
   validateCardNumber() {
-    var num = this.card.number.split('-').join(''); // remove hyphens
+    let num = this.card.number.split('-').join(''); // remove hyphens
     if (num.match(/^[0-9]+$/) == null) {
       console.log('num is not numeric', num);
       num = num.slice(0, -1);

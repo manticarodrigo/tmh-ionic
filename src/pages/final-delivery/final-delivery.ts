@@ -116,7 +116,7 @@ export class FinalDeliveryPage {
     });
     popover.onDidDismiss(data => {
       if (data) {
-        var page: any;
+        let page: any;
         if (data == 'DETAILS')
           page = 'details';
         if (data == 'DESIGN')
@@ -133,7 +133,7 @@ export class FinalDeliveryPage {
 
   selectTabLink(link) {
     console.log('selected tab link:', link);
-    var page: any;
+    let page: any;
     if (link === 'DETAILS')
       page = 'details';
     if (link === 'DESIGN')

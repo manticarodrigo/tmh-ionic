@@ -2,11 +2,6 @@
     <navbar
       [tabs]="['DETAILS', 'DESIGN', 'FINAL_DELIVERY']"
       [selectedTab]="'DESIGN'"
-      [tabsMap]="{
-        DETAILS: '1. DETAILS',
-        DESIGN: '2. DESIGN',
-        FINAL_DELIVERY: '3. FINAL DELIVERY'
-      }"
       [user]="user"
       [project]="project"
       (onHomePressed)="homePressed()"
