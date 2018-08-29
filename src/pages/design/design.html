@@ -116,62 +116,13 @@
     </ion-segment>
   </div>
 
-  <div *ngIf="roleView === 'CLIENT' && items['PENDING'] && project.status === 'CONCEPTS' && itemsView === 'PENDING'" class="collection-box">
-    <h1>HANG TIGHT</h1>
-    <p>Your designer is hard at work putting together the Floor Plan of your room!</p>
-  </div>
-  <div *ngIf="roleView === 'CLIENT' && items['PENDING'] && project.status !== 'REQUEST_ALTERNATIVES' && project.status !== 'CONCEPTS' && itemsView === 'PENDING'" class="collection-box">
-    <h1>YOUR COLLECTION</h1>
-    <p>Review your furnishings and note the items that you would like to see alternatives from your designer. Happy with the collection? Go ahead and approve all!</p>
-    <button ion-button type="button" (click)="approveCollection()">APPROVE & SUBMIT</button>
-  </div>
-  <div *ngIf="roleView === 'CLIENT' && items['PENDING'] && project.status === 'REQUEST_ALTERNATIVES' && itemsView === 'PENDING'" class="collection-box">
-    <h1>ALTERNATES REQUESTED</h1>
-    <p>Please wait for your designer to submit alternatives for the items you requested.</p>
-    <button ion-button type="button" disabled>APPROVE & SUBMIT</button>
-  </div>
-  <div *ngIf="roleView === 'CLIENT' && items['APPROVED'] && itemsView === 'APPROVED'" class="collection-box">
-    <h1>APPROVED ITEMS</h1>
-    <p>Below are the items approved from the previous stage. These items can be further discussed with your designer if needed.</p>
-  </div>
-  <div *ngIf="roleView === 'CLIENT' && !items['PENDING'] && !items['APPROVED'] && concepts && floorplan && itemsView === 'PENDING'" class="collection-box">
-    <h1>YOUR COLLECTION</h1>
-    <p>Please wait for your designer to add furniture items to the floorplan before you approve or request alternatives.</p>
-  </div>
-  <div *ngIf="roleView === 'DESIGNER' && !items['PENDING'] && !items['APPROVED'] && concepts && floorplan && itemsView === 'PENDING'" class="collection-box">
-    <h1>{{ project.room | readableRoom }} COLLECTION</h1>
-    <p>Add furniture to fill the space. Double tap at a location on the floorplan to add a new item.</p>
-  </div>
-  <div *ngIf="roleView === 'DESIGNER' && items['PENDING'] && project.status === 'CONCEPTS' && project.status !== 'FLOOR_PLAN' && itemsView === 'PENDING'" class="collection-box">
-    <h1>{{ project.room | readableRoom }} COLLECTION</h1>
-    <p>Continue adding furniture to fill the space. When you're satisfied with the collection, go ahead and submit it to your client.</p>
-    <button ion-button type="button" (click)="submitCollection()">SUBMIT COLLECTION</button>
-  </div>
-  <div *ngIf="roleView === 'DESIGNER' && items['PENDING'] && project.status === 'REQUEST_ALTERNATIVES' && itemsView === 'PENDING'" class="collection-box">
-    <h1>ALTERNATES REQUESTED:</h1>
-    <p>Review the items below. Your client wants to see alternatives furniture for them. When you're satisfied with the collection, go ahead and submit it to your client.</p>
-    <button ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
-  </div>
-  <div *ngIf="roleView === 'DESIGNER' && items['PENDING'] && project.status === 'ALTERNATIVES_READY' && itemsView === 'PENDING'" class="collection-box">
-    <h1>ALTERNATES READY</h1>
-    <p>Please wait for your client to approve alternatives for the items you submitted.</p>
-    <button ion-button type="button" disabled>SUBMIT ALTERNATIVES</button>
-  </div>
-  <div *ngIf="roleView === 'DESIGNER' && items['MODIFIED'] && project.status === 'REQUEST_ALTERNATIVES' && itemsView === 'MODIFIED'" class="collection-box">
-    <h1>MODIFIED ITEMS:</h1>
-    <p>Review the items below and submit to your client when ready.</p>
-    <button ion-button type="button" (click)="submitCollection()">SUBMIT COLLECTION</button>
-  </div>
-  <div *ngIf="roleView === 'DESIGNER' && items['MODIFIED'] && project.status === 'ALTERNATIVES_READY' && itemsView === 'MODIFIED'" class="collection-box">
-    <h1>MODIFIED ITEMS:</h1>
-    <p>Please wait for your client to approve the items you submitted.</p>
-    <button ion-button type="button" disabled>SUBMIT COLLECTION</button>
-  </div>
-  <div *ngIf="roleView === 'DESIGNER' && items['APPROVED'] && itemsView === 'APPROVED'" class="collection-box">
-    <h1>APPROVED ITEMS</h1>
-    <p>The client has already approved the following items:</p>
-    <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
-  </div>
+  <collection-box
+    [roleView]="roleView"
+    [itemsView]="itemsView"
+    [project]="project"
+    [items]="items"
+  >
+  </collection-box>
 
   <ion-grid *ngIf="items[itemsView]" class="project-items">
     <h4>{{ items[itemsView].length }} ITEMS</h4>

@@ -32,7 +32,7 @@ export class AlternativesPage {
         this.alts.push(alt);
       }
     }
-    for (var key in this.alts) {
+    for (const key in this.alts) {
       this.alts[key].number = Number(key) + 1;
     }
   }
@@ -55,7 +55,7 @@ export class AlternativesPage {
   }
 
   validatePrice() {
-    var num = this.item.price;
+    let num = this.item.price;
     if (num && num.match(/^[0-9]+$/) == null) {
       console.log('num is not numeric', num);
       num = num.slice(0, -1);
