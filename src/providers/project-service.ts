@@ -421,18 +421,18 @@ export class ProjectService {
     });
   }
 
-  addAlternative(project, alt, image, parent) {
+  addAlternative(project, alt, parent) {
     return new Promise((resolve, reject) => {
-      console.log('adding item alt:', project, alt, image, parent);
+      console.log('adding item alt:', project, alt, parent);
       const formData = new FormData();
-      formData.append('status', 'ALTERNATE');
-      formData.append('image', image);
+      formData.append('status', 'ALTERNATE_READY');
+      formData.append('image', alt.image);
       formData.append('make', alt.make);
       formData.append('type', alt.type);
       formData.append('price', alt.price);
       formData.append('inspiration', alt.inspiration);
-      formData.append('lat', alt.lat);
-      formData.append('lng', alt.lng);
+      formData.append('lat', parent.lat);
+      formData.append('lng', parent.lng);
       formData.append('project', project.id);
       formData.append('parent', parent.id);
       this.http.post(

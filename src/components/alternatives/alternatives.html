@@ -11,7 +11,7 @@
         <ion-input [(ngModel)]="alt.type" type="text" placeholder="ITEM TYPE"></ion-input>
         <ion-input [(ngModel)]="alt.price" (input)="validatePrice()" type="text" placeholder="PRICE"></ion-input>
         <ion-input [(ngModel)]="alt.inspiration" type="text" placeholder="INSPIRATION FOR ITEM?"></ion-input>
-        <button ion-button type="button" (click)="clickFile(i)">{{ files[i] ? files[i].name : 'UPLOAD IMAGE' }}</button>
+        <button ion-button type="button" (click)="clickFile(i)">{{ alts[i] && alts[i].image ? alts[i].image.name : 'UPLOAD IMAGE' }}</button>
       </ion-col>
     </ion-row>
   </ion-grid>

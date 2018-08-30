@@ -143,8 +143,9 @@ export class DesignPage {
         if (data && Array(data).length > 0) {
           const items = data.reduce((items, item) => {
             if (item.parent) {
-              const type = items.alternate
-              const parent = type[item.parent]
+              const type = items.alternate;
+              if (!type) items.alternate = {};
+              const parent = items.alternate[item.parent];
               items.alternate[item.parent] = parent ? [...parent, item] : [item]
               return items;
             }
@@ -554,8 +555,9 @@ export class DesignPage {
 
   offerAlternative(item, i) {
     console.log('offer alt item pressed:', item);
-    const alts = this.items.alternate
-    item.number = i + 1;
+    item.number = ++i;
+    const { updateItem, addAlternative } = this.projectService;
+    const alts = this.items.alternate;
     const modal = this.modalCtrl.create(
       'alternatives',
       {
@@ -566,40 +568,22 @@ export class DesignPage {
     modal.onDidDismiss(data => {
       console.log(data);
       if (data) {
-        const alts = data[0];
-        const images = data[1];
-        let altCount = 0;
-        for (const key in alts) {
-          const alt = alts[key];
-          const image = images[key];
+        const promises = [];
+        data.forEach(alt => {
           if (alt.id) {
-            alt.image = image;
-            this.projectService.updateItem(this.project, alt, 'ALTERNATE')
-            .then(itemData => {
-              console.log(itemData);
-              altCount++;
-              if (altCount === alts.length) {
-                this.fetchItems();
-              }
-            });
+            promises.push(this.projectService.updateItem(this.project, alt, 'ALTERNATE_READY'));
           } else {
-            this.projectService.addAlternative(this.project, alt, image, item)
-            .then(itemData => {
-              console.log(itemData);
-              altCount++;
-              if (altCount === alts.length) {
-                this.fetchItems();
-              }
-            });
+            promises.push(this.projectService.addAlternative(this.project, alt, item));
           }
-        }
+        });
+        this.fetchItems();
       }
     });
     modal.present();
   }
 
   viewAlternatives(item, i) {
-    console.log('view alternatives pressed:', item);
+    console.log('view alternatives pressed:', item, i);
     const alts = this.items.alternate
     if (alts) {
       item.number = i + 1;
@@ -615,7 +599,7 @@ export class DesignPage {
   }
 
   requestAlternative(item) {
-    console.log('request alternative pressed');
+    console.log('request alternative:', item);
     const { updateItemStatus, updateStatus } = this.projectService;
     const updateItem = updateItemStatus(item, 'REQUEST_ALTERNATIVE');
     const updateProject = updateStatus(this.project, 'REQUEST_ALTERNATIVES')
@@ -627,7 +611,7 @@ export class DesignPage {
   }
 
   undoAlternative(item) {
-    console.log('undo alternative pressed');
+    console.log('undo alternative:', item);
     this.projectService.updateItemStatus(item, 'SUBMITTED')
       .then(data => {
         console.log(data);

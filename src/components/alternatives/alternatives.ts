@@ -12,7 +12,6 @@ export class AlternativesPage {
   @ViewChild('file') file:ElementRef;
   item: any;
   alts = [];
-  files = [];
   clicking = 0;
   constructor(
     private navParams: NavParams,
@@ -39,7 +38,7 @@ export class AlternativesPage {
 
   addAlts() {
     console.log('add alts pressed');
-    this.viewCtrl.dismiss([this.alts, this.files]);
+    this.viewCtrl.dismiss(this.alts);
   }
 
   clickFile(i) {
@@ -51,7 +50,7 @@ export class AlternativesPage {
   fileChanged(event) {
     console.log('input file changed:', event.target.files[0]);
     const file = event.target.files[0];
-    this.files[this.clicking] = file;
+    this.alts[this.clicking].image = file;
   }
 
   validatePrice() {

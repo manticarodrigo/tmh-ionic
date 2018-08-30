@@ -11,6 +11,8 @@ export class CollectionBoxComponent {
   @Input() items: Array<any>;
   @Input() concepts: string;
   @Input() floorplan: string;
+  @Output() onApprove = new EventEmitter();
+  @Output() onSubmit = new EventEmitter();
 
   constructor() {
   }
