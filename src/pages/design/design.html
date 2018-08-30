@@ -44,7 +44,7 @@
       <p>Please upload 2 concept boards based on your client's information and style. Once all boards have been uploaded and confirmed, submit to the client and the 10 business day timeline will begin.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
-    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && roleView === 'CLIENT' && !loading">
+    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && roleView === 'CLIENT' && !loading" class="collab-alert">
       <h1>HANG TIGHT</h1>
       <p>Your designer is hard at work putting together the Floor Plan of your room!</p>
     </div>
@@ -101,16 +101,16 @@
   
   </div>
   
-  <div class="project-items-view-switcher" *ngIf="items['PENDING']|| items['APPROVED']">
+  <div class="project-items-view-switcher" *ngIf="items.pending || items.approved">
     <ion-segment [(ngModel)]="itemsView" (ionChange)="itemViewSwitched()">
-      <ion-segment-button value="PENDING" *ngIf="project.status !== 'FINAL_DELIVERY' && project.status !== 'SHOPPING_CART' && project.status !== 'ESTIMATE_SHIPPING_AND_TAX' && this.project.status !== 'ARCHIVED'">
+      <ion-segment-button value="PENDING" *ngIf="project.status !== 'FINAL_DELIVERY' && project.status !== 'SHOPPING_CART' && project.status !== 'ESTIMATE_SHIPPING_AND_TAX' && project.status !== 'ARCHIVED'">
         <span *ngIf="roleView === 'CLIENT'">PENDING</span>
         <span *ngIf="roleView === 'DESIGNER'">{{ project.status === 'FLOOR_PLAN' ? 'SUBMITTED' : 'PENDING' }}</span>
       </ion-segment-button>
-      <ion-segment-button value="MODIFIED" *ngIf="items['MODIFIED'].length > 0">
+      <ion-segment-button value="MODIFIED" *ngIf="items.modified">
         MODIFIED
       </ion-segment-button>
-      <ion-segment-button value="APPROVED" *ngIf="items['APPROVED'].length > 0">
+      <ion-segment-button value="APPROVED" *ngIf="items.approved">
         APPROVED
       </ion-segment-button>
     </ion-segment>
@@ -121,14 +121,16 @@
     [itemsView]="itemsView"
     [project]="project"
     [items]="items"
+    [concepts]="concepts"
+    [floorplan]="floorplan"
   >
   </collection-box>
 
-  <ion-grid *ngIf="items[itemsView]" class="project-items">
-    <h4>{{ items[itemsView].length }} ITEMS</h4>
-    <h5>Collection Total: ${{ items[itemsView] | priceTotal }}</h5>
+  <ion-grid *ngIf="items[itemsView.toLowerCase()]" class="project-items">
+    <h4>{{ items[itemsView.toLowerCase()].length }} ITEMS</h4>
+    <h5>Collection Total: ${{ items[itemsView.toLowerCase()] | priceTotal }}</h5>
     <ion-row class="project-items-wrapper">
-      <ion-col col-12 col-sm *ngFor="let item of items[itemsView]; let i = index" class="project-items-box">
+      <ion-col col-12 col-sm *ngFor="let item of items[itemsView.toLowerCase()]; let i = index" class="project-items-box">
         <div *ngIf="roleView === 'CLIENT'">
           <div class="project-items-label">
             ITEM {{ i + 1 }}
@@ -142,7 +144,7 @@
           <div *ngIf="item.status === 'SUBMITTED' || item.status === 'PENDING'">
             <button *ngIf="project.status === 'FLOOR_PLAN' || project.status === 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
           </div>
-          <div *ngIf="item.status === 'REQUEST_ALTERNATIVE'">
+          <div *ngIf="item.status === 'REQUEST_ALTERNATIVE' && items[itemsView.toLowerCase()][item.id]">
             <button *ngIf="project.status !== 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
             <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
           </div>

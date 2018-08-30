@@ -22,8 +22,6 @@ export class NavbarComponent {
     FINAL_DELIVERY: '3. FINAL DELIVERY'
   }
   
-  constructor() {
-    console.log(this.tabs);
-  }
+  constructor() {}
 
 }

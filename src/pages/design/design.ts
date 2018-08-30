@@ -75,6 +75,7 @@ export class DesignPage {
         this.project.status === 'ARCHIVED'
       ) {
         this.itemsView = 'APPROVED';
+        console.log('items view switched', this.itemsView);
       }
       this.fetchDetails();
       this.fetchItems();
@@ -90,6 +91,7 @@ export class DesignPage {
             this.project.status === 'ARCHIVED'
           ) {
               this.itemsView = 'APPROVED';
+              console.log('items view switched', this.itemsView);
           }
           this.fetchDetails();
           this.fetchItems();
@@ -141,23 +143,32 @@ export class DesignPage {
         if (data && Array(data).length > 0) {
           const items = data.reduce((items, item) => {
             if (item.parent) {
-              const alts = items['ALTERNATE']
-              const parent = alts[item.parent]
-              items['ALTERNATE'][item.parent] = parent ? [...parent, item] : [item]
-            } else {
-              items[item.status] = [...items[item.status], item];
+              const type = items.alternate
+              const parent = type[item.parent]
+              items.alternate[item.parent] = parent ? [...parent, item] : [item]
+              return items;
+            }
+            switch (item.status) {
+              case 'PENDING':
+              case 'SUBMITTED':
+                let type = items.modified;
+                items.modified = type ? [...type, item] : [item];
+                break;
+              case 'APPROVED':
+                type = items.approved;
+                items.approved = type ? [...type, item] : [item];
+                break;
+              default:
+                type = items.pending;
+                items.pending = type ? [...type, item] : [item];
             }
             return items;
-          }, {
-            'PENDING': [],
-            'MODIFIED': [],
-            'APPROVED': [],
-            'ALTERNATE': []
-          });
+          }, {});
           console.log('reduced items:', items);
           this.items = items;
-          if (items['MODIFIED'].length > 0) {
+          if (items.modified) {
             this.itemsView = 'MODIFIED';
+            console.log('items view switched', this.itemsView);
           }
           this.drawMarkers();
         } else {
@@ -251,13 +262,13 @@ export class DesignPage {
       // choose marker items
       switch (this.itemsView) {
         case 'PENDING':
-          items = this.items['PENDING'];
+          items = this.items.pending;
           break;
         case 'MODIFIED':
-          items = this.items['MODIFIED'];
+          items = this.items.modified;
           break;
         default:
-          items = this.items['APPROVED'];
+          items = this.items.approved;
       }
       console.log('drawing markers', this.itemsView, items);
       // clear existing layers
@@ -436,7 +447,7 @@ export class DesignPage {
   }
 
   itemViewSwitched() {
-    console.log('item view switched');
+    console.log('items view switched', this.itemsView);
     this.drawMarkers();
   }
 
@@ -451,9 +462,13 @@ export class DesignPage {
         });
     }
     if (this.view === 'APPROVE_FLOOR_PLAN') {
-      this.projectService.addDetail(this.project, file, 'FLOOR_PLAN', 'PENDING')
+      const { addDetail, updateStatus } = this.projectService;
+      const createDetail = addDetail(this.project, file, 'FLOOR_PLAN', 'PENDING');
+      const updateProject = updateStatus(this.project, 'FLOOR_PLAN')
+      Promise.all([createDetail, updateProject])
         .then(data => {
-          console.log(data);
+          console.log('upload floorplan returned data:', data);
+          this.fetchProject();
           this.fetchDetails();
         });
     }
@@ -539,11 +554,15 @@ export class DesignPage {
 
   offerAlternative(item, i) {
     console.log('offer alt item pressed:', item);
+    const alts = this.items.alternate
     item.number = i + 1;
-    const modal = this.modalCtrl.create('alternatives', {
-      item: item,
-      alts: this.items['ALTERNATE'][item.id]
-    });
+    const modal = this.modalCtrl.create(
+      'alternatives',
+      {
+        item,
+        alts: alts ? alts[item.id] : null
+      }
+    );
     modal.onDidDismiss(data => {
       console.log(data);
       if (data) {
@@ -581,20 +600,26 @@ export class DesignPage {
 
   viewAlternatives(item, i) {
     console.log('view alternatives pressed:', item);
-    item.number = i + 1;
-    const modal = this.modalCtrl.create('alternatives', {
-      item: item,
-      alts: this.items['ALTERNATE'][item.id]
-    });
-    modal.onDidDismiss(data => {
-      console.log(data);
-    });
-    modal.present();
+    const alts = this.items.alternate
+    if (alts) {
+      item.number = i + 1;
+      const modal = this.modalCtrl.create(
+        'alternatives',
+        { item, alts: alts[item.id]}
+      );
+      modal.onDidDismiss(data => {
+        console.log(data);
+      });
+      modal.present(); 
+    }
   }
 
   requestAlternative(item) {
     console.log('request alternative pressed');
-    this.projectService.updateItemStatus(item, 'REQUEST_ALTERNATIVE')
+    const { updateItemStatus, updateStatus } = this.projectService;
+    const updateItem = updateItemStatus(item, 'REQUEST_ALTERNATIVE');
+    const updateProject = updateStatus(this.project, 'REQUEST_ALTERNATIVES')
+    Promise.all([updateItem, updateProject])
       .then(data => {
         console.log(data);
         this.fetchItems();

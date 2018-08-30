@@ -9,6 +9,8 @@ export class CollectionBoxComponent {
   @Input() itemsView: string;
   @Input() project: any;
   @Input() items: Array<any>;
+  @Input() concepts: string;
+  @Input() floorplan: string;
 
   constructor() {
   }

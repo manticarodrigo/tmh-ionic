@@ -3,11 +3,12 @@ import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import * as io from 'socket.io-client';
 
+import { ENV } from '@env';
+
 @Injectable()
 export class SocketService {
   observables: any;
   collections: any;
-  port = 'https://themanhome.herokuapp.com';
   socket: any;
   isConnectionAlive = false;
 
@@ -18,7 +19,7 @@ export class SocketService {
   init() {
     console.log("Initializing sockets...");
     
-    this.socket = io.connect(this.port);
+    this.socket = io.connect(ENV.socketUrl);
 
     this.socket.on("connect", (msg) => {
       console.log('on connect');
@@ -48,7 +49,7 @@ export class SocketService {
 
   addCollection(name) {
     // Create a "Sub-Socket" for each collection
-    const _s = io.connect(this.port + '/' + name);
+    const _s = io.connect(ENV.socketUrl + '/' + name);
     this.collections[name] = _s;
   }
 
