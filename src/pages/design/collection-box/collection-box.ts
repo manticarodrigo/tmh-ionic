@@ -13,7 +13,7 @@ export class CollectionBoxComponent {
   @Input() project: any;
   @Input() items: Array<any>;
   @Input() concepts: string;
-  @Input() floorplan: string;
+  @Input() floorplan: any;
   @Output() onSubmit = new EventEmitter();
 
   constructor(

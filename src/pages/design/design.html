@@ -78,9 +78,18 @@
       </div>
     </div>
 
-    <div *ngIf="floorplan" [hidden]="view !== 'FLOOR_PLAN'" class="collab-image" id="floorplan-map">
-      <img [src]="floorplan.image" id="floorplan-img">
-    </div>
+    <floorplan-map
+      *ngIf="floorplan"
+      [hidden]="view !== 'FLOOR_PLAN'"
+      [roleView]="roleView"
+      [itemsView]="itemsView"
+      [loading]="loading"
+      [project]="project"
+      [floorplan]="floorplan"
+      [items]="items"
+      (onAddItem)="fetchItems()"
+    >
+    </floorplan-map>
 
     <div *ngIf="view === 'CONCEPT_BOARD' && conceptboard" class="collab-image">
       <img [src]="conceptboard.image" class="selected-img">
