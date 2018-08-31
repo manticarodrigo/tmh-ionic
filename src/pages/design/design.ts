@@ -172,49 +172,6 @@ export class DesignPage {
       });
   }
 
-  homePressed() {
-    console.log('logo pressed');
-    this.navCtrl.setRoot('dashboard');
-  }
-
-  selectTab() {
-    console.log('toggling tab dropdown');
-    const popover = this.popoverCtrl.create(
-      'dropdown',
-      { items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY'] }, 
-      { cssClass: 'tab-popover'}
-    );
-    popover.onDidDismiss(data => {
-      if (data) {
-        let page: any;
-        if (data === 'DETAILS')
-          page = 'details';
-        if (data === 'FINAL DELIVERY')
-          page = 'final-delivery';
-        if (page)
-          this.navCtrl.setRoot(page, {
-            project: this.project,
-            id: this.project.id
-          });
-      }
-    });
-    popover.present({animate: false});
-  }
-
-  selectTabLink(link) {
-    console.log('selected tab link:', link);
-    let page: any;
-    if (link === 'DETAILS')
-      page = 'details';
-    if (link === 'FINAL_DELIVERY')
-      page = 'final-delivery';
-    if (page)
-      this.navCtrl.setRoot(page, {
-        project: this.project,
-        id: this.project.id
-      });
-  }
-
   maximizeChat() {
     console.log('chat fab pressed for project');
     this.maximized = !this.maximized;

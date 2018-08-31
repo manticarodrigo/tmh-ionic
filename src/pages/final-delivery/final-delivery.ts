@@ -49,7 +49,7 @@ export class FinalDeliveryPage {
         if (user) {
           this.user = user;
           if (this.user.is_staff) {
-            this.viewMode = 'DESIGNER';
+            this.roleView = 'DESIGNER';
           }
           this.fetchProject();
         }

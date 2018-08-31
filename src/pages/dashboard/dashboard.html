@@ -4,9 +4,7 @@
     [tabs]="['IN_PROGRESS', 'COMPLETED']"
     [selectedTab]="selectedTab"
     [user]="user"
-    (onHomePressed)="homePressed()"
-    (onSelectTab)="selectTabLink($event)"
-    (onSelectDropdown)="selectTab()"
+    (onReload)="fetchProjects()"
   ></navbar>
 </ion-header>
 

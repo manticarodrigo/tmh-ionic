@@ -37,7 +37,7 @@ export class DashboardPage {
           if (this.user.is_staff) {
             this.roleView = 'DESIGNER';
           }
-          this.loadProjects();
+          this.fetchProjects();
         }
       });
   }
@@ -65,27 +65,7 @@ export class DashboardPage {
     alert.present();
   }
 
-  selectTabLink(tab) {
-    this.selectedTab = tab;
-    this.loadProjects();
-  }
-
-  selectTab() {
-    const popover = this.popoverCtrl.create(
-      'dropdown',
-      { items: ['IN PROGRESS', 'COMPLETED'] },
-      { cssClass: 'tab-popover'
-    });
-    popover.onDidDismiss(data => {
-      if (data) {
-        this.selectedTab = data.replace(' ', '_');
-        this.loadProjects();
-      }
-    });
-    popover.present({animate: false});
-  }
-
-  loadProjects() {
+  fetchProjects() {
     if (this.roleView === 'CLIENT') {
       this.fetchClientProjects()
         .then((data: Array<any>) => {
@@ -94,7 +74,7 @@ export class DashboardPage {
         });
     }
     if (this.roleView === 'DESIGNER') {
-      this.fetchProjects()
+      this.fetchDesignerProjects()
         .then((data: Array<any>) => {
           console.log('dashboard received designer projects', data);
           this.projects = data;
@@ -126,7 +106,7 @@ export class DashboardPage {
     });
   }
 
-  fetchProjects() {
+  fetchDesignerProjects() {
     switch (this.selectedTab) {
       case 'IN_PROGRESS':
         return this.projectService.findByInProgress();

@@ -1,6 +1,6 @@
 <ion-navbar>
   <ion-buttons left>
-    <button ion-button (click)="onHomePressed.emit()">
+    <button ion-button (click)="homePressed()">
       <img class="nav-logo" src="assets/logo.png">
     </button>
   </ion-buttons>
@@ -22,7 +22,7 @@
     <div *ngFor="let tab of tabs">
       <a
         [class.active]="tab === selectedTab"
-        (click)="onSelectTab.emit(tab)">
+        (click)="selectTab(tab)">
         {{ tabsMap[tab] }}
       </a>
     </div>
@@ -32,7 +32,7 @@
     ion-button
     class="mobile"
     type="button"
-    (click)="onSelectDropdown.emit()"
+    (click)="selectDropdown()"
   >
     {{ tabsMap[selectedTab] }}
     <img src="assets/down.png">
