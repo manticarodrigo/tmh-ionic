@@ -502,57 +502,6 @@ export class DesignPage {
     popover.present();
   }
 
-  submitCollection() {
-    console.log('submit collection pressed');
-    const modal = this.modalCtrl.create('confirm', {
-      message: 'By selecting the confimation below, the collection, floor plan and concept board will be submitted to your client.'
-    });
-    modal.onDidDismiss(data => {
-      console.log(data);
-      if (data) {
-        let status = '';
-        switch (this.project.status) {
-          case 'CONCEPTS':
-            status = 'FLOOR_PLAN';
-            break;
-          case 'FLOOR_PLAN':
-          case 'REQUEST_ALTERNATIVES':
-            status = 'ALTERNATIVES_READY';
-            break;
-          default:
-            null
-        }
-        if (this.project.revision_count === 3) {
-          status = 'FINAL_DELIVERY';
-        }
-        this.projectService.updateRevisionCount(this.project, status)
-          .then(data => {
-            console.log('update revision count returned:', data);
-            this.fetchProject();
-          });
-      }
-    });
-    modal.present();
-  }
-
-  approveCollection() {
-    console.log('approve collection pressed');
-    const modal = this.modalCtrl.create('confirm', {
-      message: 'By selecting the button below, you are approving the collection and requesting alternates from your designer.'
-    });
-    modal.onDidDismiss(data => {
-      console.log(data);
-      if (data) {
-        this.projectService.updateStatus(this.project, 'REQUEST_ALTERNATIVES')
-          .then(data => {
-            console.log('update status returned:', data);
-            this.fetchProject();
-          });
-      }
-    });
-    modal.present();
-  }
-
   offerAlternative(item, i) {
     console.log('offer alt item pressed:', item);
     item.number = ++i;

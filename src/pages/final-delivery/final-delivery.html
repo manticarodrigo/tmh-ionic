@@ -27,8 +27,8 @@
 </ion-header>
 
 <ion-content>
-  <div class="collab-final-delivery" *ngIf="project">
-    <ion-segment *ngIf="user.is_staff && project.status == 'SHOPPING_CART' || project.status == 'ESTIMATE_SHIPPING_AND_TAX' || project.status == 'ARCHIVED'" [(ngModel)]="roleView" class="admin-segment">
+  <div *ngIf="project" class="collab-final-delivery">
+    <ion-segment *ngIf="user.is_staff" [(ngModel)]="roleView" class="admin-segment">
       <ion-segment-button value="CLIENT">
         CLIENT
       </ion-segment-button>
@@ -36,7 +36,7 @@
         DESIGNER
       </ion-segment-button>
     </ion-segment>
-    <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
+    <button ion-fab class="chat-fab mobile" (click)="maximizeChat()">
       <img src="assets/chats.png">
     </button>
     <div *ngIf="view == 'DESIGNER_NOTE' && roleView == 'CLIENT'" class="designer-note">

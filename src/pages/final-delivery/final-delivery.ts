@@ -30,7 +30,7 @@ export class FinalDeliveryPage {
     UPLOADED_FURNITURE: false
   };
   view = 'DESIGNER_NOTE';
-  viewMode = 'CLIENT';
+  roleView = 'CLIENT';
   designerNote = '';
   floorplan: any;
   conceptboard: any;
@@ -59,20 +59,21 @@ export class FinalDeliveryPage {
   fetchProject() {
     if (this.navParams.get('project')) {
       this.project = this.navParams.get('project');
-      if (this.project && this.project.designerNote != '') {
-        this.designerNote = this.project.designerNote;
+      if (this.project && this.project.designer_note != '') {
+        this.designerNote = this.project.designer_note;
       }
       this.fetchDetails();
     } else if (this.navParams.get('id')) {
       const id = this.navParams.get('id');
       this.projectService.findByProjectId(id)
-      .then(project => {
-        this.project = project;
-        if (this.project && this.project.designerNote != '') {
-          this.designerNote = this.project.designerNote;
-        }
-        this.fetchDetails();
-      });
+        .then(project => {
+          console.log('final delivery received project:', project);
+          this.project = project;
+          if (this.project && this.project.designer_note != '') {
+            this.designerNote = this.project.designer_note;
+          }
+          this.fetchDetails();
+        });
     }
   }
 
@@ -80,7 +81,7 @@ export class FinalDeliveryPage {
     console.log('fetching project details');
     this.projectService.fetchProjectDetails(this.project.id)
       .then(data => {
-        console.log('design page received details:', data);
+        console.log('final-delivery page received details:', data);
         const snapshots = [];
         for (const key in data) {
           const detail = data[key];
@@ -111,9 +112,11 @@ export class FinalDeliveryPage {
 
   selectTab() {
     console.log('toggling tab dropdown');
-    let popover = this.popoverCtrl.create('dropdown', {
-      items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY']
-    });
+    let popover = this.popoverCtrl.create(
+      'dropdown',
+      { items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY'] },
+      { cssClass: 'tab-popover'}
+    );
     popover.onDidDismiss(data => {
       if (data) {
         let page: any;
@@ -147,10 +150,20 @@ export class FinalDeliveryPage {
 
   selectFooterTab() {
     console.log('toggling tab dropdown');
-    let popover = this.popoverCtrl.create('Dropdown', {
-      items: ['DESIGNER NOTE', 'FLOOR PLAN', 'CONCEPT BOARD', '3D MODEL', 'SNAPSHOTS', 'FINAL NOTES', 'SHOPPING CART']
+    let popover = this.popoverCtrl.create(
+      'dropdown',
+    { items:
+      [
+        'DESIGNER NOTE',
+        'FLOOR PLAN',
+        'CONCEPT BOARD',
+        '3D MODEL',
+        'SNAPSHOTS',
+        'FINAL NOTES',
+        'SHOPPING CART'
+      ]
     }, 
-    { cssClass: 'tab-popover' });
+    { cssClass: 'footer-popover' });
     popover.onDidDismiss(data => {
       if (data) {
         if (data == 'SHOPPING CART') {
@@ -160,7 +173,7 @@ export class FinalDeliveryPage {
         }
       }
     });
-    popover.present();
+    popover.present({animate: false});
   }
 
   selectFooterTabLink(link) {

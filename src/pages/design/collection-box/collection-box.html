@@ -20,7 +20,7 @@
   >
     <h1>YOUR COLLECTION</h1>
     <p>Review your furnishings and note the items that you would like to see alternatives from your designer. Happy with the collection? Go ahead and approve all!</p>
-    <button ion-button type="button" (click)="onApprove.emit()">APPROVE & SUBMIT</button>
+    <button ion-button type="button" (click)="approveCollection()">APPROVE & SUBMIT</button>
   </div>
   <div
     *ngIf="project.status === 'REQUEST_ALTERNATIVES'"
@@ -62,7 +62,7 @@
   >
     <h1>ALTERNATES REQUESTED:</h1>
     <p>Review the items below. Your client wants to see alternatives furniture for them. When you're satisfied with the collection, go ahead and submit it to your client.</p>
-    <button ion-button type="button" (click)="onSubmit.emit()">SUBMIT ALTERNATIVES</button>
+    <button ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
   </div>
   <div
     *ngIf="items.pending && project.status === 'ALTERNATIVES_READY' && itemsView === 'PENDING'"
@@ -78,7 +78,7 @@
   >
     <h1>MODIFIED ITEMS:</h1>
     <p>Review the items below and submit to your client when ready.</p>
-    <button ion-button type="button" (click)="onSubmit.emit()">SUBMIT COLLECTION</button>
+    <button ion-button type="button" (click)="submitCollection()">SUBMIT COLLECTION</button>
   </div>
   <div
     *ngIf="items.modified && project.status === 'ALTERNATIVES_READY' && itemsView === 'MODIFIED'"
@@ -94,6 +94,6 @@
   >
     <h1>APPROVED ITEMS</h1>
     <p>The client has already approved the following items:</p>
-    <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="onSubmit.emit()">SUBMIT ALTERNATIVES</button>
+    <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="submitCollection()">SUBMIT ALTERNATIVES</button>
   </div>
 </div>

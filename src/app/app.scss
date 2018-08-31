@@ -167,6 +167,21 @@ ion-menu {
     top: 115px !important; // 115 browser builds, 135 mobile builds
     left: 0px !important;
     width: 100% !important;
-    height: 100%;
+    height: auto;
     border-radius: 0 !important;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Footer popover styles */
+.footer-popover .popover-content {
+    position: absolute;
+    bottom: 80px !important; // 115 browser builds, 135 mobile builds
+    left: 0px !important;
+    width: 100% !important;
+    height: auto;
+    border-radius: 0 !important;
+    box-shadow: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
