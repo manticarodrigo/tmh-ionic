@@ -116,43 +116,6 @@ page-design {
         object-fit: contain;
         border: 5px solid color($colors, primary);
       }
-      #floorplan-img {
-        max-width: 100%;
-        max-height: 100%;
-        margin: auto;
-        object-fit: contain;
-        opacity: 0.25;
-      }
-      .leaflet-control-zoom.leaflet-bar.leaflet-control {
-        border-radius: 2px;
-        border: none;
-        box-shadow: 0px 1px 4px rgba(0,0,0,0.3);
-      }
-      .number-icon {
-        background-color: #5794D9;
-        width: 30px !important;
-        max-height: 30px;
-        border-radius: 50%;
-        color: #fff;
-        font-weight: 700;
-        line-height: 30px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      }
-      .leaflet-popup-content-wrapper {
-        border-radius: 2px !important;
-      }
-      .leaflet-popup-content {
-        text-align: center;
-        min-width: 200px;
-        img {
-          width: 150px;
-          height: 150px;
-          object-fit:cover;
-        }
-        h1, h2, p {
-          margin: 0px 0px;
-        }
-      }
       .collab-thumb-wrapper {
         position: relative;
         display: table;
