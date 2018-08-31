@@ -56,43 +56,43 @@ export class ChatComponent {
 
   fetchMessages() {
     this.chatService.fetchMessages()
-    .then(data => {
-      console.log('chat component received messages:', data);
-      if (data) {
-        let messageArr = [];
-        for (const key in data[0]) {
-          if (data[0].hasOwnProperty(key) && key != '_id') {
-            const message = data[0][key];
-            if (!this.memberMap[message.senderId]) {
-              this.addMemberData(message.senderId);
+      .then(data => {
+        console.log('chat component received messages:', data);
+        if (data) {
+          let messageArr = [];
+          for (const key in data[0]) {
+            if (data[0].hasOwnProperty(key) && key != '_id') {
+              const message = data[0][key];
+              if (!this.memberMap[message.senderId]) {
+                this.addMemberData(message.senderId);
+              }
+              if (message.createdAt) {
+                message.createdAtReadable = this.getTimeStringFrom(message.createdAt);
+              }
+              messageArr.push(message);
             }
-            if (message.createdAt) {
-              message.createdAtReadable = this.getTimeStringFrom(message.createdAt);
-            }
-            messageArr.push(message);
           }
+          messageArr.sort(function(a, b){
+              return a.createdAt-b.createdAt;
+          });
+          this.messages = messageArr;
+          setTimeout(() => {
+            this.scrollToBottom();
+          }, 500);
+        } else {
+          this.messages = null;
         }
-        messageArr.sort(function(a, b){
-            return a.createdAt-b.createdAt;
-        });
-        this.messages = messageArr;
-        setTimeout(() => {
-          this.scrollToBottom();
-        }, 500);
-      } else {
-        this.messages = null;
-      }
-    })
+      });
   }
 
   observeMessages() {
-    this.chatService.observeMessages(data => {
+    this.chatService.observeMessages((data: any) => {
       console.log('chat component received message:', data);
-      if (!this.memberMap[data['senderId']]) {
-       this.addMemberData(data['senderId']);
+      if (!this.memberMap[data.senderId]) {
+       this.addMemberData(data.senderId);
       }
-      if (data['createdAt']) {
-        data['createdAtReadable'] = this.getTimeStringFrom(data['createdAt']);
+      if (data.createdAt) {
+        data.createdAtReadable = this.getTimeStringFrom(data.createdAt);
       }
       this.messages.push(data);
       this.scrollToBottom();
@@ -114,13 +114,10 @@ export class ChatComponent {
   }
 
   scrollToBottom() {
-    console.log('scrolling to bottom');
-    // let dimensions = this.content.getContentDimensions();
-    if (this.content.getContentDimensions()) {
+    const dimensions = this.content.getContentDimensions()
+    console.log('scrolling to bottom', dimensions);
+    if (dimensions) {
       this.content.scrollToBottom(300);
-      // this.content.scrollTo(0, dimensions.scrollHeight, 250); //x, y, ms animation speed
-    } else {
-      console.log('content not loaded');
     }
   }
 
@@ -129,13 +126,12 @@ export class ChatComponent {
   }
 
   send() {
-    let self = this;
     let text = this.message.text.replace(/^\s+/, '').replace(/\s+$/, '');
     if (text !== '') {
         // text has real content
         const msgData = {
           message: {
-            text: self.message.text,
+            text: this.message.text,
             id: this.message.id ? this.message.id : Math.ceil(Math.random() * 1000),
             senderId: this.userService.currentUser.id,
             createdAt: new Date().getTime()
@@ -143,7 +139,7 @@ export class ChatComponent {
           room: this.project.projectId
         }
         this.chatService.send(msgData, (savedToLocal) => {
-          self.message = {
+          this.message = {
               text: '',
               id: null,
               senderId: this.userService.currentUser.userId,
@@ -154,109 +150,27 @@ export class ChatComponent {
   }
 
   fileChanged(event) {
-    console.log('file changed:', event.target.files[0]);
-    // this.imageService.uploadFile(event.target.files[0], this.project)
-    //   .then(data => {
-    //     console.log('chat component received data:', data);
-    //     const msgData = {
-    //       message: {
-    //         fileEntryId: data['fileEntryId'],
-    //         id: this.message.id ? this.message.id : Math.ceil(Math.random() * 1000),
-    //         senderId: this.userService.currentUser.userId,
-    //         createdAt: new Date().getTime()
-    //       },
-    //       room: this.project.projectId
-    //     }
-    //     this.chatService.send(msgData, (savedToLocal) => {
-    //       this.message = {
-    //           text: '',
-    //           id: null,
-    //           senderId: this.userService.currentUser.userId,
-    //           createdAt: null
-    //         };
-    //     });
-    //   });
+    const file = event.target.files[0];
+    console.log('file changed:', file);
+    const msgData = {
+      message: {
+        image: file,
+        id: this.message.id ? this.message.id : Math.ceil(Math.random() * 1000),
+        senderId: this.userService.currentUser.id,
+        createdAt: new Date().getTime()
+      },
+      room: this.project.projectId
+    }
+    this.chatService.send(msgData, (savedToLocal) => {
+      console.log('sent attachment saved:', savedToLocal);
+      this.message = {
+          text: '',
+          id: null,
+          senderId: this.userService.currentUser.id,
+          createdAt: null
+        };
+    });
   }
-
-  // showImage(url) {
-  //   PhotoViewer.show(url);
-  // }
-
-  // presentActionSheet() {
-  //   let actionSheet = this.actionSheetCtrl.create({
-  //   title: 'Select Image Source',
-  //   cssClass: 'action-sheet',
-  //   buttons: [
-  //       {
-  //       text: 'Photo Library',
-  //       handler: () => {
-  //           this.takePicture(Camera.PictureSourceType.PHOTOLIBRARY);
-  //       }
-  //       },
-  //       {
-  //       text: 'Camera',
-  //       handler: () => {
-  //           this.takePicture(Camera.PictureSourceType.CAMERA);
-  //       }
-  //       },
-  //       {
-  //       text: 'Cancel',
-  //       role: 'cancel'
-  //       }
-  //   ]
-  //   });
-  //   actionSheet.present();
-  // }
-
-  // takePicture(sourceType) {
-  //   // Create options for the Camera Dialog
-  //   var options = {
-  //       quality: 100,
-  //       destinationType : Camera.DestinationType.DATA_URL,
-  //       sourceType: sourceType,
-  //       allowEdit : true,
-  //       encodingType: Camera.EncodingType.PNG,
-  //       targetWidth: 500,
-  //       targetHeight: 500,
-  //       saveToPhotoAlbum: true,
-  //       correctOrientation: true
-  //   };
-    
-  //   // Get the data of an image
-  //   Camera.getPicture(options).then((imageData) => {
-  //       this.uploadAttachment(imageData);
-  //   }, (error) => {
-  //       console.log(error);
-  //   });
-  // }
-  // uploadAttachment(imageData) {
-  //   console.log('Attach pressed');
-  //   let loading = this.loadingCtrl.create({
-  //       content: 'Uploading image...'
-  //   });
-  //   loading.present();
-  //   this.storageS.uploadAttachmentIn(this.chat.id, imageData).then(url => {
-  //       this.chatS.sendAttachmentTo(this.user, url).then(url => {
-  //           console.log(url);
-  //           loading.dismiss();
-  //           if (this.user.pushId) {
-  //               this.settingsS.fetchUserSettings(this.user).then(settings => {
-  //                   if (settings.messages) {
-  //                       this.pushS.push(this.userS.user.firstName + ' sent an image.', this.user, 'attachment');
-  //                   }
-  //               }).catch(error => {
-  //                   console.log(error);
-  //               });
-  //           }
-  //       }).catch(error => {
-  //           console.log(error);
-  //           loading.dismiss();
-  //       });
-  //   }).catch(error => {
-  //       console.log(error);
-  //       loading.dismiss();
-  //   });
-  // }
 
   getTimeStringFrom(timestamp) {
     const date = new Date(timestamp);

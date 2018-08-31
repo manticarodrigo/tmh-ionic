@@ -4,6 +4,7 @@ import { DesignPage } from './design';
 
 import { CollectionBoxComponent } from './collection-box/collection-box';
 import { FloorplanMapComponent } from './floorplan-map/floorplan-map';
+import { ProjectItemsComponent } from './project-items/project-items';
 
 import { ComponentsModule } from '../../components/components.module';
 import { PipesModule } from '../../pipes/pipes.module';
@@ -12,7 +13,8 @@ import { PipesModule } from '../../pipes/pipes.module';
   declarations: [
     DesignPage,
     CollectionBoxComponent,
-    FloorplanMapComponent
+    FloorplanMapComponent,
+    ProjectItemsComponent
   ],
   imports: [
     IonicPageModule.forChild(DesignPage),

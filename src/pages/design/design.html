@@ -133,50 +133,13 @@
   >
   </collection-box>
 
-  <ion-grid *ngIf="items[itemsView.toLowerCase()]" class="project-items">
-    <h4>{{ items[itemsView.toLowerCase()].length }} ITEMS</h4>
-    <h5>Collection Total: ${{ items[itemsView.toLowerCase()] | priceTotal }}</h5>
-    <ion-row class="project-items-wrapper">
-      <ion-col col-12 col-sm *ngFor="let item of items[itemsView.toLowerCase()]; let i = index" class="project-items-box">
-        <div *ngIf="roleView === 'CLIENT'">
-          <div class="project-items-label">
-            ITEM {{ i + 1 }}
-          </div>
-          <div class="project-items-img">
-            <img *ngIf="item.image" [src]="item.image">
-          </div>
-          <h6>{{ item.make }}</h6>
-          <p>{{ item.type }}</p>
-          <h2>${{ item.price }}</h2>
-          <div *ngIf="item.status === 'SUBMITTED' || item.status === 'PENDING'">
-            <button *ngIf="project.status === 'FLOOR_PLAN' || project.status === 'ALTERNATIVES_READY'" ion-button type="button" (click)="requestAlternative(item)">REQUEST ALTERNATIVES</button>
-          </div>
-          <div *ngIf="item.status === 'REQUEST_ALTERNATIVE' && items[itemsView.toLowerCase()][item.id]">
-            <button *ngIf="project.status !== 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="undoAlternative(item)">UNDO</button>
-            <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-          </div>
-        </div>
-        <div *ngIf="roleView === 'DESIGNER'">
-          <div class="project-items-label" (click)="editItem($event, item, i)">
-            ITEM {{ i + 1 }}
-          </div>
-          <div class="project-items-img" (click)="editItem($event, item, i)">
-            <img *ngIf="item.image" [src]="item.image">
-          </div>
-          <h6>{{ item.make }}</h6>
-          <p>{{ item.type }}</p>
-          <h2>${{ item.price }}</h2>
-          <div *ngIf="item.status === 'REQUEST_ALTERNATIVE'">
-            <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-            <button *ngIf="project.status === 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-            <button *ngIf="project.status === 'FLOOR_PLAN'" ion-button type="button" (click)="editItem($event, item, i)">EDIT</button>
-          </div>
-          <div *ngIf="item.status === 'ALTERNATE_READY'">
-            <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="offerAlternative(item, i)">OFFER ALTERNATIVES</button>
-            <button *ngIf="project.status === 'ALTERNATIVES_READY'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
-          </div>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <project-items
+    [roleView]="roleView"
+    [itemsView]="itemsView"
+    [project]="project"
+    [items]="items"
+    (onReload)="fetchItems()"
+  >
+  </project-items>
+  
 </ion-content>
