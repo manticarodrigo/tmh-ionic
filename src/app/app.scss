@@ -89,82 +89,81 @@ ion-menu {
   a {
     display: block;
     margin: 20px;
-
   }
 }
 
 /* Alert styles */
 
 .alert-head {
-    text-align: center !important;
+	text-align: center !important;
 }
 
 .alert-message {
-    font-family: $font-family-base !important;
-    text-align: center !important;
+	font-family: $font-family-base !important;
+	text-align: center !important;
 }
 
 .alert-button-group {
-    justify-content: center !important;
+	justify-content: center !important;
 }
 
 .alert-button {
-    font-family: $font-family-base !important;
-    font-weight: 800 !important;
-    text-transform: capitalize !important;
+	font-family: $font-family-base !important;
+	font-weight: 800 !important;
+	text-transform: capitalize !important;
 }
 
 /* Define visible device screen widths */
 
 @media only screen and (min-width: 700px) {
-    .mobile {
-        display: none;
-    }
-    .desktop {
-        display: block;
-    }
+	.mobile {
+		display: none;
+	}
+	.desktop {
+		display: block;
+	}
 }
 
 @media only screen and (max-width: 700px) {
-.mobile {
-    display: block;
-    }
-    .desktop {
-        display: none;
-    }
+	.mobile {
+		display: block;
+	}
+	.desktop {
+		display: none;
+	}
 }
 
 /* Avatar styles */
 .avatar {
   padding-right: 10px;
     img {
-        width: 30px;
-        height: 30px;
-        object-fit: cover;
-        border-radius: 5px;
+			width: 30px;
+			height: 30px;
+			object-fit: cover;
+			border-radius: 5px;
     }
 }
 
 /* Admin segment styles */
 .admin-segment {
-    // position: absolute;
-    // top: 10px;
-    // left: 10px;
-    border-radius: 0px !important;
-    background-color: color($colors, primary) !important;
-    .segment-button {
-        color: #fff !important;
-        border-bottom-color: #fff;
-    }
-    .segment-activated {
-        border-bottom-color: #fff !important;
-    }
+	// position: absolute;
+	// top: 10px;
+	// left: 10px;
+	border-radius: 0px !important;
+	background-color: color($colors, primary) !important;
+	.segment-button {
+			color: #fff !important;
+			border-bottom-color: #fff;
+	}
+	.segment-activated {
+			border-bottom-color: #fff !important;
+	}
 }
 
 /* Dropdown popover styles */
 .tab-popover .popover-content {
     position: absolute;
-    top: 115px !important; // 115 browser builds, 135 mobile builds
+    top: 116px !important; // 115 browser builds, 135 mobile builds
     left: 0px !important;
     width: 100% !important;
     height: auto;

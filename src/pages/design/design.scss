@@ -11,29 +11,13 @@ page-design {
   .fixed-content {
     background-color: color($colors, secondary);
   }
-
-  // Remove padding for chat space from page when minimized on desktop
-  .minimized {
-    @media only screen and (min-width: 700px) {
-      .collab-workzone {
-        padding-right: 5px !important;
-        .collab-alert {
-          right: 0px;
-        }
-      }
-      ion-spinner {
-        right: 5px !important;
-      }
-    }
-  }
-  // Hide header for chat space from page when maximized on mobile
-  .maximized {
-    @media only screen and (max-width: 700px) {
-      z-index: 1 !important;
-    }
-  }
   
   .collab-workzone {
+    position: relative;
+    background-image: url('../assets/constructor_bg.png');
+    background-repeat: repeat;
+    background-size: cover;
+    padding: 5px;
     ion-spinner {
       position: absolute;
       top: 0;
@@ -44,11 +28,6 @@ page-design {
       width: 50px;
       height: 50px;
     }
-    position: relative;
-    background-image: url('../assets/constructor_bg.png');
-    background-repeat: repeat;
-    background-size: cover;
-    padding: 5px;
     @media only screen and (max-width: 700px) {
       padding-top: 50px;
       min-height: 300px;
@@ -67,19 +46,6 @@ page-design {
       background-color: #fff;
       box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
       border-radius: 2px;
-    }
-    .chat-fab {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      width: 45px !important;
-      height: 45px !important;
-      border-radius: 50% !important;
-      img {
-        object-fit: contain;
-        width: 17.5px;
-        height: 17.5px;
-      }
     }
     .collab-alert {
       @media only screen and (min-width: 700px) {
@@ -182,88 +148,6 @@ page-design {
         padding-right: 10px;
       }
     }
-
-    /* Chat nested comp styles */
-
-    .chat-header {
-      z-index: 1001;
-      position: absolute;
-      right: 15px;
-      top: 2%;
-      width: 325px;
-      height: 60px;
-      background-color: #fff;
-      .chat-img {
-        margin: 15px 12.5px 0px 20px;
-        float: left;
-        width: 30px;
-      }
-      .chat-title {
-        color: color($colors, primary);
-        font-size: 20px;
-        margin-top: 15px;
-      }
-      .chat-minimize {
-        position: absolute;
-        top: 22.5px;
-        right: 15px;
-        width: 19px;
-      }
-    }
-    .header-minimized {
-      background-color: color($colors, dark);
-      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
-      .chat-img {
-        filter: brightness(100);
-      }
-      .chat-title {
-        color: #fff;
-      }
-      .chat-minimize {
-        transform: rotate(180deg);
-        filter: brightness(100);
-      }
-      top: calc(100% - 60px) !important;
-    }
-    .header-maximized {
-      @media only screen and (max-width: 700px) {
-        z-index: 1001;
-        display: block;
-        position: fixed;
-        top: 0px !important; // 20px on mobile for status bar border 
-        right: 0px;
-        width: 80px;
-        overflow: hidden;
-        opacity: 0;
-      }
-    }
-    .chat-wrapper {
-      z-index: 1000;
-      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
-      position: absolute;
-      right: 15px;
-      bottom: 0;
-      width: 325px;
-      height: 98%;
-    }
-    .wrapper-minimized {
-      display: none;
-    }
-    // Full screen chat component on mobile
-    .wrapper-maximized {
-      @media only screen and (max-width: 700px) {
-        box-shadow: none;
-        display: block;
-        z-index: 1000;
-        position: fixed;
-        box-sizing: content-box;
-        top: 0px;
-        left: 0;
-        width: 100%;
-        // border-top: 20px solid #000;
-        height: calc(100%); // - 20px with mobile border
-      }
-    }
   }
   .collection-box {
     position: relative;
@@ -290,7 +174,6 @@ page-design {
     }
   }
   .project-items-view-switcher {
-    //padding: 10px;
     background: #D3D3D3;
     .segment {
       max-width: 250px;

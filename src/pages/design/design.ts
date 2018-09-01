@@ -2,9 +2,7 @@ import { Component } from '@angular/core';
 
 import {
   IonicPage,
-  NavController,
   NavParams,
-  PopoverController,
   ModalController
 } from 'ionic-angular';
 
@@ -20,10 +18,6 @@ import { ProjectService } from '../../providers/project-service';
   templateUrl: 'design.html',
 })
 export class DesignPage {
-  // Chat vars
-  false = false;
-  minimized = false;
-  maximized = false;
   // User & project vars
   user: any;
   project: any;
@@ -39,11 +33,9 @@ export class DesignPage {
   // Items
   items: any = {};
   constructor(
-    private navCtrl: NavController,
     private navParams: NavParams,
     private userService: UserService,
     private projectService: ProjectService,
-    private popoverCtrl: PopoverController,
     private modalCtrl: ModalController
   ) {
      // Fetch current user
@@ -170,20 +162,6 @@ export class DesignPage {
           this.items = null;
         }
       });
-  }
-
-  maximizeChat() {
-    console.log('chat fab pressed for project');
-    this.maximized = !this.maximized;
-  }
-
-  chatToggled() {
-    console.log('chat toggled');
-    this.minimized = !this.minimized;
-    if (this.maximized) {
-      this.maximized = !this.maximized;
-    }
-    // this.drawMarkers();
   }
 
   selectFloorplan() {

@@ -20,6 +20,7 @@ import { UserService } from '../../providers/user-service';
 export class ChatComponent {
   @ViewChild(Content) content: Content;
   @Input() project: any;
+  minimized: boolean;
   messages: any;
   message = {
     text: '',
@@ -52,6 +53,16 @@ export class ChatComponent {
     if (this.project) {
       this.chatService.leave(this.project.id);
     }
+  }
+
+  dismiss() {
+    console.log('dismissed chat view');
+    this.viewCtrl.dismiss();
+  }
+
+  chatToggled() {
+    console.log('chat toggled', this.minimized);
+    this.minimized = !this.minimized;
   }
 
   fetchMessages() {
@@ -119,10 +130,6 @@ export class ChatComponent {
     if (dimensions) {
       this.content.scrollToBottom(300);
     }
-  }
-
-  dismiss() {
-    this.viewCtrl.dismiss();
   }
 
   send() {

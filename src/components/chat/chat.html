@@ -1,54 +1,72 @@
+<button ion-fab class="chat-fab mobile" (click)="chatToggled()">
+	<img src="assets/chats.png">
+</button>
 
-<ion-header>
-    <ion-navbar>
-        <img src="assets/chat.png">
-        <ion-title class="title" *ngIf="user">
-            {{ user.first_name }}
-        </ion-title>
-        <ion-title class="title" *ngIf="!user">
-            Chat
-        </ion-title>
-        <ion-buttons end>
-            <button class="exit" ion-fab (click)="dismiss()">
-                <img src="assets/exit.png">
-            </button>
-        </ion-buttons>
-    </ion-navbar>
-</ion-header>
+<ion-navbar
+	[class.header-minimized]="minimized"
+	[class.header-maximized]="!minimized"
+	>
+	<img class="chat-img" src="assets/chat.png">
+	<ion-title class="chat-title" *ngIf="user">
+		{{ user.first_name }}
+	</ion-title>
+	<ion-title class="chat-title" *ngIf="!user">
+		Chat
+	</ion-title>
+	<ion-buttons end>
+		<button ion-fab class="exit" (click)="chatToggled()">
+			<img class="chat-exit" src="assets/exit.png">
+			<img class="chat-minimize" src="assets/down-arrow.png">
+		</button>
+	</ion-buttons>
+</ion-navbar>
 
-<ion-content>
-    <p class="alert-text" *ngIf="!messages || messages.length < 1">Hello and welcome to your personal design studio! As soon as you submit your final details, we will connect you with your designer so that you two can chat. The 10 day design period begins once you recieve your initial concept boards. Thank you!</p>
-    <ion-list no-lines>
-        <ion-item *ngFor="let message of messages">
-            <div class="message-header">
-                <img *ngIf="memberMap[message.senderId]" [src]="memberMap[message.senderId].image">
-                <img *ngIf="!memberMap[message.senderId]" src="assets/tmh.png">
-                <h4 *ngIf="memberMap[message.senderId]">{{ memberMap[message.senderId].first_name }}</h4>
-                <h4 *ngIf="!memberMap[message.senderId]">TMH BOT</h4>
-                <p *ngIf="message.createdAtReadable">{{ message.createdAtReadable }}</p>
-            </div>
-            <div *ngIf="message.text" class="message-bubble">
-                <div class="message">{{ message.text }}</div>
-            </div>
-            <div *ngIf="fileMap[message.fileEntryId]" class="img-bubble">
-                <a href="{{ fileMap[message.fileEntryId].url }}" target="_blank"> <!-- cordova: (click)="showImage(fileMap[message.fileEntryId].url)" -->
-                    <img src="{{ fileMap[message.fileEntryId].url }}">
-                </a>
-            </div>
-        </ion-item>
-    </ion-list>
+<ion-content
+	[class.content-minimized]="minimized"
+	[class.content-maximized]="!minimized"
+>
+	<p *ngIf="!messages || messages.length < 1"class="alert-text" 
+	>
+		Hello and welcome to your personal design studio! As soon as you submit your final details, we will connect you with your designer so that you two can chat. The 10 day design period begins once you recieve your initial concept boards. Thank you!
+	</p>
+
+	<ion-list no-lines>
+		<ion-item *ngFor="let message of messages">
+			<div class="message-header">
+				<img *ngIf="memberMap[message.senderId]" [src]="memberMap[message.senderId].image">
+				<img *ngIf="!memberMap[message.senderId]" src="assets/tmh.png">
+				<h4 *ngIf="memberMap[message.senderId]">{{ memberMap[message.senderId].first_name }}</h4>
+				<h4 *ngIf="!memberMap[message.senderId]">TMH BOT</h4>
+				<p *ngIf="message.createdAtReadable">{{ message.createdAtReadable }}</p>
+			</div>
+			<div *ngIf="message.text" class="message-bubble">
+				<div class="message">{{ message.text }}</div>
+			</div>
+			<div *ngIf="fileMap[message.fileEntryId]" class="img-bubble">
+				<a href="{{ fileMap[message.fileEntryId].url }}" target="_blank">
+					<img src="{{ fileMap[message.fileEntryId].url }}">
+				</a>
+			</div>
+		</ion-item>
+	</ion-list>
+	<div class="chat-footer">
+		<form name="chat-form">
+			<input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
+			<button class="attach" type="button" (click)="file.click()">
+				<img src="assets/attach.png">
+			</button>
+			<div class="chat-message">
+				<ion-textarea
+					type="text"
+					name="chat-message"
+					[(ngModel)]="message.text"
+					placeholder="Enter a message"
+					autocorrect="on"
+				></ion-textarea>
+			</div>
+			<button ion-button class="send" type="button" (click)="send()">
+				SEND
+			</button>
+		</form>
+	</div>
 </ion-content>
-<ion-footer class="chat-footer">
-  <form name="chat-form">
-    <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
-    <button class="attach" type="button" (click)="file.click()"> <!-- cordova: (click)="presentActionSheet()" -->
-        <img src="assets/attach.png">
-    </button>
-    <div class="chat-message">
-        <ion-textarea type="text" name="chat-message" [(ngModel)]="message.text" placeholder="Enter a message" autocorrect="on"></ion-textarea>
-    </div>
-    <button ion-button class="send" type="button" (click)="send()">
-        SEND
-    </button>
-  </form>
-</ion-footer>
