@@ -20,10 +20,6 @@ import { ProjectService } from '../../providers/project-service';
   templateUrl: 'details.html'
 })
 export class DetailsPage {
-  // Chat vars
-  false = false;
-  minimized = false;
-  maximized = false;
   // User & project vars
   user: any;
   project: any;
@@ -36,7 +32,7 @@ export class DetailsPage {
   };
   loading = true;
   view = 'DRAWING';
-  roleView = 'CLIENT';
+  isStaff: boolean;
   selectedDrawing: any;
   selectedInspiration: any;
   selectedFurniture: any;
@@ -51,18 +47,20 @@ export class DetailsPage {
     private popoverCtrl: PopoverController,
     private modalCtrl: ModalController,
   ) {
-    const self = this;
     // Fetch current user
     this.userService.fetchCurrentUser()
-      .subscribe(user => {
+      .subscribe((user: any) => {
         if (user) {
-          self.user = user;
-          if (self.user.is_staff) {
-            self.roleView = 'DESIGNER';
-          }
-          self.fetchProject();
+          this.user = user;
+          this.isStaff = Boolean(user.is_staff);
+          this.fetchProject();
         }
       });
+  }
+
+  toggleStaffView() {
+    console.log('toggling staff view', this.isStaff);
+    this.isStaff = !this.isStaff;
   }
 
   fetchProject() {
@@ -137,50 +135,6 @@ export class DetailsPage {
       });
   }
 
-  homePressed() {
-    console.log('logo pressed');
-    this.navCtrl.setRoot('dashboard');
-  }
-
-  selectTab() {
-    const self = this;
-    console.log('toggling tab dropdown');
-    let popover = this.popoverCtrl.create(
-      'dropdown',
-    { items: ['DETAILS', 'DESIGN', 'FINAL DELIVERY'] }, 
-    { cssClass: 'tab-popover' });
-    popover.onDidDismiss(data => {
-      if (data) {
-        let page: any;
-        if (data == 'DESIGN')
-          page = 'design';
-        if (data == 'FINAL DELIVERY')
-          page = 'final-delivery';
-        if (page)
-          this.navCtrl.setRoot(page, {
-            project: self.project,
-            id: self.project.id
-          });
-      }
-    });
-    popover.present({animate: false});
-  }
-
-  selectTabLink(link) {
-    const self = this;
-    console.log('selected tab link:', link);
-    let page: any;
-    if (link == 'DESIGN')
-      page = 'design';
-    if (link == 'FINAL_DELIVERY')
-      page = 'final-delivery';
-    if (page)
-      this.navCtrl.setRoot(page, {
-        project: self.project,
-        id: self.project.id
-      });
-  }
-
   selectDrawing(drawing) {
     console.log('thumb pressed for drawing:', drawing);
     this.selectedDrawing = drawing;
@@ -199,19 +153,6 @@ export class DetailsPage {
   selectMenuItem(item) {
     console.log('menu item pressed:', item);
     this.view = item;
-  }
-
-  maximizeChat() {
-    console.log('chat fab pressed for project');
-    this.maximized = !this.maximized;
-  }
-
-  chatToggled() {
-    console.log('chat toggled');
-    this.minimized = !this.minimized;
-    if (this.maximized) {
-      this.maximized = !this.maximized;
-    }
   }
 
   submitToDesigner() {

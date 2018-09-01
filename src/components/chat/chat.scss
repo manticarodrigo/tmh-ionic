@@ -2,6 +2,14 @@
   z-index: 1 !important;
 }
 
+chat.minimized {
+  @media only screen and (max-width: 700px) {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+  }
+}
+
 chat {
   @media only screen and (min-width: 700px) {
     position: absolute;
@@ -15,13 +23,14 @@ chat {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 60px);
     z-index: 1000;
   }
   .chat-fab {
+    z-index: 99;
     position: fixed;
     top: 128px;
-    right: 10px;
+    right: 15px;
     width: 45px !important;
     height: 45px !important;
     border-radius: 50% !important;
@@ -43,7 +52,9 @@ chat {
       filter: brightness(100);
     }
     .chat-title {
-      color: #fff;
+      .toolbar-title {
+        color: #fff;
+      }
     }
     .chat-minimize {
       transform: rotate(180deg);
@@ -51,12 +62,8 @@ chat {
     }
   }
   .header-maximized {
-    @media only screen and (min-width: 700px) {
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-    @media only screen and (max-width: 700px) {
-    
-    }
+    z-index: 1000;
+    border-bottom: 1px solid color($colors, light);
     .chat-title {
       .toolbar-title {
         color: color($colors, primary) !important;
@@ -66,20 +73,16 @@ chat {
   .content-minimized {
     display: none;
   }
-  // Full screen chat component on mobile
   .content-maximized {
-    background-color: #fff;
     @media only screen and (min-width: 700px) {
       height: 600px;
+      max-height: 55vh;
     }
   }
+  .scroll-content,
   .fixed-content {
     background-color: #fff !important;
-  }
-  .scroll-content {
-    @media only screen and (max-width: 700px) {
-      max-height: calc(100% - 60px);
-    }
+    z-index: 500;
   }
   .toolbar-title {
     text-transform: capitalize;
@@ -143,7 +146,7 @@ chat {
     top: 50%;
     right: 0;
     left: 0;
-    transform: translateY(-50%);
+    transform: translateY(-75%);
     margin: auto;
   }
   .message-header {

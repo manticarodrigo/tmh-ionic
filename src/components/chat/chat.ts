@@ -1,6 +1,7 @@
 import {
   Component,
   ViewChild,
+  HostBinding,
   Input
 } from '@angular/core';
 
@@ -16,11 +17,12 @@ import { UserService } from '../../providers/user-service';
 @Component({
   selector: 'chat',
   templateUrl: 'chat.html',
+  host: {'[class.minimized]':'minimized'}
 })
 export class ChatComponent {
   @ViewChild(Content) content: Content;
   @Input() project: any;
-  minimized: boolean;
+  @HostBinding('class.minimized') minimized: boolean = true;
   messages: any;
   message = {
     text: '',

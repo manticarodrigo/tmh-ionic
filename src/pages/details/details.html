@@ -1,46 +1,28 @@
-<ion-header [class.maximized]="maximized">
-  <ion-navbar>
-    <ion-buttons left>
-      <button ion-button (click)="homePressed()">
-        <img style="width:54px;margin:5px;" src="assets/logo.png">
-      </button>
-    </ion-buttons>
-    <ion-title><span *ngIf="project">{{ project.client.first_name }}'s </span><span *ngIf="project">{{ project.room | readableRoom }} Project: </span><span class="page">Design Studio</span></ion-title>
-    <ion-buttons end>
-      <button class="avatar" ion-button menuToggle>
-        <img *ngIf="user && user.image" [src]="user.image">
-        <img *ngIf="!user || !user.image" src="assets/user-placeholder.png">
-      </button>
-    </ion-buttons>
-  </ion-navbar>
-  <div class="sub-nav">
-    <div class="desktop menu">
-      <div><a class="active">1. DETAILS</a></div>
-      <div><a (click)="selectTabLink('DESIGN')">2. DESIGN</a></div>
-      <div><a (click)="selectTabLink('FINAL_DELIVERY')">3. FINAL DELIVERY</a></div>
-    </div>
-    <button class="mobile" ion-button type="button" (click)="selectTab()" full>
-      1. DETAILS
-      <img src="assets/down.png">
-    </button>
-    <div *ngIf="project" class="days-left">
-      {{ project.end_date | daysLeft }} day(s) left
-    </div>
-  </div>
+<ion-header class="navbar">
+    <navbar
+      [tabs]="['DETAILS', 'DESIGN', 'FINAL_DELIVERY']"
+      [selectedTab]="'DETAILS'"
+      [user]="user"
+      [project]="project"
+    ></navbar>
 </ion-header>
 
-<ion-content [class.minimized]="minimized">
+<ion-content>
   <div class="collab-workzone" *ngIf="project">
+    
     <input type="file" accept="image/*" #file (change)="fileChanged($event)" style="visibility:hidden" />
+
     <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
-    <ion-segment *ngIf="user.is_staff" [(ngModel)]="roleView" class="admin-segment">
-      <ion-segment-button value="CLIENT">
-        CLIENT
-      </ion-segment-button>
-      <ion-segment-button value="DESIGNER">
-        DESIGNER
-      </ion-segment-button>
-    </ion-segment>
+
+    <button
+      ion-fab
+      *ngIf="user.is_staff"
+      class="staff-fab"
+      (click)="toggleStaffView()"
+    >
+        <ion-icon name="eye"></ion-icon>
+    </button>
+
     <div class="collab-details-menu-desktop desktop">
       <div class="menu-item" [class.inactive]="view != 'DRAWING'" (click)="selectMenuItem('DRAWING')">
         <img src="assets/drawing.png">
@@ -55,17 +37,15 @@
         <a class="desktop">EXISTING FURNITURE</a>
       </div>
     </div>
-    <button class="chat-fab mobile" ion-fab (click)="maximizeChat()">
-      <img src="assets/chats.png">
-    </button>
-    <div *ngIf="view == 'DRAWING' && roleView == 'CLIENT' && !status.UPLOADED_DRAWING && !loading" class="collab-alert">
+    
+    <div *ngIf="view == 'DRAWING' && !isStaff && !status.UPLOADED_DRAWING && !loading" class="collab-alert">
       <h1>WELCOME TO YOUR DESIGN STUDIO!</h1>
       <p>Please upload pictures of your space and a hand drawn floor plan. The floor plan should be from a birds eye view and include height and width of each wall.</p>
       <p> Please also include dimensions for doors, windows, or any additional items that could affect the design.</p>
       <p class="note">( 2 Picture Limit)</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
-    <div *ngIf="view == 'DRAWING' && roleView == 'DESIGNER' && !status.UPLOADED_DRAWING && !loading" class="collab-alert">
+    <div *ngIf="view == 'DRAWING' && isStaff && !status.UPLOADED_DRAWING && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STUDIO!</h1>
       <p>Please wait until your client has finished the details phase.</p>
       <p>Feel free to chat with your client to prepare for the design phase and to help them prepare as well.</p>
@@ -75,19 +55,19 @@
       <div class="collab-thumb-wrapper">
         <div class="collab-thumb" *ngFor="let thumb of drawings">
           <img class="thumb-img" [src]="thumb.image" [class.active]="thumb.id == selectedDrawing.id" (click)="selectDrawing(thumb)">
-          <img *ngIf="roleView == 'CLIENT'" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
+          <img *ngIf="!isStaff" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
         </div>
-        <div *ngIf="roleView == 'CLIENT'" class="collab-thumb">
+        <div *ngIf="!isStaff" class="collab-thumb">
           <img class="thumb-img add" src="assets/add.png" (click)="file.click()">
         </div>
       </div>
-      <button *ngIf="roleView == 'CLIENT' && status.UPLOADED_INSPIRATION && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+      <button *ngIf="!isStaff && status.UPLOADED_INSPIRATION && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
-    <div *ngIf="view == 'INSPIRATION' && roleView == 'CLIENT' && !status.UPLOADED_INSPIRATION" class="collab-alert">
+    <div *ngIf="view == 'INSPIRATION' && !isStaff && !status.UPLOADED_INSPIRATION" class="collab-alert">
       <p>Upload inspiration images that you would like your designer to reference for your space.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
-    <div *ngIf="view == 'INSPIRATION' && roleView == 'DESIGNER' && !status.UPLOADED_INSPIRATION" class="collab-alert">
+    <div *ngIf="view == 'INSPIRATION' && isStaff && !status.UPLOADED_INSPIRATION" class="collab-alert">
       <p>HANG TIGHT</p>
       <p>Your client has not uploaded inspiration images yet.</p>
     </div>
@@ -96,19 +76,19 @@
       <div class="collab-thumb-wrapper">
         <div class="collab-thumb" *ngFor="let thumb of inspirations">
           <img class="thumb-img" [src]="thumb.image" [class.active]="thumb.id == selectedInspiration.id" (click)="selectInspiration(thumb)">
-          <img *ngIf="roleView == 'CLIENT'" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
+          <img *ngIf="!isStaff" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
         </div>
-        <div *ngIf="roleView == 'CLIENT'" class="collab-thumb">
+        <div *ngIf="!isStaff" class="collab-thumb">
           <img class="thumb-img  add" src="assets/add.png" (click)="file.click()">
         </div>
       </div>
-      <button *ngIf="roleView == 'CLIENT' && status.UPLOADED_DRAWING && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+      <button *ngIf="!isStaff && status.UPLOADED_DRAWING && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
-    <div *ngIf="view == 'FURNITURE' && roleView == 'CLIENT' && !status.UPLOADED_FURNITURE" class="collab-alert">
+    <div *ngIf="view == 'FURNITURE' && !isStaff && !status.UPLOADED_FURNITURE" class="collab-alert">
       <p>Upload pictures and note measurements of any existing furniture that you would like the designer to incorporate into their designs.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
-    <div *ngIf="view == 'FURNITURE' && roleView == 'DESIGNER' && !status.UPLOADED_FURNITURE" class="collab-alert">
+    <div *ngIf="view == 'FURNITURE' && isStaff && !status.UPLOADED_FURNITURE" class="collab-alert">
       <p>HANG TIGHT</p>
       <p>Your client has not uploaded existing furniture images yet.</p>
     </div>
@@ -117,13 +97,13 @@
       <div class="collab-thumb-wrapper">
         <div class="collab-thumb" *ngFor="let thumb of furnitures">
           <img class="thumb-img" [src]="thumb.image" [class.active]="thumb.id == selectedFurniture.id" (click)="selectFurniture(thumb)">
-          <img *ngIf="roleView == 'CLIENT'" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
+          <img *ngIf="!isStaff" class="delete" src="assets/delete.png" (click)="deleteDetail(thumb)">
         </div>
-        <div *ngIf="roleView == 'CLIENT'" class="collab-thumb">
+        <div *ngIf="!isStaff" class="collab-thumb">
           <img class="thumb-img add" src="assets/add.png" (click)="file.click()">
         </div>
       </div>
-      <button *ngIf="roleView == 'CLIENT' && status.UPLOADED_DRAWING && status.UPLOADED_INSPIRATION && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
+      <button *ngIf="!isStaff && status.UPLOADED_DRAWING && status.UPLOADED_INSPIRATION && project.status == 'DETAILS'" (click)="submitToDesigner()" ion-button full type="button">SUBMIT TO DESIGNER</button>
     </div>
     <div class="collab-details-menu-mobile mobile">
       <div class="menu-item" [class.inactive]="view != 'DRAWING'" (click)="selectMenuItem('DRAWING')">
@@ -136,13 +116,11 @@
         <img src="assets/furniture.png">
       </div>
     </div>
-    <div class="chat-header desktop" [class.header-minimized]="minimized" [class.header-maximized]="maximized" (click)="chatToggled()">
-      <img class="chat-img" src="assets/chat.png">
-      <h2 class="chat-title">Chat</h2>
-      <img class="chat-minimize" src="assets/down-arrow.png">
-    </div>
-    <chat [project]="project" [class.wrapper-minimized]="minimized" [class.wrapper-maximized]="maximized" class="chat-wrapper desktop"></chat>
+
+    <chat [project]="project"></chat>
+
   </div>
+
   <div class="project-details" *ngIf="project">
     <div class="project-details-wrapper">
       <h1>Project Details</h1>
@@ -161,4 +139,5 @@
       </div>
     </div>
   </div>
+
 </ion-content>
