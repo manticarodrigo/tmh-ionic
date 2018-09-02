@@ -4,7 +4,6 @@ import {
   IonicPage,
   NavController,
   NavParams,
-  PopoverController,
   ModalController
 } from 'ionic-angular';
 
@@ -44,7 +43,6 @@ export class DetailsPage {
     private navParams: NavParams,
     private userService: UserService,
     private projectService: ProjectService,
-    private popoverCtrl: PopoverController,
     private modalCtrl: ModalController,
   ) {
     // Fetch current user
@@ -71,7 +69,7 @@ export class DetailsPage {
     } else if (this.navParams.get('id')) {
       const id = this.navParams.get('id');
       this.projectService.findByProjectId(id)
-      .then(project => {
+      .then((project) => {
         this.project = project;
         this.fetchDetails();
       });

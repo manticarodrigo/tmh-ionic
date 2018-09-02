@@ -2,8 +2,11 @@ page-details {
   .staff-fab {
     z-index: 99;
     position: fixed;
-    top: 128px;
-    left: 15px;
+    bottom: 60px;
+    @media only screen and (min-width: 700px) {
+      bottom: 10px;
+    }
+    right: 15px;
     width: 45px !important;
     height: 45px !important;
     border-radius: 50% !important;
@@ -41,7 +44,6 @@ page-details {
     background-size: cover;
     padding: 5px;
     @media only screen and (max-width: 700px) {
-      padding-top: 50px;
       min-height: 300px;
     }
     @media only screen and (min-width: 700px) {
