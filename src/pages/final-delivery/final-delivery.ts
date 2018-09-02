@@ -30,7 +30,7 @@ export class FinalDeliveryPage {
     UPLOADED_FURNITURE: false
   };
   view = 'DESIGNER_NOTE';
-  roleView = 'CLIENT';
+  isStaff: boolean = false;
   designerNote = '';
   floorplan: any;
   conceptboard: any;
@@ -49,11 +49,16 @@ export class FinalDeliveryPage {
         if (user) {
           this.user = user;
           if (this.user.is_staff) {
-            this.roleView = 'DESIGNER';
+            this.isStaff = true;
           }
           this.fetchProject();
         }
       });
+  }
+
+  toggleStaffView() {
+    console.log('toggling staff view', this.isStaff);
+    this.isStaff = !this.isStaff;
   }
 
   fetchProject() {

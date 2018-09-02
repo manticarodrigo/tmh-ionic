@@ -10,7 +10,7 @@ import { ProjectService } from '../../../providers/project-service';
   templateUrl: 'floorplan-map.html'
 })
 export class FloorplanMapComponent {
-  @Input() roleView: String;
+  @Input() isStaff: String;
   @Input() itemsView: String;
   @Input() loading = true;
   @Input() project: any;
@@ -80,8 +80,8 @@ export class FloorplanMapComponent {
       // listen for map double click event
       const self = this;
       this.map.on('dblclick', function(e) {
-        console.log('clicked map', e, self.roleView);
-        if (self.roleView === 'DESIGNER') {
+        console.log('clicked map', e, self.isStaff);
+        if (self.isStaff) {
           const numberIcon = Leaflet.divIcon({
             className: 'number-icon',
             iconSize: [30, 30],

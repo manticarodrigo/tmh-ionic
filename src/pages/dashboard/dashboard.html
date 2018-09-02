@@ -36,19 +36,19 @@
 
   <ion-list>
 
-    <ion-item text-center class="no-projects" *ngIf="tab == 'IN_PROGRESS' && !projects && roleView == 'CLIENT'">
+    <ion-item text-center class="no-projects" *ngIf="tab == 'IN_PROGRESS' && !projects && !isStaff">
       <h2>We welcome you<span *ngIf="user">, {{ user.firstName }}</span>.</h2>
       <p>You have not started a project yet. We encourage you to start a new one.
       <button ion-button (click)="startProject()" full>START NEW PROJECT</button>
     </ion-item>
 
-    <ion-item text-center class="no-projects" *ngIf="tab == 'COMPLETED' && !projects && roleView == 'CLIENT'">
+    <ion-item text-center class="no-projects" *ngIf="tab == 'COMPLETED' && !projects && !isStaff">
       <h2>Oops.</h2>
       <p>Looks like you have not finished a project yet. If you haven't already, you can start a new project at any time.</p>
       <button ion-button (click)="startProject()" full>START NEW PROJECT</button>
     </ion-item>
 
-    <ion-item text-center class="no-projects" *ngIf="!projects && roleView == 'DESIGNER'">
+    <ion-item text-center class="no-projects" *ngIf="!projects && isStaff">
       <h2>HANG TIGHT</h2>
       <p>We are working hard to connect you with the right clients for you. Check back soon for assigned projects.</p>
     </ion-item>
