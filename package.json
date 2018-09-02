@@ -10,7 +10,8 @@
 		"serve": "ionic-app-scripts serve",
 		"clean": "ionic-app-scripts clean",
 		"build": "ionic-app-scripts build",
-		"lint": "ionic-app-scripts lint"
+		"lint": "ionic-app-scripts lint",
+		"heroku-postbuild": "npm run build --prod"
 	},
 	"dependencies": {
 		"@angular/animations": "5.2.11",
@@ -41,6 +42,10 @@
 		"sw-toolbox": "3.6.0",
 		"typescript": "~2.6.2",
 		"zone.js": "0.8.26"
+	},
+	"engines": {
+		"node": "7.10.0",
+		"npm": "4.6.1"
 	},
 	"config": {
 		"ionic_webpack": "./config/webpack.config.js"
