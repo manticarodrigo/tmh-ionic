@@ -1,4 +1,5 @@
 export const ENV = {
-  production: true
-  //MORE VARIABLES CAN BE ADDED HERE
+  production: true,
+  backendUrl: 'https://tmh-django.herokuapp.com',
+  socketUrl: 'https://themanhome.herokuapp.com',
 };
