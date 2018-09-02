@@ -3,7 +3,7 @@
   <h5>Collection Total: ${{ items[itemsView.toLowerCase()] | priceTotal }}</h5>
   <ion-row class="project-items-wrapper">
     <ion-col col-12 col-sm *ngFor="let item of items[itemsView.toLowerCase()]; let i = index" class="project-items-box">
-      <div *ngIf="roleView === 'CLIENT'">
+      <div *ngIf="!isStaff">
         <div class="project-items-label">
           ITEM {{ i + 1 }}
         </div>
@@ -21,7 +21,7 @@
           <button *ngIf="project.status === 'REQUEST_ALTERNATIVES'" ion-button type="button" (click)="viewAlternatives(item, i)">VIEW ALTERNATIVES</button>
         </div>
       </div>
-      <div *ngIf="roleView === 'DESIGNER'">
+      <div *ngIf="isStaff">
         <div class="project-items-label" (click)="editItem($event, item, i)">
           ITEM {{ i + 1 }}
         </div>

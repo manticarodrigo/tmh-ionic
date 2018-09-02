@@ -15,39 +15,40 @@
 
     <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
 
-    <ion-segment *ngIf="user.is_staff" [(ngModel)]="roleView" class="admin-segment">
-      <ion-segment-button value="CLIENT">
-        CLIENT
-      </ion-segment-button>
-      <ion-segment-button value="DESIGNER">
-        DESIGNER
-      </ion-segment-button>
-    </ion-segment>
+    <button
+      ion-fab
+      *ngIf="user.is_staff"
+      class="staff-fab"
+      [class.selected]="!isStaff"
+      (click)="toggleStaffView()"
+    >
+        <ion-icon name="eye"></ion-icon>
+    </button>
 
-    <div *ngIf="view === 'APPROVE_CONCEPT' && roleView === 'CLIENT' && !concepts && !loading" class="collab-alert">
+    <div *ngIf="view === 'APPROVE_CONCEPT' && !isStaff && !concepts && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
     </div>
-    <div *ngIf="view === 'APPROVE_CONCEPT' && roleView === 'CLIENT' && concepts && concepts[0].status === 'PENDING'" class="collab-alert">
+    <div *ngIf="view === 'APPROVE_CONCEPT' && !isStaff && concepts && concepts[0].status === 'PENDING'" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
     </div>
-    <div *ngIf="view === 'APPROVE_CONCEPT' && roleView === 'DESIGNER' && !concepts && !loading" class="collab-alert">
+    <div *ngIf="view === 'APPROVE_CONCEPT' && isStaff && !concepts && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Please upload 2 concept boards based on your client's information and style. Once all boards have been uploaded and confirmed, submit to the client and the 10 business day timeline will begin.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
-    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && roleView === 'CLIENT' && !loading" class="collab-alert">
+    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && !isStaff && !loading" class="collab-alert">
       <h1>HANG TIGHT</h1>
       <p>Your designer is hard at work putting together the Floor Plan of your room!</p>
     </div>
-    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && roleView === 'DESIGNER' && !loading" class="collab-alert">
+    <div *ngIf="view === 'APPROVE_FLOOR_PLAN' && conceptboard && !floorplan && isStaff && !loading" class="collab-alert">
       <p>Using the floor plan provided by the client, create and upload a floor plan to begin the design process.</p>
       <button (click)="file.click()" ion-button full type="button">UPLOAD</button>
     </div>
 
     <div *ngIf="view === 'APPROVE_CONCEPT' && concepts && !conceptboard" class="collab-image">
-      <div *ngIf="roleView === 'CLIENT' && concepts[0].status === 'SUBMITTED'">
+      <div *ngIf="!isStaff && concepts[0].status === 'SUBMITTED'">
         <img class="selected-img" [src]="selectedConcept.image">
         <div class="collab-thumb-wrapper">
           <div class="collab-thumb" *ngFor="let thumb of concepts">
@@ -56,7 +57,7 @@
         </div>
         <button (click)="approveConcept()" ion-button full type="button">APPROVE CONCEPT {{ concepts[0].id === selectedConcept.id ? 1 : 2 }}</button>
       </div>
-      <div *ngIf="roleView === 'DESIGNER'">
+      <div *ngIf="isStaff">
         <img class="selected-img" [src]="selectedConcept.image">
         <div class="collab-thumb-wrapper">
           <div class="collab-thumb" *ngFor="let thumb of concepts">
@@ -100,8 +101,8 @@
   <div class="project-items-view-switcher" *ngIf="items.pending || items.approved">
     <ion-segment [(ngModel)]="itemsView" (ionChange)="itemViewSwitched()">
       <ion-segment-button value="PENDING" *ngIf="project.status !== 'FINAL_DELIVERY' && project.status !== 'SHOPPING_CART' && project.status !== 'ESTIMATE_SHIPPING_AND_TAX' && project.status !== 'ARCHIVED'">
-        <span *ngIf="roleView === 'CLIENT'">PENDING</span>
-        <span *ngIf="roleView === 'DESIGNER'">{{ project.status === 'FLOOR_PLAN' ? 'SUBMITTED' : 'PENDING' }}</span>
+        <span *ngIf="!isStaff">PENDING</span>
+        <span *ngIf="isStaff">{{ project.status === 'FLOOR_PLAN' ? 'SUBMITTED' : 'PENDING' }}</span>
       </ion-segment-button>
       <ion-segment-button value="MODIFIED" *ngIf="items.modified">
         MODIFIED
@@ -113,7 +114,7 @@
   </div>
 
   <collection-box
-    [roleView]="roleView"
+    [isStaff]="isStaff"
     [itemsView]="itemsView"
     [project]="project"
     [items]="items"
@@ -124,7 +125,7 @@
   </collection-box>
 
   <project-items
-    [roleView]="roleView"
+    [isStaff]="isStaff"
     [itemsView]="itemsView"
     [project]="project"
     [items]="items"

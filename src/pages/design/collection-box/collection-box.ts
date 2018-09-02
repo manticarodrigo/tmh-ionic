@@ -8,7 +8,7 @@ import { ProjectService } from '../../../providers/project-service';
   templateUrl: 'collection-box.html'
 })
 export class CollectionBoxComponent {
-  @Input() roleView: string;
+  @Input() isStaff: boolean;
   @Input() itemsView: string;
   @Input() project: any;
   @Input() items: Array<any>;

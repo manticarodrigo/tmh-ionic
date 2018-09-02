@@ -29,23 +29,10 @@ page-design {
       height: 50px;
     }
     @media only screen and (max-width: 700px) {
-      padding-top: 50px;
       min-height: 300px;
     }
     @media only screen and (min-width: 700px) {
       min-height: 500px;
-    }
-    .admin-segment {
-      z-index: 1000;
-      @media only screen and (max-width: 700px) {
-        position: absolute;
-        top: 10px;
-        left: 15px;
-      }
-      width: 200px;
-      background-color: #fff;
-      box-shadow: 0px 1px 6px rgba(0,0,0,0.3);
-      border-radius: 2px;
     }
     .collab-alert {
       @media only screen and (min-width: 700px) {

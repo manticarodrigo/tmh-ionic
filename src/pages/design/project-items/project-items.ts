@@ -8,8 +8,8 @@ import { ProjectService } from '../../../providers/project-service';
   templateUrl: 'project-items.html'
 })
 export class ProjectItemsComponent {
-  @Input() roleView: String;
-  @Input() itemsView: String;
+  @Input() isStaff: boolean;
+  @Input() itemsView: string;
   @Input() loading = true;
   @Input() project: any;
   @Input() floorplan: any;

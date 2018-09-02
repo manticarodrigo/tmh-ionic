@@ -1,5 +1,5 @@
 <!-- Client Views -->
-<div *ngIf="project && roleView === 'CLIENT'">
+<div *ngIf="project && !isStaff">
   <div 
     *ngIf="project.status === 'CONCEPTS' && concepts"
     class="collection-box"
@@ -40,7 +40,7 @@
 </div>
 
 <!-- Designer Views -->
-<div *ngIf="project && roleView === 'DESIGNER'">
+<div *ngIf="project && isStaff">
   <div
     *ngIf="(items | json) == '{}' && floorplan"
     class="collection-box"

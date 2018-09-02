@@ -22,10 +22,10 @@ export class DesignPage {
   user: any;
   project: any;
   // Step flow
-  loading = true;
-  view = 'APPROVE_CONCEPT';
-  roleView = 'CLIENT';
-  itemsView = 'PENDING';
+  loading: boolean = true;
+  view: string = 'APPROVE_CONCEPT';
+  isStaff: boolean = false;
+  itemsView: string = 'PENDING';
   concepts: any;
   selectedConcept: any;
   conceptboard: any;
@@ -40,15 +40,18 @@ export class DesignPage {
   ) {
      // Fetch current user
     this.userService.fetchCurrentUser()
-      .subscribe(user => {
+      .subscribe((user: any) => {
         if (user) {
           this.user = user;
-          if (this.user.is_staff) {
-            this.roleView = 'DESIGNER';
-          }
+          this.isStaff = Boolean(user.is_staff);
           this.fetchProject();
         }
       });
+  }
+
+  toggleStaffView() {
+    console.log('toggling staff view', this.isStaff);
+    this.isStaff = !this.isStaff;
   }
 
   fetchProject() {

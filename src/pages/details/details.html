@@ -18,6 +18,7 @@
       ion-fab
       *ngIf="user.is_staff"
       class="staff-fab"
+      [class.selected]="!isStaff"
       (click)="toggleStaffView()"
     >
         <ion-icon name="eye"></ion-icon>
