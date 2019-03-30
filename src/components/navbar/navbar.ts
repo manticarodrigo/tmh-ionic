@@ -71,15 +71,27 @@ export class NavbarComponent {
       this.onReload.emit();
     } else {
       let page: any;
-      if (link === 'DETAILS')
-        page = 'details';
-      if (link === 'FINAL_DELIVERY')
-        page = 'final-delivery';
-      if (page)
-        this.navCtrl.setRoot(page, {
-          project: this.project,
-          id: this.project.id
-        });
+
+      switch(link) {
+        case 'DETAILS':
+          page = 'details';
+          break;
+        case 'DESIGN':
+          page = 'design';
+          break;
+        case 'FINAL_DELIVERY':
+          page = 'final-delivery';
+          break;
+        default:
+          break;
+      }
+
+      if (!page) return;
+      
+      this.navCtrl.setRoot(page, {
+        project: this.project,
+        id: this.project.id
+      });
     }
   }
 
