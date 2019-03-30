@@ -151,7 +151,7 @@ export class ChatComponent {
           this.message = {
               text: '',
               id: null,
-              senderId: this.userService.currentUser.userId,
+              senderId: this.userService.currentUser.id,
               createdAt: null
             };
         });
