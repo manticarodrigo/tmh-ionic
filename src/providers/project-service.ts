@@ -23,8 +23,7 @@ export class ProjectService {
     ARCHIVED: 'Archived'
   };
 
-  constructor(private http: Http,
-              private userService: UserService) {
+  constructor(private http: Http, private userService: UserService) {
     this.api = this.userService.api;
   }
 
@@ -285,6 +284,7 @@ export class ProjectService {
   }
 
   addDetail(project, file, type, status) {
+    console.log('adding detail:', type);
     return new Promise((resolve, reject) => {
       const headers = this.userService.getHeaders();
       const formData = new FormData();

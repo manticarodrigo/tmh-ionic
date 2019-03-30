@@ -97,10 +97,10 @@ export class ProjectItemsComponent {
 
   requestAlternative(item) {
     console.log('request alternative:', item);
-    const { updateItemStatus, updateStatus } = this.projectService;
-    const updateItem = updateItemStatus(item, 'REQUEST_ALTERNATIVE');
-    const updateProject = updateStatus(this.project, 'REQUEST_ALTERNATIVES')
-    Promise.all([updateItem, updateProject])
+    Promise.all([
+      this.projectService.updateItemStatus(item, 'REQUEST_ALTERNATIVE'),
+      this.projectService.updateStatus(this.project, 'REQUEST_ALTERNATIVES')
+    ])
       .then(data => {
         console.log(data);
         this.onReload.emit();

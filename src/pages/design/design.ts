@@ -8,6 +8,7 @@ import {
 
 import { UserService } from '../../providers/user-service';
 import { ProjectService } from '../../providers/project-service';
+import { User } from '../../models/user.model';
 
 @IonicPage({
   name: 'design',
@@ -18,10 +19,10 @@ import { ProjectService } from '../../providers/project-service';
   templateUrl: 'design.html',
 })
 export class DesignPage {
-  // User & project vars
-  user: any;
+  // user & project
+  user: User;
   project: any;
-  // Step flow
+  // workflow
   loading: boolean = true;
   view: string = 'APPROVE_CONCEPT';
   isStaff: boolean = false;
@@ -30,8 +31,11 @@ export class DesignPage {
   selectedConcept: any;
   conceptboard: any;
   floorplan: any;
-  // Items
+  // items
   items: any = {};
+  // chat
+  chatMinimized = true;
+
   constructor(
     private navParams: NavParams,
     private userService: UserService,
@@ -67,8 +71,10 @@ export class DesignPage {
         this.itemsView = 'APPROVED';
         console.log('items view switched', this.itemsView);
       }
-      this.fetchDetails();
-      this.fetchItems();
+      Promise.all([this.fetchDetails, this.fetchItems])
+        .then(() => {
+          this.loading = false;
+        });
     } else if (this.navParams.get('id')) {
       const id = this.navParams.get('id');
       this.projectService.findByProjectId(id)
@@ -83,14 +89,16 @@ export class DesignPage {
               this.itemsView = 'APPROVED';
               console.log('items view switched', this.itemsView);
           }
-          this.fetchDetails();
-          this.fetchItems();
+          Promise.all([this.fetchDetails(), this.fetchItems()])
+            .then(() => {
+              this.loading = false;
+            });
         });
     }
   }
 
-  fetchDetails() {
-    this.projectService.fetchProjectDetails(this.project.id)
+  fetchDetails(): Promise<any> {
+    return this.projectService.fetchProjectDetails(this.project.id)
       .then(data => {
         console.log('design received details:', data);
         const concepts = [];
@@ -125,8 +133,8 @@ export class DesignPage {
       });
   }
 
-  fetchItems() {
-    this.projectService.fetchItems(this.project)
+  fetchItems(): Promise<any> {
+    return this.projectService.fetchItems(this.project)
       .then((data: Array<any>) => {
         console.log('design page received item data:', data);
         if (data && Array(data).length > 0) {
@@ -160,7 +168,7 @@ export class DesignPage {
             this.itemsView = 'MODIFIED';
             console.log('items view switched', this.itemsView);
           }
-          // his.drawMarkers();
+          // this.drawMarkers();
         } else {
           this.items = null;
         }
@@ -237,7 +245,7 @@ export class DesignPage {
   }
 
   fileChanged(event) {
-    console.log('file changed:', event.target.files[0]);
+    console.log('file changed:', event.target.files[0], this.view);
     const file = event.target.files[0];
     if (this.view === 'APPROVE_CONCEPT') {
       this.projectService.addDetail(this.project, file, 'CONCEPT', 'PENDING')
@@ -247,10 +255,10 @@ export class DesignPage {
         });
     }
     if (this.view === 'APPROVE_FLOOR_PLAN') {
-      const { addDetail, updateStatus } = this.projectService;
-      const createDetail = addDetail(this.project, file, 'FLOOR_PLAN', 'PENDING');
-      const updateProject = updateStatus(this.project, 'FLOOR_PLAN')
-      Promise.all([createDetail, updateProject])
+      Promise.all([
+        this.projectService.addDetail(this.project, file, 'FLOOR_PLAN', 'PENDING'),
+        this.projectService.updateStatus(this.project, 'FLOOR_PLAN')
+      ])
         .then(data => {
           console.log('upload floorplan returned data:', data);
           this.fetchProject();
@@ -259,6 +267,10 @@ export class DesignPage {
     }
     // reset files
     event.target.value = null;
+  }
+
+  chatToggled() {
+    this.chatMinimized = !this.chatMinimized;
   }
 
 }

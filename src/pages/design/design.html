@@ -15,16 +15,6 @@
 
     <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
 
-    <button
-      ion-fab
-      *ngIf="user.is_staff"
-      class="staff-fab"
-      [class.selected]="!isStaff"
-      (click)="toggleStaffView()"
-    >
-        <ion-icon name="eye"></ion-icon>
-    </button>
-
     <div *ngIf="view === 'APPROVE_CONCEPT' && !isStaff && !concepts && !loading" class="collab-alert">
       <h1>WELCOME TO THE DESIGN STAGE!</h1>
       <p>Your designer is hard at work designing your two custom concept boards! We will send you an email when it's time for you to make a selection.</p>
@@ -94,7 +84,7 @@
       <a (click)="selectConceptboard()">CONCEPT BOARD</a>
     </div>
     
-    <chat [project]="project"></chat>
+    <chat [project]="project" [minimized]="chatMinimized"></chat>
   
   </div>
   
@@ -134,3 +124,18 @@
   </project-items>
 
 </ion-content>
+
+<ion-footer>
+  <button
+      ion-fab
+      *ngIf="user.is_staff"
+      class="staff-fab"
+      [class.selected]="!isStaff"
+      (click)="toggleStaffView()"
+    >
+        <ion-icon name="eye"></ion-icon>
+    </button>
+    <button ion-fab class="chat-fab mobile" (click)="chatToggled()">
+      <img src="assets/chats.png">
+    </button>
+</ion-footer>

@@ -7,6 +7,9 @@ floorplan-map {
       object-fit: contain;
       opacity: 0.25;
     }
+    .leaflet-image-layer {
+      object-fit: contain;
+    }
     .leaflet-control-zoom.leaflet-bar.leaflet-control {
       border-radius: 2px;
       border: none;

@@ -22,7 +22,7 @@ import { UserService } from '../../providers/user-service';
 export class ChatComponent {
   @ViewChild(Content) content: Content;
   @Input() project: any;
-  @HostBinding('class.minimized') minimized: boolean = true;
+  @HostBinding('class.minimized') @Input() minimized: boolean = true;
   messages: any;
   message = {
     text: '',

@@ -27,11 +27,13 @@ export class FloorplanMapComponent {
     private projectService: ProjectService
   ) {}
 
+  ngOnInit() {
+    this.drawFloorplan();
+  }
+
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     const items = changes.items;
-    if (items && JSON.stringify(items.currentValue) != '{}') {
-      if (!this.map) this.drawFloorplan();
+    if (this.map && items && JSON.stringify(items.currentValue) != '{}') {
       this.drawMarkers();
     }
   }
@@ -75,6 +77,8 @@ export class FloorplanMapComponent {
       this.map.fitBounds(bounds);
       // create the markers layer
       this.markers = new Leaflet.LayerGroup().addTo(this.map);
+      // diable transforms
+      this.map.invalidateSize();
       // draw markers
       this.drawMarkers();
       // listen for map double click event
@@ -109,12 +113,10 @@ export class FloorplanMapComponent {
               marker.remove();
             }
           });
-          // const ev = e.originalEvent;
-          // popover.present({ev});
           popover.present();
         }
       });
-    }, 2000);
+    }, 250);
   }
 
   drawMarkers() {
