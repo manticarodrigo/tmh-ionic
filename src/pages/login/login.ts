@@ -64,18 +64,18 @@ export class LoginPage {
       this.presentError('Please provide a valid username and password.');
       this.loading = false;
     } else {
-      this.userService.login(
-        this.username,
-        this.password,
-        (res) => {
-          console.log(res);
+      this.userService.login(this.username, this.password)
+        .then(() => {
           this.navCtrl.setRoot('dashboard');
           this.username = '';
           this.password = '';
           this.password2 = '';
           this.loading = false;
-        }
-      );
+        })
+        .catch(error => {
+          this.presentError(error);
+          this.loading = false;
+        });
     }
   }
 

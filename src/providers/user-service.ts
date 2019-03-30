@@ -5,11 +5,11 @@ import 'rxjs/add/operator/catch';
 import { Storage } from '@ionic/storage';
 import { ENV } from '@env';
 import { Observable } from 'rxjs/Observable';
+import { User } from '../models/user.model';
 
 @Injectable()
 export class UserService {
-  // TODO: remove user service vars
-  currentUser: any;
+  currentUser: User;
   headers: any;
   api: any;
   
@@ -57,32 +57,35 @@ export class UserService {
     });
   }
 
-  login(username, password, callback) {
-    this.http.post(
-      `${ENV.backendUrl}/rest-auth/login/`,
-      {
-        username,
-        password
-      }
-    )
-      .map(res => res.json())
-      .subscribe(
-        res => {
-          console.log(res);
-          if (res.user && res.key) {
-            const user = res.user
-            user.key = res.key
-            this.setCurrentUser(user)
-            callback(user);
-          } else {
-            callback(null);
-          }
-        },
-        err => {
-          console.log(err);
-          callback(null);
+  login(username, password) {
+    return new Promise((resolve, reject) => {
+      this.http.post(
+        `${ENV.backendUrl}/rest-auth/login/`,
+        {
+          username,
+          password
         }
-    );
+      )
+        .map(res => res.json())
+        .subscribe(
+          res => {
+            console.log(res);
+            if (res.user && res.key) {
+              const user = res.user
+              user.key = res.key
+              this.setCurrentUser(user)
+              resolve(user);
+            } else {
+              reject(null);
+            }
+          },
+          err => {
+            const body = JSON.parse(err._body);
+            const message = body.non_field_errors[0];
+            reject(message);
+          }
+      );
+    });
   }
 
   register(username, first_name, last_name, email, password1, password2) {
